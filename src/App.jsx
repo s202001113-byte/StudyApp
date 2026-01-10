@@ -1,0 +1,1907 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Monitor, Cpu, Layers, Box, ArrowLeft, 
+  CheckCircle2, HardDrive, Database, Zap, Layout, Settings 
+} from 'lucide-react';
+
+const App = () => {
+  const [currentView, setCurrentView] = useState('home');
+  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [userAnswers, setUserAnswers] = useState({});
+  const [showAnswers, setShowAnswers] = useState(false);
+
+  const topics = [
+    { id: 'comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
+    { id: 'comp_a_ch2', title: 'Compulsory A Ch2: Data Control', description: 'GIGO, Data Validation & Verification', icon: <CheckCircle2 />, category: 'Compulsory A', color: '#3b82f6' },
+    { id: 'comp_a_ch3', title: 'Compulsory A Ch3: Data Representation', description: 'Data Representation & File Formats', icon: <Database />, category: 'Compulsory A', color: '#10b981' },
+    { id: 'comp_b_ch1', title: 'Compulsory B Ch1: Hardware Components', description: 'Monitors, Projectors, & Printers Comparison', icon: <Monitor />, category: 'Compulsory B', color: '#4f46e5' },
+    { id: 'comp_b_ch2', title: 'Compulsory B Ch2: System Hardware', description: 'The System Unit, CPU, GPU, & Storage', icon: <Cpu />, category: 'Compulsory B', color: '#0891b2' },
+    { id: 'comp_b_ch3', title: 'Compulsory B Ch3: System Software', description: 'System Software, OS, & Utilities', icon: <Layers />, category: 'Compulsory B', color: '#7c3aed' },
+    { id: 'comp_c_ch1', title: 'Compulsory C Ch1: Computer Networking and Internet Basics', description: 'Computer Networking & Internet Access', icon: <Zap />, category: 'Compulsory C', color: '#8b5cf6' },
+    { id: 'comp_c_ch2', title: 'Compulsory C Ch2: Internet Protocols', description: 'Network Protocols & IP Addressing', icon: <Settings />, category: 'Compulsory C', color: '#f59e0b' },
+    { id: 'comp_c_ch3', title: 'Compulsory C Ch3: Internet Services & Applications', description: 'IoT, Cloud, Smart City, & Online Services', icon: <Layout />, category: 'Compulsory C', color: '#db2777' }
+  ];
+
+  const handleInputChange = (id, val) => {
+    setUserAnswers(prev => ({ ...prev, [id]: val }));
+  };
+
+  const resetQuiz = () => {
+    setUserAnswers({});
+    setShowAnswers(false);
+  };
+
+  const styles = {
+    container: { minHeight: '100vh', backgroundColor: '#f8fafc', color: '#0f172a', padding: '40px 20px', fontFamily: 'system-ui, -apple-system, sans-serif' },
+    wrapper: { maxWidth: '1000px', margin: '0 auto' },
+    header: { textAlign: 'center', marginBottom: '40px' },
+    title: { fontSize: '2.5rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '10px', letterSpacing: '-0.025em' },
+    subtitle: { color: '#64748b', fontSize: '1.1rem' },
+    categoryTitle: { fontSize: '1.25rem', fontWeight: '700', marginBottom: '20px', borderLeft: '4px solid #4f46e5', paddingLeft: '15px', color: '#334155', marginTop: '40px' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' },
+    card: { display: 'flex', alignItems: 'center', padding: '24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' },
+    iconBox: { padding: '12px', borderRadius: '12px', marginRight: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+    quizBox: { backgroundColor: '#fff', borderRadius: '24px', padding: '30px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' },
+    backBtn: { display: 'flex', alignItems: 'center', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '24px', fontWeight: '600' },
+    qSection: { marginBottom: '40px', padding: '20px', borderRadius: '12px', border: '1px solid #f1f5f9', backgroundColor: '#fdfdff' },
+    qTitle: { fontSize: '1.2rem', fontWeight: '700', color: '#4338ca', marginBottom: '15px' },
+    table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },
+    th: { backgroundColor: '#f8fafc', padding: '12px', textAlign: 'left', border: '1px solid #e2e8f0', fontSize: '0.9rem', color: '#64748b' },
+    td: { padding: '10px', border: '1px solid #e2e8f0' },
+    input: { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem' },
+    answerKey: { marginTop: '10px', padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #22c55e', color: '#166534', fontSize: '0.9rem', whiteSpace: 'pre-wrap' },
+    submitBtn: { backgroundColor: '#4f46e5', color: 'white', padding: '14px 30px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer', transition: 'background 0.2s' },
+    select: { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '6px', backgroundColor: 'white' }
+  };
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.wrapper}>
+        {currentView === 'home' ? (
+          <div>
+            <header style={styles.header}>
+              <h1 style={styles.title}>ICT Study Portal</h1>
+              <p style={styles.subtitle}>I'm cooked fuck you HKDSE</p>
+            </header>
+            
+            {['Compulsory A', 'Compulsory B', 'Compulsory C'].map(cat => (
+              <div key={cat}>
+                <h2 style={styles.categoryTitle}>{cat}</h2>
+                <div style={styles.grid}>
+                  {topics.filter(t => t.category === cat).map(topic => (
+                    <div key={topic.id} style={styles.card} onClick={() => { setSelectedTopic(topic.id); setCurrentView('quiz'); resetQuiz(); }}>
+                      <div style={{...styles.iconBox, backgroundColor: `${topic.color}15`, color: topic.color}}>{topic.icon}</div>
+                      <div>
+                        <div style={{fontWeight: '700', fontSize: '1.1rem'}}>{topic.title}</div>
+                        <div style={{fontSize: '0.85rem', color: '#64748b'}}>{topic.description}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={styles.quizBox}>
+            <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            
+            {selectedTopic === 'comp_a_ch1' && <A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_a_ch2' && <A_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_a_ch3' && <A_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_b_ch1' && <B_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_b_ch2' && <B_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_b_ch3' && <B_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_c_ch1' && <C_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_c_ch2' && <C_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {selectedTopic === 'comp_c_ch3' && <C_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+
+            <div style={{textAlign: 'center', marginTop: '40px'}}>
+              {!showAnswers ? (
+                <button style={styles.submitBtn} onClick={() => setShowAnswers(true)}>Check My Answers</button>
+              ) : (
+                <button style={{...styles.submitBtn, backgroundColor: '#64748b'}} onClick={() => setShowAnswers(false)}>Hide Answers</button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// --- COMPULSORY A CH 1 ---
+const A_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Text */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Text Types</h3>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <p>Definition of <b>Plain Text</b>:</p>
+        <input style={styles.input} onChange={(e) => onChange('a1q1_plain', e.target.value)} value={userAnswers.a1q1_plain || ''}/>
+        <p>Definition of <b>Formatted Text</b>:</p>
+        <input style={styles.input} onChange={(e) => onChange('a1q1_form', e.target.value)} value={userAnswers.a1q1_form || ''}/>
+        <p>Difference between them:</p>
+        <input style={styles.input} placeholder="Regarding file size..." onChange={(e) => onChange('a1q1_diff', e.target.value)} value={userAnswers.a1q1_diff || ''}/>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>Plain: Stores characters only. Formatted: Stores characters + formatting data. Diff: Formatted text has a larger file size.</div>}
+    </div>
+
+    {/* Q2: Image */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Image Representation</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>Bitmap Image</b> (Def & Adv):</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('a1q2_bit', e.target.value)} value={userAnswers.a1q2_bit || ''}/>
+        </div>
+        <div>
+          <p><b>Vector Image</b> (Def & Adv):</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('a1q2_vec', e.target.value)} value={userAnswers.a1q2_vec || ''}/>
+        </div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Bitmap:</b> Stores as pixels. Adv: Real-life images, common tools. <br/>
+          <b>Vector:</b> Mathematical formulae. Adv: Smaller size, no rough edges/blur when scaled.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Information Processing */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Information Processing Steps</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        {[1, 2, 3, 4].map(i => (
+          <input key={i} style={styles.input} placeholder={`Step ${i}`} onChange={(e) => onChange(`a1q3_s${i}`, e.target.value)} value={userAnswers[`a1q3_s${i}`] || ''}/>
+        ))}
+      </div>
+      {showAnswers && <div style={styles.answerKey}>1. Data Collection, 2. Organization, 3. Processing & Analysis, 4. Transmission & Presentation.</div>}
+    </div>
+
+    {/* Q4: Information Age */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: The Information Age</h3>
+      <p>Definition:</p>
+      <input style={styles.input} onChange={(e) => onChange('a1q4_def', e.target.value)} value={userAnswers.a1q4_def || ''}/>
+      
+      <p style={{marginTop: '10px'}}>Causes (4 points):</p>
+      <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('a1q4_cause', e.target.value)} value={userAnswers.a1q4_cause || ''}/>
+      
+      <p style={{marginTop: '10px'}}>Key Developments (3 points):</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="1" onChange={(e) => onChange('a1q4_dev1', e.target.value)} value={userAnswers.a1q4_dev1 || ''}/>
+        <input style={styles.input} placeholder="2" onChange={(e) => onChange('a1q4_dev2', e.target.value)} value={userAnswers.a1q4_dev2 || ''}/>
+        <input style={styles.input} placeholder="3" onChange={(e) => onChange('a1q4_dev3', e.target.value)} value={userAnswers.a1q4_dev3 || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Def: Fast development of ICT. Causes: 1. Lower price, 2. Better performance, 3. Better UI, 4. Faster network. Developments: IoT, Big Data, AI.
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const A_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: GIGO */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: GIGO & Input Errors</h3>
+      <p>Definition of <b>GIGO</b>:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('a2q1_gigo', e.target.value)} value={userAnswers.a2q1_gigo || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Input Errors:</b></p>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>Error Type</th><th style={styles.th}>Definition</th></tr>
+        </thead>
+        <tbody>
+          {['Data Source Error', 'Transcription Error', 'Transposition Error'].map(err => (
+            <tr key={err}>
+              <td><b>{err}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a2q1_${err}`, e.target.value)} value={userAnswers[`a2q1_${err}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          GIGO: Analysis isn't useful if input is unreliable. 1. Source: Incorrect data used. 2. Transcription: Misread/misheard. 3. Transposition: Wrong position/order.
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Data Validation */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Data Validation</h3>
+      <p>Is validation done by computer or human?</p>
+      <input style={styles.input} onChange={(e) => onChange('a2q2_who', e.target.value)} value={userAnswers.a2q2_who || ''}/>
+      
+      <p style={{marginTop: '15px'}}>List the names of common data checks (Range, Format, etc.):</p>
+      <textarea style={styles.input} rows="2" placeholder="List 7 types..." onChange={(e) => onChange('a2q2_types', e.target.value)} value={userAnswers.a2q2_types || ''}/>
+
+      <p style={{marginTop: '15px'}}>How UI elements apply validation:</p>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>UI Element</th><th style={styles.th}>Check Type applied</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Radio Button / Drop-down</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui1', e.target.value)} value={userAnswers.a2q2_ui1 || ''}/></td></tr>
+          <tr><td>Check Boxes</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui2', e.target.value)} value={userAnswers.a2q2_ui2 || ''}/></td></tr>
+          <tr><td>Date Picker</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui3', e.target.value)} value={userAnswers.a2q2_ui3 || ''}/></td></tr>
+        </tbody>
+      </table>
+
+      <div style={{marginTop: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>Check Digit</b> Attributes:</p>
+          <textarea style={styles.input} rows="5" onChange={(e) => onChange('a2q2_cd', e.target.value)} value={userAnswers.a2q2_cd || ''}/>
+        </div>
+        <div>
+          <p><b>Parity Check</b> Attributes:</p>
+          <textarea style={styles.input} rows="5" onChange={(e) => onChange('a2q2_pc', e.target.value)} value={userAnswers.a2q2_pc || ''}/>
+        </div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Checks: Range, Format, Presence, Fixed Value, Type, Length, Uniqueness. <br/>
+          Radio/List: Fixed value. Date: Format/Type. <br/>
+          Check Digit: Algorithm-based, appended to end. <br/>
+          Parity: Bit appended (odd/even) for transmission; fails on transposition.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Data Verification */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Data Verification</h3>
+      <p>Is verification done by computer or human?</p>
+      <input style={styles.input} onChange={(e) => onChange('a2q3_who', e.target.value)} value={userAnswers.a2q3_who || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Methods of Verification:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <input style={styles.input} placeholder="Method 1" onChange={(e) => onChange('a2q3_m1', e.target.value)} value={userAnswers.a2q3_m1 || ''}/>
+        <input style={styles.input} placeholder="Method 2" onChange={(e) => onChange('a2q3_m2', e.target.value)} value={userAnswers.a2q3_m2 || ''}/>
+        <input style={styles.input} placeholder="Method 3" onChange={(e) => onChange('a2q3_m3', e.target.value)} value={userAnswers.a2q3_m3 || ''}/>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>1. Double data entry, 2. Inputting data twice, 3. Proofreading.</div>}
+    </div>
+  </div>
+);
+
+const A_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Unit of Data */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Unit of Data & Conversions</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <div>
+          <p>Smallest unit of data:</p>
+          <input style={styles.input} placeholder="Unit (symbol)" onChange={(e) => onChange('a3q1_u1', e.target.value)} value={userAnswers.a3q1_u1 || ''}/>
+        </div>
+        <div>
+          <p>8 bits = ?</p>
+          <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_u2', e.target.value)} value={userAnswers.a3q1_u2 || ''}/>
+        </div>
+      </div>
+      <p style={{marginTop: '10px'}}>1024 B = ?</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_u3', e.target.value)} value={userAnswers.a3q1_u3 || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Unit for data transfer rate (per unit time):</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_tr', e.target.value)} value={userAnswers.a3q1_tr || ''}/>
+      <p style={{marginTop: '5px'}}>1000 bps = ?</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_tr2', e.target.value)} value={userAnswers.a3q1_tr2 || ''}/>
+
+      <p style={{marginTop: '15px'}}>Max patterns representable by <b>n</b> bits:</p>
+      <input style={styles.input} placeholder="Formula" onChange={(e) => onChange('a3q1_formula', e.target.value)} value={userAnswers.a3q1_formula || ''}/>
+      
+      {showAnswers && <div style={styles.answerKey}>Unit: bit (b). 8b=1B. 1024B=1KB. Transfer: bps (1000bps=1kbps). Patterns: 2^n.</div>}
+    </div>
+
+    {/* Q2: Representing Numbers */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Representing Numbers</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>Unsigned Integer</b> Def & Range:</p>
+          <input style={styles.input} placeholder="Definition" onChange={(e) => onChange('a3q2_u_def', e.target.value)} value={userAnswers.a3q2_u_def || ''}/>
+          <input style={{...styles.input, marginTop: '5px'}} placeholder="" onChange={(e) => onChange('a3q2_u_range', e.target.value)} value={userAnswers.a3q2_u_range || ''}/>
+        </div>
+        <div>
+          <p><b>Two's Complement Representation:</b></p>
+          <p style={{fontSize: '0.8rem'}}>1st bit meaning (0/1):</p>
+          <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_s_bit', e.target.value)} value={userAnswers.a3q2_s_bit || ''}/>
+        </div>
+      </div>
+
+      <p style={{marginTop: '15px'}}>Comparison of Two Methods (n bits):</p>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>Method</th><th style={styles.th}>Conversion/Rule</th><th style={styles.th}>Range</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Two's Comp Representation</td>
+            <td>Refer to pervious answer</td>
+            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r1', e.target.value)} value={userAnswers.a3q2_r1 || ''}/></td>
+          </tr>
+          <tr>
+            <td>Two's Complement</td>
+            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r2_rule', e.target.value)} value={userAnswers.a3q2_r2_rule || ''}/></td>
+            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r2', e.target.value)} value={userAnswers.a3q2_r2 || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style={{marginTop: '10px'}}>Relationship: Two's complement of X is the representation of...?</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_rel', e.target.value)} value={userAnswers.a3q2_rel || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Unsigned: Positive only, 0 to (2^n)-1. Repr Range: -(2^(n-1)) to 2^(n-1)-1. Comp Range: -(2^(n-1))+1 to 2^(n-1). Relation: Two's complement of X = Two's complement representation of -X.</div>}
+    </div>
+
+{/* Q3: Character Encoding */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Character Encoding Systems</h3>
+      
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Encoding System</th>
+            <th style={styles.th}>Language / Characters</th>
+            <th style={styles.th}>Bit/Byte Used</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[
+            { id: 'ascii', name: 'ASCII' },
+            { id: 'big5', name: 'Big-5' },
+            { id: 'gb', name: 'GB' },
+            { id: 'unicode', name: 'Unicode (UTF-8)' }
+          ].map((item) => (
+            <tr key={item.id}>
+              <td style={{padding: '10px'}}><b>{item.name}</b></td>
+              <td>
+                <input 
+                  style={styles.input} 
+                  placeholder="Language" 
+                  onChange={(e) => onChange(`a3q3_${item.id}_lang`, e.target.value)} 
+                  value={userAnswers[`a3q3_${item.id}_lang`] || ''}
+                />
+              </td>
+              <td>
+                <input 
+                  style={styles.input} 
+                  placeholder="" 
+                  onChange={(e) => onChange(`a3q3_${item.id}_size`, e.target.value)} 
+                  value={userAnswers[`a3q3_${item.id}_size`] || ''}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div style={{marginTop: '20px'}}>
+        <p><b>Why use an extra bit in ASCII (8-bit) instead of 7-bit? (3 reasons):</b></p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '5px'}}>
+          <input style={styles.input} placeholder="Reason 1" onChange={(e) => onChange('a3q3_ascii_r1', e.target.value)} value={userAnswers.a3q3_ascii_r1 || ''}/>
+          <input style={styles.input} placeholder="Reason 2" onChange={(e) => onChange('a3q3_ascii_r2', e.target.value)} value={userAnswers.a3q3_ascii_r2 || ''}/>
+          <input style={styles.input} placeholder="Reason 3" onChange={(e) => onChange('a3q3_ascii_r3', e.target.value)} value={userAnswers.a3q3_ascii_r3 || ''}/>
+        </div>
+      </div>
+
+      <div style={{marginTop: '20px'}}>
+        <p><b>Consequence of wrong encoding:</b></p>
+        <textarea 
+          style={styles.input} 
+          rows="2" 
+          placeholder="" 
+          onChange={(e) => onChange('a3q3_wrong_enc', e.target.value)} 
+          value={userAnswers.a3q3_wrong_enc || ''}
+        />
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Table:</b><br/>
+          - ASCII: English / 7 bits (standard) or 1 Byte.<br/>
+          - Big-5: Traditional Chinese / 2 Bytes.<br/>
+          - GB: Simplified Chinese / 2 Bytes.<br/>
+          - Unicode: All languages / 1 to 4 Bytes.<br/><br/>
+          <b>ASCII Extra Bit:</b> 1. Parity check, 2. Store extra symbols (Extended ASCII), 3. Data alignment (processing as whole bytes).<br/><br/>
+          <b>Consequence:</b> Characters appear as garbled text (Mojibake), meaningless symbols, or boxes because the computer interprets the binary data using the wrong character map.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Barcode vs QR Code */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Barcode vs QR Code</h3>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>Aspect Name</th><th style={styles.th}>Barcode</th><th style={styles.th}>QR Code</th></tr>
+        </thead>
+        <tbody>
+          {[1, 2, 3].map(i => (
+            <tr key={i}>
+              <td><input style={styles.input} placeholder="" onChange={(e) => onChange(`a3q4_asp_${i}`, e.target.value)} value={userAnswers[`a3q4_asp_${i}`] || ''}/></td>
+              <td><textarea style={styles.input} onChange={(e) => onChange(`a3q4_bar_${i}`, e.target.value)} value={userAnswers[`a3q4_bar_${i}`] || ''}/></td>
+              <td><textarea style={styles.input} onChange={(e) => onChange(`a3q4_qr_${i}`, e.target.value)} value={userAnswers[`a3q4_qr_${i}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {showAnswers && <div style={styles.answerKey}>1. Character Set: Barcode (ASCII/Num) vs QR (Unicode). 2. Length: Barcode (50) vs QR (1000+). 3. Scanning: Barcode (0/180 deg) vs QR (Any angle).</div>}
+    </div>
+
+    {/* Q5: Analog vs Digital */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q5: Analog & Digital Data</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <textarea style={styles.input} placeholder="Analog Definition" onChange={(e) => onChange('a3q5_a_def', e.target.value)} value={userAnswers.a3q5_a_def || ''}/>
+        <textarea style={styles.input} placeholder="Digital Definition" onChange={(e) => onChange('a3q5_d_def', e.target.value)} value={userAnswers.a3q5_d_def || ''}/>
+      </div>
+      
+      <p style={{marginTop: '15px'}}>Comparison (Name aspect & values):</p>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>Aspect</th><th style={styles.th}>Analog</th><th style={styles.th}>Digital</th></tr>
+        </thead>
+        <tbody>
+          {[1, 2, 3, 4].map(i => (
+            <tr key={i}>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q5_asp_${i}`, e.target.value)} value={userAnswers[`a3q5_asp_${i}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q5_ana_${i}`, e.target.value)} value={userAnswers[`a3q5_ana_${i}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q5_dig_${i}`, e.target.value)} value={userAnswers[`a3q5_dig_${i}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}>Digitalizing Audio (Steps):</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <div style={{flex: 1}}>
+          <p>Step 1: Discretization</p>
+          <textarea style={styles.input} placeholder="Description" onChange={(e) => onChange('a3q5_s1', e.target.value)} value={userAnswers.a3q5_s1 || ''}/>
+        </div>
+        <div style={{flex: 1}}>
+          <p>Step 2: Quantization</p>
+          <textarea style={styles.input} placeholder="Description" onChange={(e) => onChange('a3q5_s2', e.target.value)} value={userAnswers.a3q5_s2 || ''}/>
+        </div>
+      </div>
+      <p style={{marginTop: '10px'}}>Digitalizing Books (Name):</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q5_ocr', e.target.value)} value={userAnswers.a3q5_ocr || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Aspects: Presentation, Lifespan/Durability, Compression, Resistance to corruption. S1: Sample at intervals. S2: Assign discrete values. Books: OCR.</div>}
+    </div>
+
+    {/* Q6: Compression */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q6: Compression</h3>
+      <textarea style={styles.input} placeholder="Definition of Compression" onChange={(e) => onChange('a3q6_def', e.target.value)} value={userAnswers.a3q6_def || ''}/>
+      <div style={{marginTop: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <div>
+          <p><b>Lossy</b> Definition:</p>
+          <textarea style={styles.input} onChange={(e) => onChange('a3q6_lossy', e.target.value)} value={userAnswers.a3q6_lossy || ''}/>
+        </div>
+        <div>
+          <p><b>Lossless</b> Definition:</p>
+          <textarea style={styles.input} onChange={(e) => onChange('a3q6_lossless', e.target.value)} value={userAnswers.a3q6_lossless || ''}/>
+        </div>
+      </div>
+      <p style={{marginTop: '10px'}}>Compression Ratio Formula:</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q6_ratio', e.target.value)} value={userAnswers.a3q6_ratio || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Lossy: Data lost, higher ratio. Lossless: No data lost. Ratio = Uncompressed Size / Compressed Size.</div>}
+    </div>
+
+    {/* Q7: File Size Calculations */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q7: File Size Formulas</h3>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>File Type</th><th style={styles.th}>Formula / Attribute</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Plain Text</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f1', e.target.value)} value={userAnswers.a3q7_f1 || ''}/></td></tr>
+          <tr><td>Bitmap Image</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f2', e.target.value)} value={userAnswers.a3q7_f2 || ''}/></td></tr>
+          <tr><td>Audio</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f3', e.target.value)} value={userAnswers.a3q7_f3 || ''}/></td></tr>
+          <tr><td>Video</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f4', e.target.value)} value={userAnswers.a3q7_f4 || ''}/></td></tr>
+        </tbody>
+      </table>
+      {showAnswers && <div style={styles.answerKey}>Text: chars*size. Image: W*H*depth. Audio: SampleRate*BitDepth*Secs*Channels. Video: (FrameSize*FPS*Secs) + Audio.</div>}
+    </div>
+
+    {/* Q8: File Formats */}
+<div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q8: File Formats</h3>
+      
+      <p><b>Text Formats:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Type</th><th style={styles.th}>Attribute</th></tr></thead>
+        <tbody>
+          {['1', '2', '3', '4'].map(idx => (
+            <tr key={idx}>
+              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_t_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_ext_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_t_type_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_type_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_t_attr_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_attr_${idx}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Image Formats:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Transparent? (Y/N)</th><th style={styles.th}>Animation? (Y/N)</th><th style={styles.th}>Compression Type</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
+        <tbody>
+          {['1', '2', '3', '4', '5', '6'].map(idx => (
+            <tr key={idx}>
+              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_i_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_ext_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '40px'}} onChange={(e) => onChange(`a3q8_i_tr_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_tr_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '40px'}} onChange={(e) => onChange(`a3q8_i_an_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_an_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_co_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_co_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_at1_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_at1_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_at2_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_at2_${idx}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Audio & Video Formats:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Compression Type</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
+        <tbody>
+          {['1', '2', '3', '4', '5', '6', '7', '8'].map(idx => (
+            <tr key={idx}>
+              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_av_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_ext_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_co_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_co_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_at1_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_at1_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_at2_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_at2_${idx}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {showAnswers && <div style={styles.answerKey}>Verify against notes: BMP (uncomp), JPG (lossy), PNG (lossless), GIF (8-bit), PDF (uniform layout), MIDI (notes, no real sound).</div>}
+    </div>
+  </div>
+);
+
+// --- COMPULSORY B CH 1: OUTPUT DEVICES ---
+const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Comparison of monitor types */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Comparison of Monitor Types</h3>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Type</th>
+            <th style={styles.th}>Working Principle</th>
+            <th style={styles.th}>Advantages</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style={styles.td}><b>LCD</b></td>
+            <td style={styles.td}><textarea style={styles.input} rows="3" placeholder="Working principle..." onChange={(e) => onChange('b1q1_lcd_p', e.target.value)} value={userAnswers.b1q1_lcd_p || ''}/></td>
+            <td style={styles.td}><textarea style={styles.input} rows="3" placeholder="Advantages..." onChange={(e) => onChange('b1q1_lcd_a', e.target.value)} value={userAnswers.b1q1_lcd_a || ''}/></td>
+          </tr>
+          <tr>
+            <td style={styles.td}><b>OLED</b></td>
+            <td style={styles.td}><textarea style={styles.input} rows="3" placeholder="Working principle..." onChange={(e) => onChange('b1q1_oled_p', e.target.value)} value={userAnswers.b1q1_oled_p || ''}/></td>
+            <td style={styles.td}><textarea style={styles.input} rows="3" placeholder="Advantages..." onChange={(e) => onChange('b1q1_oled_a', e.target.value)} value={userAnswers.b1q1_oled_a || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>LCD:</b> Principle: Uses LED backlight; LCD crystals filter the light to show images. Adv: 1. Cheaper, 2. More screen size options.<br/>
+          <b>OLED:</b> Principle: OLED itself is the light source (no backlight required). Adv: 1. Higher contrast ratio, 2. Wider viewing angle, 3. Lighter in weight.
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Ports of monitors */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Ports of Monitors</h3>
+      <p>Input the 4 names of port types:</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px'}}>
+        {[1,2,3,4].map(i => <input key={i} style={styles.input} placeholder={`Port Name ${i}`} onChange={(e) => onChange(`b1q2_p${i}`, e.target.value)} value={userAnswers[`b1q2_p${i}`] || ''}/>)}
+      </div>
+      <p>Two types of ports that support audio:</p>
+      <div style={{display: 'flex', gap: '10px', marginBottom: '15px'}}>
+        <input style={styles.input} placeholder="Audio Port 1" onChange={(e) => onChange('b1q2_a1', e.target.value)} value={userAnswers.b1q2_a1 || ''}/>
+        <input style={styles.input} placeholder="Audio Port 2" onChange={(e) => onChange('b1q2_a2', e.target.value)} value={userAnswers.b1q2_a2 || ''}/>
+      </div>
+      <p>Rearrange the 4 ports by video quality (Lowest &lt; Highest):</p>
+      <input style={styles.input} placeholder="e.g. A < B < C < D" onChange={(e) => onChange('b1q2_rank', e.target.value)} value={userAnswers.b1q2_rank || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Ports: VGA, DVI, HDMI, DisplayPort. Audio: HDMI & DisplayPort. Quality: VGA &lt; DVI &lt; HDMI &lt; DisplayPort.</div>}
+    </div>
+
+    {/* Q3: Comparison with projectors */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Comparison with Projectors</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p>Advantages of <b>Projector</b>:</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('b1q3_proj', e.target.value)} value={userAnswers.b1q3_proj || ''}/>
+        </div>
+        <div>
+          <p>Advantages of <b>Monitor</b>:</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('b1q3_mon', e.target.value)} value={userAnswers.b1q3_mon || ''}/>
+        </div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Projector:</b> 1. Large audience, 2. Adjustable size, 3. Portable.<br/>
+          <b>Monitor:</b> 1. Personal use, 2. Better quality, 3. Lighter weight.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Comparison of printers */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Comparison of Printers</h3>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Type</th>
+            <th style={styles.th}>Advantages</th>
+            <th style={styles.th}>Disadvantages</th>
+          </tr>
+        </thead>
+        <tbody>
+          {['Thermal', 'Inkjet', 'Laser'].map(type => (
+            <tr key={type}>
+              <td><b>{type}</b></td>
+              <td><textarea style={styles.input} rows="3" onChange={(e) => onChange(`b1q4_${type}_a`, e.target.value)} value={userAnswers[`b1q4_${type}_a`] || ''}/></td>
+              <td><textarea style={styles.input} rows="3" onChange={(e) => onChange(`b1q4_${type}_d`, e.target.value)} value={userAnswers[`b1q4_${type}_d`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Thermal:</b> Adv: Quiet, Fast, Low cost. Disadv: Low quality, Fades over time.<br/>
+          <b>Inkjet:</b> Adv: Affordable, High quality. Disadv: Blurry when wet, Slow speed.<br/>
+          <b>Laser:</b> Adv: Fast speed. Disadv: Expensive.
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// --- COMPULSORY B CH 2: SYSTEM UNIT ---
+const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Overview</h3>
+      <p>Name the components of a system unit:</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px'}}>
+        {[1,2,3,4,5,6].map(i => <input key={i} style={styles.input} placeholder={`Comp ${i}`} onChange={(e) => onChange(`b2q1_c${i}`, e.target.value)} value={userAnswers[`b2q1_c${i}`] || ''}/>)}
+      </div>
+      <p>Peripheral Device Definition:</p>
+      <div style={{display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap'}}>
+        <input style={{...styles.input, width: '150px'}} placeholder="External" onChange={(e) => onChange('b2q1_p1', e.target.value)} value={userAnswers.b2q1_p1 || ''}/> devices that 
+        <input style={{...styles.input, width: '150px'}} placeholder="connect" onChange={(e) => onChange('b2q1_p2', e.target.value)} value={userAnswers.b2q1_p2 || ''}/> to the system unit.
+      </div>
+      <p style={{marginTop: '15px'}}>Chip vs Chipsets:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="Chip definition" onChange={(e) => onChange('b2q1_chip', e.target.value)} value={userAnswers.b2q1_chip || ''}/>
+        <textarea style={styles.input} placeholder="Chipsets definition" onChange={(e) => onChange('b2q1_sets', e.target.value)} value={userAnswers.b2q1_sets || ''}/>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>Comps: CPU, GPU, Secondary storage, PSU, motherboard, main memory. Def: External devices that connect to the system unit. Chip: IC used to manage communication. Chipsets: Collection of chips.</div>}
+    </div>
+
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Motherboard</h3>
+      <p>Definition:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('b2q2_def', e.target.value)} value={userAnswers.b2q2_def || ''}/>
+      <p style={{marginTop: '15px'}}>Ports & Connected Devices:</p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Port Name</th><th style={styles.th}>Devices Connected</th></tr></thead>
+        <tbody>
+          {[1,2,3,4,5].map(i => (
+            <tr key={i}>
+                <td><input style={styles.input} placeholder="Enter Port Name" onChange={(e) => onChange(`b2q2_pn_${i}`, e.target.value)} value={userAnswers[`b2q2_pn_${i}`] || ''}/></td>
+                <td><input style={styles.input} placeholder="Enter Connected Devices" onChange={(e) => onChange(`b2q2_pd_${i}`, e.target.value)} value={userAnswers[`b2q2_pd_${i}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p style={{marginTop: '15px'}}>Advantage of an integrated surface:</p>
+      <textarea style={styles.input} rows="3" onChange={(e) => onChange('b2q2_adv', e.target.value)} value={userAnswers.b2q2_adv || ''}/>
+      {showAnswers && <div style={styles.answerKey}>SATA: secondary storage. PCIe: CPU, GPU, NIC. USB: Peripherals. M.2: SATA/PCIe/USB devices. VGA/HDMI: Display. Adv: Replaces expensive interfaces with integrated surface to cut building costs.</div>}
+    </div>
+
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: PSU</h3>
+      <p>Use:</p>
+      <input style={styles.input} onChange={(e) => onChange('b2q3_use', e.target.value)} value={userAnswers.b2q3_use || ''}/>
+      <p style={{marginTop: '10px'}}>Essential Requirements & Purpose:</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="Requirement" onChange={(e) => onChange('b2q3_req', e.target.value)} value={userAnswers.b2q3_req || ''}/>
+        <input style={styles.input} placeholder="Purpose" onChange={(e) => onChange('b2q3_purp', e.target.value)} value={userAnswers.b2q3_purp || ''}/>
+      </div>
+      <p style={{marginTop: '10px'}}>Practical Reminder & Reason:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <input style={styles.input} placeholder="Reminder" onChange={(e) => onChange('b2q3_rem', e.target.value)} value={userAnswers.b2q3_rem || ''}/>
+        <input style={styles.input} placeholder="Reason" onChange={(e) => onChange('b2q3_reas', e.target.value)} value={userAnswers.b2q3_reas || ''}/>
+      </div>
+    </div>
+
+<div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Bus</h3>
+      <p>Use of Bus:</p>
+      <input style={styles.input} placeholder="General use of bus..." onChange={(e) => onChange('b2q4_use', e.target.value)} value={userAnswers.b2q4_use || ''}/>
+      
+      <div style={{marginTop: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <h4 style={{marginBottom: '10px', color: '#1e1b4b'}}>Bus Type 1: System Bus</h4>
+        <p>Use of System Bus:</p>
+        <input style={{...styles.input, marginBottom: '15px'}} placeholder="Connect computer units..." onChange={(e) => onChange('b2q4_sys_use', e.target.value)} value={userAnswers.b2q4_sys_use || ''}/>
+        
+        <p>Relationship with CPU Word Length:</p>
+        <div style={{backgroundColor: '#f8fafc', padding: '10px', borderRadius: '6px', fontSize: '0.95rem', lineHeight: '2'}}>
+          Bus width is the <input style={{width: '70px', border: 'none', borderBottom: '1px solid #64748b', textAlign: 'center', backgroundColor: 'transparent'}} placeholder="" onChange={(e) => onChange('b2q4_rel1', e.target.value)} value={userAnswers.b2q4_rel1 || ''}/> as 
+          <input style={{width: '150px', border: 'none', borderBottom: '1px solid #64748b', textAlign: 'center', backgroundColor: 'transparent'}} placeholder="" onChange={(e) => onChange('b2q4_rel2', e.target.value)} value={userAnswers.b2q4_rel2 || ''}/> of 
+          <input style={{width: '60px', border: 'none', borderBottom: '1px solid #64748b', textAlign: 'center', backgroundColor: 'transparent'}} placeholder="" onChange={(e) => onChange('b2q4_rel3', e.target.value)} value={userAnswers.b2q4_rel3 || ''}/> usually.
+        </div>
+
+        <table style={{...styles.table, marginTop: '15px'}}>
+          <thead><tr><th style={styles.th}>System Bus Type</th><th style={styles.th}>Use</th><th style={styles.th}>Direction</th></tr></thead>
+          <tbody>
+            <tr><td><b>Control Bus</b></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_cb_u', e.target.value)} value={userAnswers.b2q4_cb_u || ''}/></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_cb_d', e.target.value)} value={userAnswers.b2q4_cb_d || ''}/></td></tr>
+            <tr><td><b>Address Bus</b></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_ab_u', e.target.value)} value={userAnswers.b2q4_ab_u || ''}/></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_ab_d', e.target.value)} value={userAnswers.b2q4_ab_d || ''}/></td></tr>
+            <tr><td><b>Data Bus</b></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_db_u', e.target.value)} value={userAnswers.b2q4_db_u || ''}/></td><td><input style={styles.input} onChange={(e) => onChange('b2q4_db_d', e.target.value)} value={userAnswers.b2q4_db_d || ''}/></td></tr>
+          </tbody>
+        </table>
+        
+        <p style={{marginTop: '15px'}}>Use of <b>Data Address</b>:</p>
+        <textarea style={styles.input} rows="2" placeholder="Explain the use of data address..." onChange={(e) => onChange('b2q4_addr_use', e.target.value)} value={userAnswers.b2q4_addr_use || ''}/>
+      </div>
+
+      <div style={{marginTop: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <h4 style={{marginBottom: '10px', color: '#1e1b4b'}}>Bus Type 2: USB</h4>
+        <p>Use of USB:</p>
+        <input style={{...styles.input, marginBottom: '10px'}} onChange={(e) => onChange('b2q4_usb_use', e.target.value)} value={userAnswers.b2q4_usb_use || ''}/>
+        <p>Attributes & Explanation:</p>
+        <textarea style={styles.input} rows="2" placeholder="" onChange={(e) => onChange('b2q4_usb_attr', e.target.value)} value={userAnswers.b2q4_usb_attr || ''}/>
+        
+        <p style={{marginTop: '10px'}}>USB Standards & Colours:</p>
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px'}}>
+          <input style={styles.input} placeholder="1.0 Colour" onChange={(e) => onChange('b2q4_u1_c', e.target.value)} value={userAnswers.b2q4_u1_c || ''}/>
+          <input style={styles.input} placeholder="2.0 Colour" onChange={(e) => onChange('b2q4_u2_c', e.target.value)} value={userAnswers.b2q4_u2_c || ''}/>
+          <input style={styles.input} placeholder="3.0 Colour" onChange={(e) => onChange('b2q4_u3_c', e.target.value)} value={userAnswers.b2q4_u3_c || ''}/>
+        </div>
+        <p style={{marginTop: '10px'}}>Which standard is the fastest?</p>
+        <input style={styles.input} onChange={(e) => onChange('b2q4_fast', e.target.value)} value={userAnswers.b2q4_fast || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Bus Use:</b> Connect devices via data and control signals.<br/>
+          <b>System Bus:</b> Rel: [same] as [word length/size] of [CPU].<br/>
+          <b>Types:</b> 1. Control: one-way from processors. 2. Address: one-way from processors. 3. Data: two-way.<br/>
+          <b>Data Address:</b> To indicate which data is to be read from or written into.<br/>
+          <b>USB:</b> Use: Connect peripherals. Attr: Hot swapping (plug/unplug while operating). Standards: 1.0 (White), 2.0 (Black), 3.0 (Blue). Fast: USB 3.0.
+        </div>
+      )}
+    </div>
+
+<div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q5: CPU (Central Processing Unit)</h3>
+      
+      {/* Definitions */}
+      <div style={{marginBottom: '20px'}}>
+        <p>Definition of <b>CPU</b>:</p>
+        <textarea style={styles.input} rows="2" placeholder="Processor consisting of chipsets..." onChange={(e) => onChange('b2q5_def', e.target.value)} value={userAnswers.b2q5_def || ''}/>
+        <p style={{marginTop: '10px'}}>Definition of <b>Word Length / Word Size</b>:</p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('b2q5_word_def', e.target.value)} value={userAnswers.b2q5_word_def || ''}/>
+        <p style={{marginTop: '10px'}}>Advantage of larger Word Length:</p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('b2q5_word_adv', e.target.value)} value={userAnswers.b2q5_word_adv || ''}/>
+      </div>
+
+      {/* ALU & CU */}
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px'}}>
+        <div style={{padding: '10px', backgroundColor: '#f8fafc', borderRadius: '8px'}}>
+          <p><b>ALU</b> (Use & Data Transfer):</p>
+          <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('b2q5_alu', e.target.value)} value={userAnswers.b2q5_alu || ''}/>
+        </div>
+        <div style={{padding: '10px', backgroundColor: '#f8fafc', borderRadius: '8px'}}>
+          <p><b>CU</b> (Uses):</p>
+          <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('b2q5_cu', e.target.value)} value={userAnswers.b2q5_cu || ''}/>
+        </div>
+      </div>
+
+      {/* Registers */}
+      <div style={{marginBottom: '20px'}}>
+        <p><b>Registers</b> (Definition & Properties):</p>
+        <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('b2q5_reg_def', e.target.value)} value={userAnswers.b2q5_reg_def || ''}/>
+        <table style={{...styles.table, marginTop: '10px'}}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Type</th>
+              <th style={styles.th}>Purpose</th>
+              <th style={styles.th}>Connect to Memory? (Via what bus?)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {['CIR', 'PC', 'MAR', 'MDR', 'Accumulator'].map(reg => (
+              <tr key={reg}>
+                <td><b>{reg}</b></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`b2q5_${reg}_p`, e.target.value)} value={userAnswers[`b2q5_${reg}_p`] || ''}/></td>
+                <td><input style={styles.input} placeholder="e.g. Yes via Address Bus" onChange={(e) => onChange(`b2q5_${reg}_c`, e.target.value)} value={userAnswers[`b2q5_${reg}_c`] || ''}/></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Cache Memory */}
+      <div style={{marginBottom: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <p><b>Cache Memory</b> (Properties & Function):</p>
+        <textarea style={styles.input} rows="4" placeholder="Volatile, performance, frequently accessed data..." onChange={(e) => onChange('b2q5_cache', e.target.value)} value={userAnswers.b2q5_cache || ''}/>
+      </div>
+
+      {/* Machine Cycle */}
+      <div style={{marginBottom: '20px'}}>
+        <p><b>Machine Cycle (7 Steps)</b>:</p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+          {[1,2,3,4,5,6,7].map(i => (
+            <div key={i} style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+              <span style={{fontWeight: 'bold', minWidth: '25px'}}>{i}.</span>
+              <input style={styles.input} placeholder={`Step ${i}`} onChange={(e) => onChange(`b2q5_mc_${i}`, e.target.value)} value={userAnswers[`b2q5_mc_${i}`] || ''}/>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CPU Specifications */}
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div style={{padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+          <p><b>1. Clock Rate</b> (Def & Performance):</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('b2q5_spec_clock', e.target.value)} value={userAnswers.b2q5_spec_clock || ''}/>
+        </div>
+        <div style={{padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+          <p><b>2. Number of Cores</b> (Def & Performance):</p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('b2q5_spec_cores', e.target.value)} value={userAnswers.b2q5_spec_cores || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>CPU:</b> Processor with chipsets to process data/control instructions.<br/>
+          <b>Word Length:</b> Bits processed at once. Adv: Address more memory, complex functions.<br/>
+          <b>ALU:</b> Logic/Arithmetic; result to Accumulator via Data Bus.<br/>
+          <b>Registers:</b> CIR (current instr), PC (next addr), MAR (addr to mem - Address Bus), MDR (data from mem - Data Bus), Accumulator (ALU result).<br/>
+          <b>Cache:</b> Volatile. Stores frequent data because it's faster than main memory.<br/>
+          <b>Cycle:</b> 1. PC-MAR, 2. PC Update, 3. MAR-Mem (Addr Bus), 4. Mem-MDR (Data Bus), 5. MDR-CIR, 6. Decode/Exec, 7. Result-Accumulator.<br/>
+          <b>Clock Rate:</b> Cycles/sec. Computer speed doesn't vary directly if main memory is slow.<br/>
+          <b>Cores:</b> Parallel processors. Computer speed doesn't vary directly (depends on software).
+        </div>
+      )}
+    </div>
+
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q6: GPU</h3>
+      <p>Difference with CPU:</p>
+      <textarea style={styles.input} onChange={(e) => onChange('b2q6_diff', e.target.value)} value={userAnswers.b2q6_diff || ''}/>
+      <p style={{marginTop: '15px'}}>Graphic Card vs iGPU Adv:</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="Graphic Card Adv" onChange={(e) => onChange('b2q6_gc', e.target.value)} value={userAnswers.b2q6_gc || ''}/>
+        <textarea style={styles.input} placeholder="iGPU Adv" onChange={(e) => onChange('b2q6_ig', e.target.value)} value={userAnswers.b2q6_ig || ''}/>
+      </div>
+    </div>
+
+<div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q7: Storage Device - Main Memory</h3>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Type</th>
+            <th style={styles.th}>Use</th>
+            <th style={styles.th}>Volatility</th>
+            <th style={styles.th}>Rewritability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>ROM</b></td>
+            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('b2q7_rom_u', e.target.value)} value={userAnswers.b2q7_rom_u || ''}/></td>
+            <td><input style={styles.input} placeholder="Volatile?" onChange={(e) => onChange('b2q7_rom_v', e.target.value)} value={userAnswers.b2q7_rom_v || ''}/></td>
+            <td><input style={styles.input} placeholder="Rewritable?" onChange={(e) => onChange('b2q7_rom_r', e.target.value)} value={userAnswers.b2q7_rom_r || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>RAM</b></td>
+            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('b2q7_ram_u', e.target.value)} value={userAnswers.b2q7_ram_u || ''}/></td>
+            <td><input style={styles.input} placeholder="Volatile?" onChange={(e) => onChange('b2q7_ram_v', e.target.value)} value={userAnswers.b2q7_ram_v || ''}/></td>
+            <td><input style={styles.input} placeholder="Rewritable?" onChange={(e) => onChange('b2q7_ram_r', e.target.value)} value={userAnswers.b2q7_ram_r || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style={{marginTop: '15px'}}>Definition of <b>Firmware</b>:</p>
+      <input style={styles.input} placeholder="Instructions to start computer..." onChange={(e) => onChange('b2q7_firmware', e.target.value)} value={userAnswers.b2q7_firmware || ''}/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>ROM:</b> Store firmware, non-volatile, cannot be rewritten.<br/>
+          <b>RAM:</b> Temp store processing data, volatile, rewritable in high speed.<br/>
+          <b>Firmware:</b> Series of instructions required to start the computer.
+        </div>
+      )}
+    </div>
+
+<div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q8: Secondary Storage</h3>
+      <div style={{display: 'flex', gap: '10px', marginBottom: '15px'}}>
+        <div style={{flex: 1}}>
+          <p>Definition:</p>
+          <input style={styles.input} onChange={(e) => onChange('b2q8_def', e.target.value)} value={userAnswers.b2q8_def || ''}/>
+        </div>
+        <div style={{flex: 1}}>
+          <p>Volatility:</p>
+          <input style={styles.input} onChange={(e) => onChange('b2q8_vol', e.target.value)} value={userAnswers.b2q8_vol || ''}/>
+        </div>
+      </div>
+
+      <p><b>Access Methods:</b></p>
+      <table style={{...styles.table, fontSize: '0.85rem'}}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Method</th>
+            <th style={styles.th}>Mechanism (Storage & Search)</th>
+            <th style={styles.th}>Access Rate</th>
+            <th style={styles.th}>Device</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Sequential</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('b2q8_seq_m', e.target.value)} value={userAnswers.b2q8_seq_m || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('b2q8_seq_r', e.target.value)} value={userAnswers.b2q8_seq_r || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('b2q8_seq_d', e.target.value)} value={userAnswers.b2q8_seq_d || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Random</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('b2q8_ran_m', e.target.value)} value={userAnswers.b2q8_ran_m || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('b2q8_ran_r', e.target.value)} value={userAnswers.b2q8_ran_r || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('b2q8_ran_d', e.target.value)} value={userAnswers.b2q8_ran_d || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '20px'}}><b>Types of Secondary Devices:</b></p>
+      <table style={{...styles.table, fontSize: '0.8rem'}}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Name</th>
+            <th style={styles.th}>Type</th>
+            <th style={styles.th}>Attribute / Advantage / Disadvantage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {['Magnetic Tape', 'Hard Disk', 'SSD', 'Memory Card', 'USB Flash Drive'].map(dev => (
+            <tr key={dev}>
+              <td><b>{dev}</b></td>
+              <td><input style={styles.input} placeholder="Storage Type" onChange={(e) => onChange(`b2q8_${dev}_type`, e.target.value)} value={userAnswers[`b2q8_${dev}_type`] || ''}/></td>
+              <td><textarea style={styles.input} rows="3" placeholder="Attr/Adv/Disadv..." onChange={(e) => onChange(`b2q8_${dev}_details`, e.target.value)} value={userAnswers[`b2q8_${dev}_details`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div style={{marginTop: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <p><b>Optical Disk</b></p>
+        <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
+          <input style={styles.input} placeholder="Storage Type" onChange={(e) => onChange('b2q8_opt_type', e.target.value)} value={userAnswers.b2q8_opt_type || ''}/>
+          <input style={styles.input} placeholder="Attribute/Mechanism" onChange={(e) => onChange('b2q8_opt_attr', e.target.value)} value={userAnswers.b2q8_opt_attr || ''}/>
+        </div>
+        <input style={styles.input} placeholder="Reminder" onChange={(e) => onChange('b2q8_opt_rem', e.target.value)} value={userAnswers.b2q8_opt_rem || ''}/>
+        
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '15px'}}>
+          <table style={styles.table}>
+            <thead><tr><th style={styles.th}>Media</th><th style={styles.th}>Size</th></tr></thead>
+            <tbody>
+              <tr><td>CD</td><td><input style={styles.input} onChange={(e) => onChange('b2q8_sz_cd', e.target.value)} value={userAnswers.b2q8_sz_cd || ''}/></td></tr>
+              <tr><td>DVD</td><td><input style={styles.input} onChange={(e) => onChange('b2q8_sz_dvd', e.target.value)} value={userAnswers.b2q8_sz_dvd || ''}/></td></tr>
+              <tr><td>BD</td><td><input style={styles.input} onChange={(e) => onChange('b2q8_sz_bd', e.target.value)} value={userAnswers.b2q8_sz_bd || ''}/></td></tr>
+            </tbody>
+          </table>
+          <table style={styles.table}>
+            <thead><tr><th style={styles.th}>Rewritability</th><th style={styles.th}>Types</th></tr></thead>
+            <tbody>
+              <tr><td>None</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('b2q8_rw_no', e.target.value)} value={userAnswers.b2q8_rw_no || ''}/></td></tr>
+              <tr><td>Once</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('b2q8_rw_one', e.target.value)} value={userAnswers.b2q8_rw_one || ''}/></td></tr>
+              <tr><td>Multiple</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('b2q8_rw_multi', e.target.value)} value={userAnswers.b2q8_rw_multi || ''}/></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Access:</b> Seq (Magnetic Tape): start-to-finish search, slower. Random (SSD): unique address, direct, faster/stable.<br/>
+          <b>HDD:</b> Magnetic, high speed, less durable (head crash). <b>SSD:</b> Solid-state, controller + flash, durable, expensive.<br/>
+          <b>Optical:</b> CD (700MB), DVD (4.7GB), BD (25-128GB).<br/>
+          <b>RW:</b> -ROM (Read only), -R (Recordable once), -RW (Rewritable).
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// --- COMPULSORY B CH 3: SOFTWARE (COMPLETE NEW UPDATE) ---
+const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Introduction */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Introduction to Software</h3>
+      <p>Use of <b>System Software</b>:</p>
+      <input style={styles.input} onChange={(e) => onChange('b3q1_sys', e.target.value)} value={userAnswers.b3q1_sys || ''}/>
+      <p style={{marginTop: '10px'}}>Use of <b>Application Software</b>:</p>
+      <input style={styles.input} onChange={(e) => onChange('b3q1_app', e.target.value)} value={userAnswers.b3q1_app || ''}/>
+      {showAnswers && <div style={styles.answerKey}>System: Control hardware. Application: Perform specific tasks.</div>}
+    </div>
+
+    {/* Q2: Operating System (OS) */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Operating System (OS)</h3>
+      <p>Is OS System or Application software?</p>
+      <select style={styles.select} onChange={(e) => onChange('b3q2_type', e.target.value)} value={userAnswers.b3q2_type || ''}>
+        <option value="">Select...</option>
+        <option value="System">System Software</option>
+        <option value="Application">Application Software</option>
+      </select>
+      
+      <p style={{marginTop: '15px'}}>Uses of OS (Hardware control & Disk Management):</p>
+      <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('b3q2_use', e.target.value)} value={userAnswers.b3q2_use || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Benefit of <b>Partitioning</b>:</p>
+      <input style={styles.input} onChange={(e) => onChange('b3q2_part_ben', e.target.value)} value={userAnswers.b3q2_part_ben || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Categorization of OS:</b></p>
+      {[1, 2, 3].map(i => (
+        <div key={i} style={{marginBottom: '15px', padding: '10px', backgroundColor: '#f8fafc', borderRadius: '8px'}}>
+          <input style={{...styles.input, fontWeight: 'bold'}} placeholder={`Categorization Method ${i}`} onChange={(e) => onChange(`b3q2_cat_m${i}`, e.target.value)} value={userAnswers[`b3q2_cat_m${i}`] || ''}/>
+          <textarea style={{...styles.input, marginTop: '5px'}} rows="3" placeholder="Examples and details..." onChange={(e) => onChange(`b3q2_cat_d${i}`, e.target.value)} value={userAnswers[`b3q2_cat_d${i}`] || ''}/>
+        </div>
+      ))}
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Uses:</b> Interact with drivers; Format (delete/restore); Partition (divide disk).<br/>
+          <b>Benefit:</b> Malware/failure on one partition doesn't affect others.<br/>
+          <b>Categories:</b> 1. Users (Single vs Multi), 2. Purpose (Mobile, Desktop, Network), 3. Interface (GUI: easy/resource-heavy vs CLI: fast/needs memorization).
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Utility Program */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Utility Program</h3>
+      <p>Is it System or Application software?</p>
+      <select style={styles.select} onChange={(e) => onChange('b3q3_type', e.target.value)} value={userAnswers.b3q3_type || ''}>
+        <option value="">Select...</option>
+        <option value="System">System Software</option>
+        <option value="Application">Application Software</option>
+      </select>
+      <p style={{marginTop: '15px'}}>Use of Utility:</p>
+      <input style={styles.input} onChange={(e) => onChange('b3q3_use', e.target.value)} value={userAnswers.b3q3_use || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Fragmentation vs. Defragmentation:</p>
+      <textarea style={styles.input} rows="3" placeholder="Describe fragmentation and the process of defrag..." onChange={(e) => onChange('b3q3_frag', e.target.value)} value={userAnswers.b3q3_frag || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Effect of Defragmentation:</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="On Hard Disks..." onChange={(e) => onChange('b3q3_eff_hdd', e.target.value)} value={userAnswers.b3q3_eff_hdd || ''}/>
+        <textarea style={styles.input} placeholder="On SSDs..." onChange={(e) => onChange('b3q3_eff_ssd', e.target.value)} value={userAnswers.b3q3_eff_ssd || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: System. Use: Efficiency/Maintenance. Defrag: Reorganize split data. HDD: Improves speed. SSD: Lowers lifespan (wears R/W cycles).
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Driver Program */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Driver Program</h3>
+      <p>Is it System or Application software?</p>
+      <select style={styles.select} onChange={(e) => onChange('b3q4_type', e.target.value)} value={userAnswers.b3q4_type || ''}>
+        <option value="">Select...</option>
+        <option value="System">System Software</option>
+        <option value="Application">Application Software</option>
+      </select>
+      <p style={{marginTop: '15px'}}>Use of Drivers:</p>
+      <textarea style={styles.input} rows="2" placeholder="" onChange={(e) => onChange('b3q4_use', e.target.value)} value={userAnswers.b3q4_use || ''}/>
+      
+      <p style={{marginTop: '15px'}}>Attributes & Installation:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="Attributes " onChange={(e) => onChange('b3q4_attr', e.target.value)} value={userAnswers.b3q4_attr || ''}/>
+        <input style={styles.input} placeholder="How to install?" onChange={(e) => onChange('b3q4_inst', e.target.value)} value={userAnswers.b3q4_inst || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: System. Use: Connect peripherals via machine language translation. Attr: Hot swapping; specific to OS/Device. Install: Follow user manual.
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Network Architecture */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Network Architecture</h3>
+      
+      <p style={{marginBottom: '10px'}}><b>LAN vs WAN Definitions:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Type</th><th style={styles.th}>Definition</th><th style={styles.th}>Connection</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>LAN</td>
+            <td><textarea style={styles.input} rows="2" onChange={(e) => onChange('c1q1_lan_def', e.target.value)} value={userAnswers.c1q1_lan_def || ''}/></td>
+            <td><textarea style={styles.input} rows="2" onChange={(e) => onChange('c1q1_lan_conn', e.target.value)} value={userAnswers.c1q1_lan_conn || ''}/></td>
+          </tr>
+          <tr>
+            <td>WAN</td>
+            <td><textarea style={styles.input} rows="2" onChange={(e) => onChange('c1q1_wan_def', e.target.value)} value={userAnswers.c1q1_wan_def || ''}/></td>
+            <td><textarea style={styles.input} rows="2" onChange={(e) => onChange('c1q1_wan_conn', e.target.value)} value={userAnswers.c1q1_wan_conn || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Comparison (LAN vs WAN):</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Comparison Point</th><th style={styles.th}>Relation</th></tr></thead>
+        <tbody>
+          {['Set up cost', 'Coverage', 'Data transmission speed'].map((pt, i) => (
+            <tr key={i}>
+              <td>{pt}</td>
+              <td><input style={styles.input} placeholder="e.g. WAN > LAN" onChange={(e) => onChange(`c1q1_comp_${i}`, e.target.value)} value={userAnswers[`c1q1_comp_${i}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Client-Server vs Peer-to-Peer:</b></p>
+      <div style={{overflowX: 'auto'}}>
+        <table style={styles.table}>
+          <thead><tr><th style={styles.th}>Feature</th><th style={styles.th}>Client-Server</th><th style={styles.th}>Peer-to-Peer</th></tr></thead>
+          <tbody>
+            {['Purpose', 'Consists of', 'Resource Storage', 'How to share', 'Application', '3 Pros', '3 Cons'].map((feat, i) => (
+              <tr key={i}>
+                <td>{feat}</td>
+                <td><textarea style={styles.input} rows="2" onChange={(e) => onChange(`c1q1_cs_${i}`, e.target.value)} value={userAnswers[`c1q1_cs_${i}`] || ''}/></td>
+                <td><textarea style={styles.input} rows="2" onChange={(e) => onChange(`c1q1_p2p_${i}`, e.target.value)} value={userAnswers[`c1q1_p2p_${i}`] || ''}/></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          LAN: Small area, no ISP. WAN: Large area, uses ISP.<br/>
+          Relations: Cost (WAN&gt;LAN), Coverage (WAN&gt;LAN), Speed (LAN&gt;WAN).<br/>
+          CS: Server present, centralized admin/storage. P2P: No server, decentralized storage.
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Network Services */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Network Services</h3>
+      <p>List 6 Services (Name, Description, Attribute):</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} style={{display: 'grid', gridTemplateColumns: '1fr 2fr 1fr', gap: '5px'}}>
+            <input style={styles.input} placeholder="Name" onChange={(e) => onChange(`c1q2_n${i}`, e.target.value)} value={userAnswers[`c1q2_n${i}`] || ''}/>
+            <input style={styles.input} placeholder="Description" onChange={(e) => onChange(`c1q2_d${i}`, e.target.value)} value={userAnswers[`c1q2_d${i}`] || ''}/>
+            <input style={styles.input} placeholder="Attribute" onChange={(e) => onChange(`c1q2_a${i}`, e.target.value)} value={userAnswers[`c1q2_a${i}`] || ''}/>
+          </div>
+        ))}
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          1. Internal Comm, 2. Video Conf, 3. Hardware Sharing, 4. Software Sharing, 5. File Sharing, 6. Internet Connection Sharing.
+        </div>
+      )}
+    </div>
+
+{/* Q3: Network Hardware */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Network Hardware</h3>
+      
+      <p style={{fontWeight: 'bold'}}>NIC</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
+        <textarea style={styles.input} placeholder="2 Uses" onChange={(e) => onChange('c1q3_nic_u', e.target.value)} value={userAnswers.c1q3_nic_u || ''}/>
+        <input style={styles.input} placeholder="Position" onChange={(e) => onChange('c1q3_nic_p', e.target.value)} value={userAnswers.c1q3_nic_p || ''}/>
+        <input style={styles.input} placeholder="Equipment (Ethernet NIC)" onChange={(e) => onChange('c1q3_nic_e', e.target.value)} value={userAnswers.c1q3_nic_e || ''}/>
+        <textarea style={styles.input} placeholder="MAC Address (Size, Use, location and assignment)" onChange={(e) => onChange('c1q3_nic_m', e.target.value)} value={userAnswers.c1q3_nic_m || ''}/>
+      </div>
+
+      <p style={{fontWeight: 'bold', marginTop: '15px'}}>Switch</p>
+      <textarea style={styles.input} rows="3" placeholder="3 Uses" onChange={(e) => onChange('c1q3_sw', e.target.value)} value={userAnswers.c1q3_sw || ''}/>
+
+      <p style={{fontWeight: 'bold', marginTop: '15px'}}>Access Point (AP)</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="Use, Coverage, Max Users" onChange={(e) => onChange('c1q3_ap_u', e.target.value)} value={userAnswers.c1q3_ap_u || ''}/>
+        <textarea style={styles.input} placeholder="SSID (Def, Attr) & Encryption" onChange={(e) => onChange('c1q3_ap_s', e.target.value)} value={userAnswers.c1q3_ap_s || ''}/>
+      </div>
+      <p style={{marginTop: '5px'}}>WiFi Roaming Steps:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c1q3_ap_r', e.target.value)} value={userAnswers.c1q3_ap_r || ''}/>
+
+      <p style={{fontWeight: 'bold', marginTop: '15px'}}>Router</p>
+      <textarea style={styles.input} rows="2" placeholder="2 Uses, All-in-one benefit, Dual Band meaning" onChange={(e) => onChange('c1q3_rt', e.target.value)} value={userAnswers.c1q3_rt || ''}/>
+
+      <p style={{fontWeight: 'bold', marginTop: '15px'}}>Modem</p>
+      <textarea style={styles.input} rows="2" placeholder="Use, Position, DSL benefit" onChange={(e) => onChange('c1q3_md_u', e.target.value)} value={userAnswers.c1q3_md_u || ''}/>
+      <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+        <input style={styles.input} placeholder="ADSL Explanation" onChange={(e) => onChange('c1q3_md_adsl', e.target.value)} value={userAnswers.c1q3_md_adsl || ''}/>
+        <input style={styles.input} placeholder="SDSL Explanation" onChange={(e) => onChange('c1q3_md_sdsl', e.target.value)} value={userAnswers.c1q3_md_sdsl || ''}/>
+      </div>
+
+      <p style={{fontWeight: 'bold', marginTop: '15px'}}>Cables</p>
+      <input style={styles.input} placeholder="Use, Max distance, Long distance type" onChange={(e) => onChange('c1q3_cb_gen', e.target.value)} value={userAnswers.c1q3_cb_gen || ''}/>
+      <div style={{marginTop: '5px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <textarea style={styles.input} placeholder="Twisted Pair (Component, Reason)" onChange={(e) => onChange('c1q3_cb_tp', e.target.value)} value={userAnswers.c1q3_cb_tp || ''}/>
+        <textarea style={styles.input} placeholder="UTP (Component, Cat6 def/speed)" onChange={(e) => onChange('c1q3_cb_utp', e.target.value)} value={userAnswers.c1q3_cb_utp || ''}/>
+        <textarea style={styles.input} placeholder="STP (Component, vs UTP)" onChange={(e) => onChange('c1q3_cb_stp', e.target.value)} value={userAnswers.c1q3_cb_stp || ''}/>
+        <textarea style={styles.input} placeholder="Fibre Optic (vs UTP/STP)" onChange={(e) => onChange('c1q3_cb_fo', e.target.value)} value={userAnswers.c1q3_cb_fo || ''}/>
+      </div>
+    </div>
+
+    {/* Q4: Wireless Communication */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Wireless Communication</h3>
+      
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
+        <div>
+          <p style={{fontWeight: 'bold'}}>Satellite</p>
+          <textarea style={styles.input} rows="4" placeholder="Use, Mechanism, Interference, Cost, Factor" onChange={(e) => onChange('c1q4_sat', e.target.value)} value={userAnswers.c1q4_sat || ''}/>
+        </div>
+        <div>
+          <p style={{fontWeight: 'bold'}}>Microwave</p>
+          <textarea style={styles.input} rows="4" placeholder="Tech , Setup, Factor" onChange={(e) => onChange('c1q4_mic', e.target.value)} value={userAnswers.c1q4_mic || ''}/>
+        </div>
+      </div>
+
+      <p style={{fontWeight: 'bold'}}>Wifi</p>
+      <textarea style={styles.input} placeholder="Tech, How to establish" onChange={(e) => onChange('c1q4_wifi_gen', e.target.value)} value={userAnswers.c1q4_wifi_gen || ''}/>
+      
+      <p style={{marginTop: '10px', fontSize: '0.9rem'}}><b>Frequency Band Comparison:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Metric</th><th style={styles.th}>Relation</th></tr></thead>
+        <tbody>
+          {['Speed', 'Coverage', 'Interference'].map((m, i) => (
+            <tr key={i}><td>{m}</td><td><input style={styles.input} placeholder="e.g. 5GHz > 2.4GHz" onChange={(e) => onChange(`c1q4_w_rel_${i}`, e.target.value)} value={userAnswers[`c1q4_w_rel_${i}`] || ''}/></td></tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '10px', fontSize: '0.9rem'}}><b>Wifi Standards:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Std Name</th><th style={styles.th}>IEEE Name</th><th style={styles.th}>Max Speed</th><th style={styles.th}>Band</th></tr></thead>
+        <tbody>
+          {[4, 5, 6].map(v => (
+            <tr key={v}>
+              <td>Wifi {v}</td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c1q4_w_ieee_${v}`, e.target.value)} value={userAnswers[`c1q4_w_ieee_${v}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c1q4_w_spd_${v}`, e.target.value)} value={userAnswers[`c1q4_w_spd_${v}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c1q4_w_band_${v}`, e.target.value)} value={userAnswers[`c1q4_w_band_${v}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <textarea style={{...styles.input, marginTop: '5px'}} placeholder="Effect of Wifi 6 " onChange={(e) => onChange('c1q4_w_eff', e.target.value)} value={userAnswers.c1q4_w_eff || ''}/>
+
+      <p style={{marginTop: '15px', fontWeight: 'bold'}}>Bluetooth</p>
+      <textarea style={styles.input} rows="2" placeholder="Use, Mechanism, vs Wifi" onChange={(e) => onChange('c1q4_bt', e.target.value)} value={userAnswers.c1q4_bt || ''}/>
+    </div>
+    {/* Q5: Wired vs Wireless */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q5: Wired vs Wireless Network</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <div>
+          <p><b>Wired</b></p>
+          <textarea style={styles.input} placeholder="Advantage" onChange={(e) => onChange('c1q5_wd_adv', e.target.value)} value={userAnswers.c1q5_wd_adv || ''}/>
+          <textarea style={{...styles.input, marginTop: '5px'}} placeholder="Disadvantage" onChange={(e) => onChange('c1q5_wd_dis', e.target.value)} value={userAnswers.c1q5_wd_dis || ''}/>
+        </div>
+        <div>
+          <p><b>Wireless</b></p>
+          <textarea style={styles.input} placeholder="Advantage" onChange={(e) => onChange('c1q5_wl_adv', e.target.value)} value={userAnswers.c1q5_wl_adv || ''}/>
+          <textarea style={{...styles.input, marginTop: '5px'}} placeholder="Disadvantage" onChange={(e) => onChange('c1q5_wl_dis', e.target.value)} value={userAnswers.c1q5_wl_dis || ''}/>
+        </div>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>Wired: Secure/Fast but Low mobility. Wireless: Easy/Flexible but Less secure/stable.</div>}
+    </div>
+
+    {/* Q6: Internet Access */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q6: Method of Internet Access</h3>
+      <p style={{fontWeight: 'bold'}}>Broadband</p>
+      <textarea style={styles.input} rows="2" placeholder="Method, Attr, Comparison" onChange={(e) => onChange('c1q6_bb', e.target.value)} value={userAnswers.c1q6_bb || ''}/>
+      
+      <p style={{fontWeight: 'bold', marginTop: '10px'}}>Leased Line</p>
+      <textarea style={styles.input} rows="2" placeholder="Def & Benefit" onChange={(e) => onChange('c1q6_ll', e.target.value)} value={userAnswers.c1q6_ll || ''}/>
+      
+      <p style={{fontWeight: 'bold', marginTop: '10px'}}>Mobile Data</p>
+      <textarea style={styles.input} rows="2" placeholder="Use, 5G Def & Adv" onChange={(e) => onChange('c1q6_md', e.target.value)} value={userAnswers.c1q6_md || ''}/>
+      
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Broadband: Wired, wide bandwidth. FTTH &gt; FTTC &gt; ADSL.<br/>
+          Leased Line: Private dedicated channel, reliable.<br/>
+          Mobile Data: 5G = Faster, Large capacity, Low latency (IoT).
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// --- COMPULSORY C CH 2 ---
+const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: Protocol */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Protocol</h3>
+      <p>Definition of a <b>Protocol</b>:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c2q1_def', e.target.value)} value={userAnswers.c2q1_def || ''}/>
+      {showAnswers && <div style={styles.answerKey}>A set of rules that specify the format and order of data sent and received between devices.</div>}
+    </div>
+
+    {/* Q2: TCP/IP */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: TCP/IP</h3>
+      <p>What is TCP/IP?</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q2_def', e.target.value)} value={userAnswers.c2q2_def || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Steps of Transmission:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+           <span style={{fontWeight: 'bold', width: '60px'}}>Step 1:</span>
+           <input style={styles.input} placeholder="" onChange={(e) => onChange('c2q2_s1', e.target.value)} value={userAnswers.c2q2_s1 || ''}/>
+        </div>
+        <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+           <span style={{fontWeight: 'bold', width: '60px'}}>Step 2:</span>
+           <input style={styles.input} placeholder="" onChange={(e) => onChange('c2q2_s2', e.target.value)} value={userAnswers.c2q2_s2 || ''}/>
+        </div>
+        <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+           <span style={{fontWeight: 'bold', width: '60px'}}>Step 3:</span>
+           <input style={styles.input} placeholder="" onChange={(e) => onChange('c2q2_s3', e.target.value)} value={userAnswers.c2q2_s3 || ''}/>
+        </div>
+        <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+           <span style={{fontWeight: 'bold', width: '60px'}}>Step 4:</span>
+           <input style={styles.input} placeholder="" onChange={(e) => onChange('c2q2_s4', e.target.value)} value={userAnswers.c2q2_s4 || ''}/>
+        </div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Def: Protocol that specifies how data is transmitted.<br/>
+          1. TCP divides data into packets. 2. Packets are numbered and sent. 3. IP assigns dest address & finds best path. 4. TCP reassembles packets at destination.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: IP Address */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: IP Address</h3>
+      <p>Definition:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q3_def', e.target.value)} value={userAnswers.c2q3_def || ''}/>
+      
+      <p style={{marginTop: '10px'}}>3 Attributes:</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="1" onChange={(e) => onChange('c2q3_att1', e.target.value)} value={userAnswers.c2q3_att1 || ''}/>
+        <input style={styles.input} placeholder="2" onChange={(e) => onChange('c2q3_att2', e.target.value)} value={userAnswers.c2q3_att2 || ''}/>
+        <input style={styles.input} placeholder="3" onChange={(e) => onChange('c2q3_att3', e.target.value)} value={userAnswers.c2q3_att3 || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Difference (MAC vs IP):</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <input style={styles.input} placeholder="MAC identifies..." onChange={(e) => onChange('c2q3_mac', e.target.value)} value={userAnswers.c2q3_mac || ''}/>
+        <input style={styles.input} placeholder="IP identifies..." onChange={(e) => onChange('c2q3_ip_role', e.target.value)} value={userAnswers.c2q3_ip_role || ''}/>
+      </div>
+
+      <p style={{marginTop: '20px'}}><b>IPv4 vs IPv6:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Feature</th><th style={styles.th}>IPv4</th><th style={styles.th}>IPv6</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>No. of Bits</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v4_bits', e.target.value)} value={userAnswers.c2q3_v4_bits || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v6_bits', e.target.value)} value={userAnswers.c2q3_v6_bits || ''}/></td>
+          </tr>
+          <tr>
+            <td>Available Addresses</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v4_count', e.target.value)} value={userAnswers.c2q3_v4_count || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v6_count', e.target.value)} value={userAnswers.c2q3_v6_count || ''}/></td>
+          </tr>
+          <tr>
+            <td>Range / Example</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v4_range', e.target.value)} value={userAnswers.c2q3_v4_range || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q3_v6_range', e.target.value)} value={userAnswers.c2q3_v6_range || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p style={{marginTop: '10px'}}>Reason to establish IPv6:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q3_v6_reason', e.target.value)} value={userAnswers.c2q3_v6_reason || ''}/>
+      
+      <p style={{marginTop: '10px'}}>2 ways to shorten IPv6:</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="Method 1" onChange={(e) => onChange('c2q3_short1', e.target.value)} value={userAnswers.c2q3_short1 || ''}/>
+        <input style={styles.input} placeholder="Method 2" onChange={(e) => onChange('c2q3_short2', e.target.value)} value={userAnswers.c2q3_short2 || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Def: Changeable numeric address identifying a device in a TCP/IP network.<br/>
+          Attr: Unique in network, Assigned by ISP, Binary processed.<br/>
+          Diff: MAC=Specific Device, IP=Location of Device.<br/>
+          IPv4: 32 bits, 2^32 addrs, 0.0.0.0-255.255.255.255.<br/>
+          IPv6: 128 bits, 2^128 addrs, 0000:..:FFFF.<br/>
+          Reason: IPv4 exhaustion due to rapid ICT dev.<br/>
+          Shorten: 1. Omit leading zero, 2. Turn multiple "0000:" into "::" (once).
+        </div>
+      )}
+    </div>
+
+    {/* Q4: DNS */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: DNS</h3>
+      <p>Use of Domain Name:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c2q4_dn_use', e.target.value)} value={userAnswers.c2q4_dn_use || ''}/>
+      <p style={{marginTop: '10px'}}>Use of DNS Server:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q4_dns_use', e.target.value)} value={userAnswers.c2q4_dns_use || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Hierarchy (Example: www.google.com.hk)</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <div><span style={{fontWeight: 'bold'}}>www</span>: <input style={styles.input} onChange={(e) => onChange('c2q4_www', e.target.value)} value={userAnswers.c2q4_www || ''}/></div>
+        <div><span style={{fontWeight: 'bold'}}>google</span>: <input style={styles.input} onChange={(e) => onChange('c2q4_google', e.target.value)} value={userAnswers.c2q4_google || ''}/></div>
+        <div><span style={{fontWeight: 'bold'}}>com</span>: <input style={styles.input} onChange={(e) => onChange('c2q4_com', e.target.value)} value={userAnswers.c2q4_com || ''}/></div>
+        <div><span style={{fontWeight: 'bold'}}>hk</span>: <input style={styles.input} onChange={(e) => onChange('c2q4_hk', e.target.value)} value={userAnswers.c2q4_hk || ''}/></div>
+      </div>
+      
+      <p style={{marginTop: '15px'}}>Examples:</p>
+      <div style={{display: 'flex', gap: '20px'}}>
+        <div style={{flex: 1}}>
+          <p>gTLD Examples:</p>
+          <input style={styles.input} onChange={(e) => onChange('c2q4_gtld', e.target.value)} value={userAnswers.c2q4_gtld || ''}/>
+        </div>
+        <div style={{flex: 1}}>
+          <p>ccTLD Examples:</p>
+          <input style={styles.input} onChange={(e) => onChange('c2q4_cctld', e.target.value)} value={userAnswers.c2q4_cctld || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          DN Use: Difficult to memorize IP, meaningful name adopted. DNS Server: Translate Domain Name to IP.<br/>
+          Hierarchy: www (Host), google (Register), com (gTLD), hk (ccTLD).<br/>
+          gTLD: .net, .edu, .gov. ccTLD: .jp, .uk.
+        </div>
+      )}
+    </div>
+
+    {/* Q5: URL */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q5: URL</h3>
+      <p>Use of Port Number:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q5_port', e.target.value)} value={userAnswers.c2q5_port || ''}/>
+      <p style={{marginTop: '10px'}}>Use of Path:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q5_path', e.target.value)} value={userAnswers.c2q5_path || ''}/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Port: Specify service requested (when multiple hosted). Path: Specify resource location relative to root.
+        </div>
+      )}
+    </div>
+
+    {/* Q6: Network Protocol */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q6: HTTP & HTTPS</h3>
+      <p>Use of HTTP/HTTPS:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q6_use', e.target.value)} value={userAnswers.c2q6_use || ''}/>
+      <p style={{marginTop: '10px'}}>Use of HTTP Server:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q6_serv', e.target.value)} value={userAnswers.c2q6_serv || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Difference & Security:</b></p>
+      <p>Difference between HTTP and HTTPS:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q6_diff', e.target.value)} value={userAnswers.c2q6_diff || ''}/>
+      <p style={{marginTop: '10px'}}>Use of SSL:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c2q6_ssl', e.target.value)} value={userAnswers.c2q6_ssl || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Use: Transfer hypertext (web pages). Server: Host web pages. Diff: HTTPS is more secure (uses SSL).<br/>
+          SSL: Encrypts data during transmission, making it reliable and confidential.
+        </div>
+      )}
+    </div>
+
+    {/* Q7: Email Protocol */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q7: Email Protocol</h3>
+      <p>2 Uses of SMTP:</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="1" onChange={(e) => onChange('c2q7_smtp1', e.target.value)} value={userAnswers.c2q7_smtp1 || ''}/>
+        <input style={styles.input} placeholder="2" onChange={(e) => onChange('c2q7_smtp2', e.target.value)} value={userAnswers.c2q7_smtp2 || ''}/>
+      </div>
+
+      <p style={{marginTop: '20px'}}><b>IMAP vs POP3:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Aspect</th><th style={styles.th}>IMAP</th><th style={styles.th}>POP3</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>General Use</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_imap_use', e.target.value)} value={userAnswers.c2q7_imap_use || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_pop3_use', e.target.value)} value={userAnswers.c2q7_pop3_use || ''}/></td>
+          </tr>
+          <tr>
+            <td>Email Location</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_imap_loc', e.target.value)} value={userAnswers.c2q7_imap_loc || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_pop3_loc', e.target.value)} value={userAnswers.c2q7_pop3_loc || ''}/></td>
+          </tr>
+          <tr>
+            <td>Organization/Sync</td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('c2q7_imap_org', e.target.value)} value={userAnswers.c2q7_imap_org || ''}/></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('c2q7_pop3_org', e.target.value)} value={userAnswers.c2q7_pop3_org || ''}/></td>
+          </tr>
+          <tr>
+            <td>Internet Req</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_imap_net', e.target.value)} value={userAnswers.c2q7_imap_net || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c2q7_pop3_net', e.target.value)} value={userAnswers.c2q7_pop3_net || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          SMTP: 1. Send email to server. 2. Distribute to other servers.<br/>
+          IMAP: Kept on server. Syncs changes across devices. Requires internet to access.<br/>
+          POP3: Download to local. Deleted from server (by default). No sync. Internet not req after download.
+        </div>
+      )}
+    </div>
+
+    {/* Q8: FTP */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q8: FTP</h3>
+      <p>Use:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q8_use', e.target.value)} value={userAnswers.c2q8_use || ''}/>
+      <p style={{marginTop: '10px'}}>Requirement:</p>
+      <input style={styles.input} onChange={(e) => onChange('c2q8_req', e.target.value)} value={userAnswers.c2q8_req || ''}/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Use: Transfer files between devices across network. Req: FTP server + Authentication (Login).
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// --- COMPULSORY C CH 3 ---
+const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+  <div>
+    {/* Q1: IoT */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q1: Internet of Things (IoT)</h3>
+      <p><b>Type:</b> (Application / Service)</p>
+      <input style={styles.input} onChange={(e) => onChange('c3q1_type', e.target.value)} value={userAnswers.c3q1_type || ''}/>
+      
+      <p style={{marginTop: '10px'}}><b>Definition:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c3q1_def', e.target.value)} value={userAnswers.c3q1_def || ''}/>
+      
+      <p style={{marginTop: '10px'}}><b>Mechanism:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c3q1_mech', e.target.value)} value={userAnswers.c3q1_mech || ''}/>
+      
+      <p style={{marginTop: '10px'}}><b>Connection Method:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c3q1_conn', e.target.value)} value={userAnswers.c3q1_conn || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Application<br/>
+          Def: Network of connecting physical objects.<br/>
+          Mech: Shared collected data and develop new functionalities.<br/>
+          Conn: Wireless connection.
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Cloud Service */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q2: Cloud Service</h3>
+      <p><b>Type:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c3q2_type', e.target.value)} value={userAnswers.c3q2_type || ''}/>
+
+      <p style={{marginTop: '10px'}}><b>Definition:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c3q2_def', e.target.value)} value={userAnswers.c3q2_def || ''}/>
+
+      <p style={{marginTop: '10px'}}><b>Mechanism:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c3q2_mech', e.target.value)} value={userAnswers.c3q2_mech || ''}/>
+
+      <div style={{marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>4 Benefits:</b></p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('c3q2_ben', e.target.value)} value={userAnswers.c3q2_ben || ''}/>
+        </div>
+        <div>
+          <p><b>2 Drawbacks:</b></p>
+          <textarea style={styles.input} rows="4" onChange={(e) => onChange('c3q2_draw', e.target.value)} value={userAnswers.c3q2_draw || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Application. Def: The Internet.<br/>
+          Mech: Data stored in server controlled by 3rd party, accessible via internet.<br/>
+          Benefits: 1. Access anytime/anywhere. 2. No SW install/HW update. 3. On-demand plans. 4. 3rd party maintenance.<br/>
+          Drawbacks: 1. Requires internet. 2. Slower speed than local.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Smart City */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q3: Smart City</h3>
+      <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block', marginLeft: '10px'}} onChange={(e) => onChange('c3q3_type', e.target.value)} value={userAnswers.c3q3_type || ''}/></p>
+      
+      <p style={{marginTop: '15px'}}><b>Smart Economy (2 Uses):</b></p>
+      <input style={styles.input} placeholder="1." onChange={(e) => onChange('c3q3_eco1', e.target.value)} value={userAnswers.c3q3_eco1 || ''}/>
+      <input style={{...styles.input, marginTop: '5px'}} placeholder="2." onChange={(e) => onChange('c3q3_eco2', e.target.value)} value={userAnswers.c3q3_eco2 || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Digital Workplace (2 Uses):</b></p>
+      <input style={styles.input} placeholder="1." onChange={(e) => onChange('c3q3_work1', e.target.value)} value={userAnswers.c3q3_work1 || ''}/>
+      <input style={{...styles.input, marginTop: '5px'}} placeholder="2." onChange={(e) => onChange('c3q3_work2', e.target.value)} value={userAnswers.c3q3_work2 || ''}/>
+
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Role</th><th style={styles.th}>Benefit</th><th style={styles.th}>Drawback</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Employer</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c3q3_er_b', e.target.value)} value={userAnswers.c3q3_er_b || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c3q3_er_d', e.target.value)} value={userAnswers.c3q3_er_d || ''}/></td>
+          </tr>
+          <tr>
+            <td>Employee</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c3q3_ee_b', e.target.value)} value={userAnswers.c3q3_ee_b || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c3q3_ee_d', e.target.value)} value={userAnswers.c3q3_ee_d || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Application.<br/>
+          Economy: Cashless payment/finance mgmt, Online banking (check transactions instantly).<br/>
+          Workplace: Remote work (PC), Access company files anytime.<br/>
+          Employer: Rent smaller office (cut cost) / Data breach risk.<br/>
+          Employee: Less transport cost / Cost to setup workstation.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Email */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q4: Email</h3>
+      <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block', marginLeft: '10px'}} onChange={(e) => onChange('c3q4_type', e.target.value)} value={userAnswers.c3q4_type || ''}/></p>
+      
+      <p style={{marginTop: '10px'}}><b>Address Format:</b> iloveict@gmail.com</p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="'iloveict' is..." onChange={(e) => onChange('c3q4_user', e.target.value)} value={userAnswers.c3q4_user || ''}/>
+        <input style={styles.input} placeholder="'gmail.com' is..." onChange={(e) => onChange('c3q4_domain', e.target.value)} value={userAnswers.c3q4_domain || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Recipient Fields:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Field</th><th style={styles.th}>Feature</th><th style={styles.th}>Application</th></tr></thead>
+        <tbody>
+          {['To', 'Cc', 'Bcc'].map(f => (
+            <tr key={f}>
+              <td><b>{f}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_${f}_feat`, e.target.value)} value={userAnswers[`c3q4_${f}_feat`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_${f}_app`, e.target.value)} value={userAnswers[`c3q4_${f}_app`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Reply Methods:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Method</th><th style={styles.th}>Feature</th></tr></thead>
+        <tbody>
+          {['Reply', 'Reply All', 'Forward'].map(m => (
+            <tr key={m}>
+              <td><b>{m}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_${m}`, e.target.value)} value={userAnswers[`c3q4_${m}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Sending Files:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Method</th><th style={styles.th}>Attribute</th><th style={styles.th}>Suitable Usage</th><th style={styles.th}>Benefit</th><th style={styles.th}>Drawback</th></tr></thead>
+        <tbody>
+          {['Hyperlink', 'Inline Embedding', 'Attachment'].map(m => (
+            <tr key={m}>
+              <td style={{fontSize: '0.85rem'}}><b>{m}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_f_${m}_attr`, e.target.value)} value={userAnswers[`c3q4_f_${m}_attr`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_f_${m}_use`, e.target.value)} value={userAnswers[`c3q4_f_${m}_use`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_f_${m}_ben`, e.target.value)} value={userAnswers[`c3q4_f_${m}_ben`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q4_f_${m}_draw`, e.target.value)} value={userAnswers[`c3q4_f_${m}_draw`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div style={{marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <div><p><b>Blacklist Use:</b></p><input style={styles.input} onChange={(e) => onChange('c3q4_bl', e.target.value)} value={userAnswers.c3q4_bl || ''}/></div>
+        <div><p><b>Whitelist Use:</b></p><input style={styles.input} onChange={(e) => onChange('c3q4_wl', e.target.value)} value={userAnswers.c3q4_wl || ''}/></div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Service. Addr: Username / Mail Server Domain Name.<br/>
+          <b>Fields:</b><br/>
+          To: Original email, main recipient attention.<br/>
+          Cc: Shown on header, for info.<br/>
+          Bcc: Not shown on header, bulk mail privacy.<br/>
+          <b>Reply:</b> Reply (Sender only), Reply All (Sender + Cc), Forward (New copy to new recipient).<br/>
+          <b>Files:</b><br/>
+          Hyperlink: Link to browser. Send large files. No mail storage / Takes remote storage.<br/>
+          Inline: Shown in box. Visual content. Visual / Maybe blocked or image only.<br/>
+          Attachment: In mailbox (25MB limit). Small files. Direct download / Takes mail storage.<br/>
+          Blacklist: Block (Spam). Whitelist: Approve (Not Spam).
+        </div>
+      )}
+    </div>
+
+    {/* Q5: Remote Logon */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q5: Remote Logon</h3>
+      <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block'}} onChange={(e) => onChange('c3q5_type', e.target.value)} value={userAnswers.c3q5_type || ''}/></p>
+      <p style={{marginTop: '10px'}}><b>Uses:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c3q5_use', e.target.value)} value={userAnswers.c3q5_use || ''}/>
+      <div style={{display: 'flex', gap: '15px', marginTop: '10px'}}>
+        <div style={{flex: 1}}><p><b>Benefit:</b></p><input style={styles.input} onChange={(e) => onChange('c3q5_ben', e.target.value)} value={userAnswers.c3q5_ben || ''}/></div>
+        <div style={{flex: 1}}><p><b>Drawbacks (2):</b></p><textarea style={styles.input} rows="2" onChange={(e) => onChange('c3q5_draw', e.target.value)} value={userAnswers.c3q5_draw || ''}/></div>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>Type: Service. Use: Remote access device, authorized connection from distance. Ben: Access files anytime/where. Draw: 1. Need stable net, 2. Data breach risk.</div>}
+    </div>
+
+    {/* Q6, Q7, Q10: Short Questions */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q6, Q7, Q10: Service Checks</h3>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>Q6 Online Chat</b> (Type, Use, Ex):</p>
+          <input style={styles.input} onChange={(e) => onChange('c3q6', e.target.value)} value={userAnswers.c3q6 || ''}/>
+        </div>
+        <div>
+          <p><b>Q7 SNS</b> (Type, 2 Ex):</p>
+          <input style={styles.input} onChange={(e) => onChange('c3q7', e.target.value)} value={userAnswers.c3q7 || ''}/>
+        </div>
+        <div style={{gridColumn: '1 / -1'}}>
+          <p><b>Q10 Streaming</b> (Type, Def, Mech, Ben):</p>
+          <textarea style={styles.input} rows="3" onChange={(e) => onChange('c3q10', e.target.value)} value={userAnswers.c3q10 || ''}/>
+        </div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Q6: Service. Communicate over net. Ex: Online chat support.<br/>
+          Q7: Service. Ex: Social media, Discussion forum.<br/>
+          Q10: Service. Def: Media continuous flow. Mech: Play while downloading. Ben: Shortened wait time.
+        </div>
+      )}
+    </div>
+
+    {/* Q8: File Transfer */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q8: File Transfer</h3>
+      <p>Type: <input style={{...styles.input, width: '150px', display: 'inline-block'}} onChange={(e) => onChange('c3q8_type', e.target.value)} value={userAnswers.c3q8_type || ''}/> Factors: <input style={{...styles.input, width: '300px', display: 'inline-block'}} onChange={(e) => onChange('c3q8_fac', e.target.value)} value={userAnswers.c3q8_fac || ''}/></p>
+      
+      <div style={{overflowX: 'auto', marginTop: '15px'}}>
+        <table style={{...styles.table, minWidth: '800px'}}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Method</th>
+              <th style={styles.th}>Size Limit</th>
+              <th style={styles.th}>Restriction</th>
+              <th style={styles.th}>Encrypted?</th>
+              <th style={styles.th}>2FA?</th>
+              <th style={styles.th}>Advantage</th>
+              <th style={styles.th}>Disadvantage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              {n: 'Messaging App', k: 'msg'}, {n: 'Email', k: 'email'}, {n: 'Cloud Storage', k: 'cloud'},
+              {n: 'Network Drive (VPN)', k: 'vpn'}, {n: 'P2P File Sharing', k: 'p2p'}
+            ].map(row => (
+              <tr key={row.k}>
+                <td><b>{row.n}</b></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_size`, e.target.value)} value={userAnswers[`c3q8_${row.k}_size`] || ''}/></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_res`, e.target.value)} value={userAnswers[`c3q8_${row.k}_res`] || ''}/></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_enc`, e.target.value)} value={userAnswers[`c3q8_${row.k}_enc`] || ''}/></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_2fa`, e.target.value)} value={userAnswers[`c3q8_${row.k}_2fa`] || ''}/></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_adv`, e.target.value)} value={userAnswers[`c3q8_${row.k}_adv`] || ''}/></td>
+                <td><input style={styles.input} onChange={(e) => onChange(`c3q8_${row.k}_dis`, e.target.value)} value={userAnswers[`c3q8_${row.k}_dis`] || ''}/></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Service. Factors: Size, Type, Security.<br/>
+          Messaging: Small, Compressed, End-to-End, Y, Secure, Low Quality.<br/>
+          Email: Small, None, Y (if supported), Y, Cross-platform, Fee for space.<br/>
+          Cloud: Large, None, Y, Y, Cross-platform, Fee.<br/>
+          VPN: No limit (storage dependent), None, N, N, Secure, Diff setup.<br/>
+          P2P: No limit, None, Y (low), N, Fast, Malware risk.
+        </div>
+      )}
+    </div>
+
+    {/* Q9: Information Searching */}
+    <div style={styles.qSection}>
+      <h3 style={styles.qTitle}>Q9: Information Searching</h3>
+      <p>Type: <input style={{...styles.input, width: '150px', display: 'inline-block'}} onChange={(e) => onChange('c3q9_type', e.target.value)} value={userAnswers.c3q9_type || ''}/></p>
+      
+      <p style={{marginTop: '15px'}}><b>Search Engine vs Database:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Aspect</th><th style={styles.th}>Search Engine</th><th style={styles.th}>Database</th></tr></thead>
+        <tbody>
+          {['Fee', 'Structure of Data', 'Sponsors & Ads', 'Application'].map(asp => (
+            <tr key={asp}>
+              <td><b>{asp}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q9_${asp}_se`, e.target.value)} value={userAnswers[`c3q9_${asp}_se`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q9_${asp}_db`, e.target.value)} value={userAnswers[`c3q9_${asp}_db`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Search Steps:</b></p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="Step 1" onChange={(e) => onChange('c3q9_s1', e.target.value)} value={userAnswers.c3q9_s1 || ''}/>
+        <input style={styles.input} placeholder="Step 2" onChange={(e) => onChange('c3q9_s2', e.target.value)} value={userAnswers.c3q9_s2 || ''}/>
+        <input style={styles.input} placeholder="Step 3" onChange={(e) => onChange('c3q9_s3', e.target.value)} value={userAnswers.c3q9_s3 || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Search Operators:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Operator</th><th style={styles.th}>Technique / Description</th></tr></thead>
+        <tbody>
+          {['-', 'OR', '""', 'site:'].map(op => (
+            <tr key={op}>
+              <td style={{textAlign: 'center', fontWeight: 'bold'}}>{op}</td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q9_op_${op}`, e.target.value)} value={userAnswers[`c3q9_op_${op}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>Evaluation Criteria:</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Criteria</th><th style={styles.th}>Methods to Check</th></tr></thead>
+        <tbody>
+          {['Credibility', 'Reliability', 'Timeliness'].map(c => (
+            <tr key={c}>
+              <td><b>{c}</b></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`c3q9_eval_${c}`, e.target.value)} value={userAnswers[`c3q9_eval_${c}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Type: Service.<br/>
+          Diff: Free vs Fee, Unstructured vs Structured, Ads vs No Ads, General vs Academic.<br/>
+          Steps: 1. Keywords, 2. Type/Restraints, 3. Operators.<br/>
+          Ops: - (Exclude), OR (Combine), "" (Exact), site: (Specific URL).<br/>
+          Eval: Credibility (Author/Domain), Reliability (Fact-check/Citations), Timeliness (Update freq/Pub date).
+        </div>
+      )}
+    </div>
+  </div>
+);
+export default App;
