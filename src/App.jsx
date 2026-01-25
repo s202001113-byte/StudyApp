@@ -3017,7 +3017,7 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           </div>
           
           {/* Question Image */}
-          <img src={`/mcdata/PHY COMP 4 CH2/q/${q.id}.png`} style={{maxWidth: '100%', marginBottom: '15px'}} alt={`Question ${q.id}`} />
+          <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH2/q/${q.id}.png`} style={{maxWidth: '100%', marginBottom: '15px'}} alt={`Question ${q.id}`} />
           
           {/* Multiple Choice Options */}
           <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
@@ -3036,7 +3036,7 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
                   {q.options[idx].text ? (
                     <span>{q.options[idx].text}</span>
                   ) : (
-                    <img src={`/mcdata/PHY COMP 4 CH2/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
+                    <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH2/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
                   )}
                 </div>
               </label>
@@ -3047,7 +3047,7 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           {showAnswers && (
             <div style={styles.answerKey}>
               <p><b>Solution:</b></p>
-              <img src={`/mcdata/PHY COMP 4 CH2/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
+              <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH2/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
             </div>
           )}
         </div>
@@ -3627,7 +3627,7 @@ const Phy_E_3_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
 
       <p style={{marginTop: '15px'}}><b>Formula of binding energy (for E in MeV and Δm in u):</b></p>
       <input style={styles.input} placeholder="E = ..." onChange={(e) => onChange('e3ch3_q2_be_formula_mev', e.target.value)} value={userAnswers.e3ch3_q2_be_formula_mev || ''}/>
-      <img src="/images/BEG.jpg" alt="description" style={{maxWidth: '100%', marginTop: '10px'}} />
+      <img src={`${import.meta.env.BASE_URL}images/BEG.jpg`} alt="description" style={{maxWidth: '100%', marginTop: '10px'}} />
       <p style={{marginTop: '15px'}}><b>How to study the stability of a nucleus:</b></p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q2_stability', e.target.value)} value={userAnswers.e3ch3_q2_stability || ''}/>
 
