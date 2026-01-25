@@ -1,25 +1,142 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Monitor, Cpu, Layers, Box, ArrowLeft, 
-  CheckCircle2, HardDrive, Database, Zap, Layout, Settings 
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Box, CheckCircle2, Database, Monitor, Cpu, Layers, Zap, Settings, Layout, Globe, ShieldAlert, ArrowLeft, Star } from 'lucide-react';
 
 const App = () => {
   const [currentView, setCurrentView] = useState('home');
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [showAnswers, setShowAnswers] = useState(false);
+  const [subject, setSubject] = useState('ICT');
+  const [countdown, setCountdown] = useState({});
+  const [starredQuestions, setStarredQuestions] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('starredQuestions')) || {};
+    } catch {
+      return {};
+    }
+  });
+
+  // Exam dates for each subject
+  const examDates = {
+    Chinese: '2026-04-09',
+    English: '2026-04-10',
+    Maths: '2026-04-13',
+    CS: '2026-04-14',
+    Physics: '2026-04-22',
+    ICT: '2026-04-24',
+    M2: '2026-04-30'
+  };
+
+  // Calculate countdown for a specific date
+  const calculateCountdown = (dateString) => {
+    // Parse date as local timezone (not UTC)
+    const [year, month, day] = dateString.split('-');
+    const targetDate = new Date(year, parseInt(month) - 1, day, 0, 0, 0, 0).getTime();
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+
+    if (distance > 0) {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      return { days, hours, minutes, seconds };
+    }
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  };
+
+  // Countdown Timer Effect
+  useEffect(() => {
+    const updateCountdown = () => {
+      const newCountdown = {};
+      Object.entries(examDates).forEach(([subject, date]) => {
+        newCountdown[subject] = calculateCountdown(date);
+      });
+      setCountdown(newCountdown);
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Get next exam
+  const getNextExam = () => {
+    let nextExam = null;
+    let minDays = Infinity;
+    Object.entries(examDates).forEach(([subject, date]) => {
+      const cd = countdown[subject] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      if (cd.days >= 0 && cd.days < minDays) {
+        minDays = cd.days;
+        nextExam = subject;
+      }
+    });
+    return nextExam;
+  }; 
+
+  // Handle starring questions
+  const toggleStar = (questionId) => {
+    setStarredQuestions(prev => {
+      const updated = { ...prev };
+      if (updated[questionId]) {
+        delete updated[questionId];
+      } else {
+        updated[questionId] = true;
+      }
+      localStorage.setItem('starredQuestions', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Star Button Component
+  const StarButton = ({ questionId }) => (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleStar(questionId);
+      }}
+      style={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '6px',
+        transition: 'all 0.2s',
+        backgroundColor: starredQuestions[questionId] ? '#fef3c7' : '#f3f4f6'
+      }}
+      title={starredQuestions[questionId] ? 'Unstar question' : 'Star question'}
+    >
+      <Star
+        size={20}
+        fill={starredQuestions[questionId] ? '#fbbf24' : 'none'}
+        color={starredQuestions[questionId] ? '#f59e0b' : '#9ca3af'}
+      />
+    </button>
+  );
 
   const topics = [
-    { id: 'comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
-    { id: 'comp_a_ch2', title: 'Compulsory A Ch2: Data Control', description: 'GIGO, Data Validation & Verification', icon: <CheckCircle2 />, category: 'Compulsory A', color: '#3b82f6' },
-    { id: 'comp_a_ch3', title: 'Compulsory A Ch3: Data Representation', description: 'Data Representation & File Formats', icon: <Database />, category: 'Compulsory A', color: '#10b981' },
-    { id: 'comp_b_ch1', title: 'Compulsory B Ch1: Hardware Components', description: 'Monitors, Projectors, & Printers Comparison', icon: <Monitor />, category: 'Compulsory B', color: '#4f46e5' },
-    { id: 'comp_b_ch2', title: 'Compulsory B Ch2: System Hardware', description: 'The System Unit, CPU, GPU, & Storage', icon: <Cpu />, category: 'Compulsory B', color: '#0891b2' },
-    { id: 'comp_b_ch3', title: 'Compulsory B Ch3: System Software', description: 'System Software, OS, & Utilities', icon: <Layers />, category: 'Compulsory B', color: '#7c3aed' },
-    { id: 'comp_c_ch1', title: 'Compulsory C Ch1: Computer Networking and Internet Basics', description: 'Computer Networking & Internet Access', icon: <Zap />, category: 'Compulsory C', color: '#8b5cf6' },
-    { id: 'comp_c_ch2', title: 'Compulsory C Ch2: Internet Protocols', description: 'Network Protocols & IP Addressing', icon: <Settings />, category: 'Compulsory C', color: '#f59e0b' },
-    { id: 'comp_c_ch3', title: 'Compulsory C Ch3: Internet Services & Applications', description: 'IoT, Cloud, Smart City, & Online Services', icon: <Layout />, category: 'Compulsory C', color: '#db2777' }
+    // --- ICT Topics ---
+    { id: 'ict_comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
+    { id: 'ict_comp_a_ch2', title: 'Compulsory A Ch2: Data Control', description: 'GIGO, Data Validation & Verification', icon: <CheckCircle2 />, category: 'Compulsory A', color: '#3b82f6' },
+    { id: 'ict_comp_a_ch3', title: 'Compulsory A Ch3: Data Representation', description: 'Data Representation & File Formats', icon: <Database />, category: 'Compulsory A', color: '#10b981' },
+    { id: 'ict_comp_b_ch1', title: 'Compulsory B Ch1: Hardware Components', description: 'Monitors, Projectors, & Printers Comparison', icon: <Monitor />, category: 'Compulsory B', color: '#4f46e5' },
+    { id: 'ict_comp_b_ch2', title: 'Compulsory B Ch2: System Hardware', description: 'The System Unit, CPU, GPU, & Storage', icon: <Cpu />, category: 'Compulsory B', color: '#0891b2' },
+    { id: 'ict_comp_b_ch3', title: 'Compulsory B Ch3: System Software', description: 'System Software, OS, & Utilities', icon: <Layers />, category: 'Compulsory B', color: '#7c3aed' },
+    { id: 'ict_comp_c_ch1', title: 'Compulsory C Ch1: Computer Networking and Internet Basics', description: 'Computer Networking & Internet Access', icon: <Zap />, category: 'Compulsory C', color: '#8b5cf6' },
+    { id: 'ict_comp_c_ch2', title: 'Compulsory C Ch2: Internet Protocols', description: 'Network Protocols & IP Addressing', icon: <Settings />, category: 'Compulsory C', color: '#f59e0b' },
+    { id: 'ict_comp_c_ch3', title: 'Compulsory C Ch3: Internet Services & Applications', description: 'IoT, Cloud, Smart City, & Online Services', icon: <Layout />, category: 'Compulsory C', color: '#db2777' },
+    { id: 'ict_comp_c_ch4', title: 'Compulsory C Ch4: Web Authoring Basics', description: 'HTML, Editors, Tags, & UI/UX Design', icon: <Globe />, category: 'Compulsory C', color: '#ec4899' },
+    { id: 'ict_comp_c_ch5', title: 'Compulsory C Ch5: Network Security & Privacy', description: 'Malware, Attacks, Protection, & Privacy', icon: <ShieldAlert />, category: 'Compulsory C', color: '#dc2626' },
+    
+    // --- Physics Topics ---
+    { id: 'phy_comp_4_ch2', title: 'Compulsory 4 Ch2: Electric Circuits', description: 'Electric Circuits, Current & Voltage', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
+    { id: 'phy_e_2_ch1', title: 'E2 Ch1: Rutherford\'s atomic model', description: 'Rutherford\'s Model, Scattering & Limitations', icon: <Zap />, category: 'Elective 2', color: '#f97316' },
+    { id: 'phy_e_3_ch1', title: 'E3 Ch1: Electricity at home', description: 'Efficiency, Lighting, Appliances & AC', icon: <Zap />, category: 'Elective 3', color: '#eab308' },
+    { id: 'phy_e_3_ch2', title: 'E3 Ch2: Energy efficiency in buildings', description: 'Conduction, Radiation & Vehicles', icon: <Zap />, category: 'Elective 3', color: '#f59e0b' },
+    { id: 'phy_e_3_ch3', title: 'E3 Ch3: Renewable energy', description: 'Nuclear, Wind, Hydro & Solar Energy', icon: <Zap />, category: 'Elective 3', color: '#84cc16' },
   ];
 
   const handleInputChange = (id, val) => {
@@ -31,12 +148,26 @@ const App = () => {
     setShowAnswers(false);
   };
 
+  // Define categories per subject
+  const categories = {
+    ICT: ['Compulsory A', 'Compulsory B', 'Compulsory C'],
+    Physics: ['Compulsory 4', 'Elective 2', 'Elective 3']
+  };
+
   const styles = {
     container: { minHeight: '100vh', backgroundColor: '#f8fafc', color: '#0f172a', padding: '40px 20px', fontFamily: 'system-ui, -apple-system, sans-serif' },
     wrapper: { maxWidth: '1000px', margin: '0 auto' },
     header: { textAlign: 'center', marginBottom: '40px' },
     title: { fontSize: '2.5rem', fontWeight: '800', color: '#1e1b4b', marginBottom: '10px', letterSpacing: '-0.025em' },
-    subtitle: { color: '#64748b', fontSize: '1.1rem' },
+    subtitle: { color: '#64748b', fontSize: '1.1rem', marginBottom: '20px' },
+    
+    // New Style for Subject Toggle
+    subjectToggleContainer: { display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px' },
+    subjectBtn: (isActive) => ({
+      padding: '10px 24px', borderRadius: '50px', border: 'none', cursor: 'pointer', fontWeight: '700', fontSize: '1rem', transition: 'all 0.2s',
+      backgroundColor: isActive ? '#4f46e5' : '#e2e8f0', color: isActive ? 'white' : '#64748b', boxShadow: isActive ? '0 4px 12px rgba(79, 70, 229, 0.3)' : 'none'
+    }),
+
     categoryTitle: { fontSize: '1.25rem', fontWeight: '700', marginBottom: '20px', borderLeft: '4px solid #4f46e5', paddingLeft: '15px', color: '#334155', marginTop: '40px' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' },
     card: { display: 'flex', alignItems: 'center', padding: '24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' },
@@ -51,7 +182,24 @@ const App = () => {
     input: { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.95rem' },
     answerKey: { marginTop: '10px', padding: '12px', backgroundColor: '#f0fdf4', borderRadius: '8px', borderLeft: '4px solid #22c55e', color: '#166534', fontSize: '0.9rem', whiteSpace: 'pre-wrap' },
     submitBtn: { backgroundColor: '#4f46e5', color: 'white', padding: '14px 30px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer', transition: 'background 0.2s' },
-    select: { width: '100%', padding: '10px', border: '1px solid #cbd5e1', borderRadius: '6px', backgroundColor: 'white' }
+    timerContainer: { backgroundColor: '#fee2e2', border: '2px solid #dc2626', borderRadius: '12px', padding: '20px', marginBottom: '30px', textAlign: 'center' },
+    timerTitle: { fontSize: '1.1rem', fontWeight: '700', color: '#991b1b', marginBottom: '10px' },
+    timerDisplay: { display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' },
+    timerUnit: { display: 'flex', flexDirection: 'column', alignItems: 'center' },
+    timerNumber: { fontSize: '2.5rem', fontWeight: '800', color: '#dc2626', minWidth: '80px' },
+    timerLabel: { fontSize: '0.9rem', color: '#991b1b', fontWeight: '600', marginTop: '5px' },
+    examSchedule: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginTop: '15px' },
+    examCard: (isNext) => ({
+      padding: '12px',
+      borderRadius: '8px',
+      backgroundColor: isNext ? '#fef3c7' : '#f9fafb',
+      border: `2px solid ${isNext ? '#d97706' : '#e5e7eb'}`,
+      textAlign: 'center',
+      transition: 'all 0.3s'
+    }),
+    examSubject: { fontSize: '0.85rem', fontWeight: '700', color: '#374151', marginBottom: '6px' },
+    examDate: { fontSize: '0.75rem', color: '#6b7280', marginBottom: '6px' },
+    examCountdown: { fontSize: '0.8rem', fontWeight: '600', color: '#1f2937' },
   };
 
   return (
@@ -60,11 +208,39 @@ const App = () => {
         {currentView === 'home' ? (
           <div>
             <header style={styles.header}>
-              <h1 style={styles.title}>ICT Study Portal</h1>
+              <h1 style={styles.title}>Study Portal</h1>
               <p style={styles.subtitle}>I'm cooked fuck you HKDSE</p>
+              
+              {/* Exam Schedule Countdown */}
+              <div style={styles.timerContainer}>
+                <div style={styles.timerTitle}>📋 Exam Schedule Countdown</div>
+                <div style={styles.examSchedule}>
+                  {Object.entries(examDates).map(([subject, date]) => {
+                    const cd = countdown[subject] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
+                    const isNext = subject === getNextExam();
+                    const dateObj = new Date(date);
+                    const dateStr = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+                    return (
+                      <div key={subject} style={styles.examCard(isNext)}>
+                        <div style={styles.examSubject}>{subject}</div>
+                        <div style={styles.examDate}>{dateStr}/2026</div>
+                        <div style={styles.examCountdown}>
+                          {cd.days}d {cd.hours}h {cd.minutes}m
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Subject Selector */}
+              <div style={styles.subjectToggleContainer}>
+                <button style={styles.subjectBtn(subject === 'ICT')} onClick={() => setSubject('ICT')}>ICT</button>
+                <button style={styles.subjectBtn(subject === 'Physics')} onClick={() => setSubject('Physics')}>Physics</button>
+              </div>
             </header>
             
-            {['Compulsory A', 'Compulsory B', 'Compulsory C'].map(cat => (
+            {categories[subject].map(cat => (
               <div key={cat}>
                 <h2 style={styles.categoryTitle}>{cat}</h2>
                 <div style={styles.grid}>
@@ -86,15 +262,25 @@ const App = () => {
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
             <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
             
-            {selectedTopic === 'comp_a_ch1' && <A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_a_ch2' && <A_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_a_ch3' && <A_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_b_ch1' && <B_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_b_ch2' && <B_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_b_ch3' && <B_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_c_ch1' && <C_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_c_ch2' && <C_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
-            {selectedTopic === 'comp_c_ch3' && <C_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} />}
+            {/* ICT Components */}
+            {selectedTopic === 'ict_comp_a_ch1' && <ICT_Comp_A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_a_ch2' && <ICT_Comp_A_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_a_ch3' && <ICT_Comp_A_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_b_ch1' && <ICT_Comp_B_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_b_ch2' && <ICT_Comp_B_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_b_ch3' && <ICT_Comp_B_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_c_ch1' && <ICT_Comp_C_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_c_ch2' && <ICT_Comp_C_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_c_ch3' && <ICT_Comp_C_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_c_ch4' && <ICT_Comp_C_Ch4 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'ict_comp_c_ch5' && <ICT_Comp_C_Ch5 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            
+            {/* Physics Components */}
+            {selectedTopic === 'phy_comp_4_ch2' && <Phy_Comp_4_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'phy_e_2_ch1' && <Phy_E_2_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'phy_e_3_ch1' && <Phy_E_3_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'phy_e_3_ch2' && <Phy_E_3_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+            {selectedTopic === 'phy_e_3_ch3' && <Phy_E_3_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
 
             <div style={{textAlign: 'center', marginTop: '40px'}}>
               {!showAnswers ? (
@@ -111,64 +297,88 @@ const App = () => {
 };
 
 // --- COMPULSORY A CH 1 ---
-const A_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_A_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Text */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Text Types</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Text Types</h3>
+        <StarButton questionId="a1q1" />
+      </div>
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         <p>Definition of <b>Plain Text</b>:</p>
         <input style={styles.input} onChange={(e) => onChange('a1q1_plain', e.target.value)} value={userAnswers.a1q1_plain || ''}/>
         <p>Definition of <b>Formatted Text</b>:</p>
         <input style={styles.input} onChange={(e) => onChange('a1q1_form', e.target.value)} value={userAnswers.a1q1_form || ''}/>
         <p>Difference between them:</p>
-        <input style={styles.input} placeholder="Regarding file size..." onChange={(e) => onChange('a1q1_diff', e.target.value)} value={userAnswers.a1q1_diff || ''}/>
+        <input style={styles.input} onChange={(e) => onChange('a1q1_diff', e.target.value)} value={userAnswers.a1q1_diff || ''}/>
       </div>
-      {showAnswers && <div style={styles.answerKey}>Plain: Stores characters only. Formatted: Stores characters + formatting data. Diff: Formatted text has a larger file size.</div>}
+      {showAnswers && <div style={styles.answerKey}>Plain Text: Stores characters only. Formatted Text: Stores characters and their formatting data. Difference: Formatted text usually has larger file size.</div>}
     </div>
 
     {/* Q2: Image */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Image Representation</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Image Representation</h3>
+        <StarButton questionId="a1q2" />
+      </div>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
         <div>
-          <p><b>Bitmap Image</b> (Def & Adv):</p>
-          <textarea style={styles.input} rows="4" onChange={(e) => onChange('a1q2_bit', e.target.value)} value={userAnswers.a1q2_bit || ''}/>
+          <p><b>Bitmap Image</b></p>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '8px'}}>Definition:</p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a1q2_bit_def', e.target.value)} value={userAnswers.a1q2_bit_def || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: '10px', marginBottom: '8px'}}>Advantages:</p>
+          <input style={{...styles.input, marginBottom: '8px'}} placeholder="Advantage 1" onChange={(e) => onChange('a1q2_bit_adv1', e.target.value)} value={userAnswers.a1q2_bit_adv1 || ''}/>
+          <input style={styles.input} placeholder="Advantage 2" onChange={(e) => onChange('a1q2_bit_adv2', e.target.value)} value={userAnswers.a1q2_bit_adv2 || ''}/>
         </div>
         <div>
-          <p><b>Vector Image</b> (Def & Adv):</p>
-          <textarea style={styles.input} rows="4" onChange={(e) => onChange('a1q2_vec', e.target.value)} value={userAnswers.a1q2_vec || ''}/>
+          <p><b>Vector Image</b></p>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '8px'}}>Definition:</p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a1q2_vec_def', e.target.value)} value={userAnswers.a1q2_vec_def || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: '10px', marginBottom: '8px'}}>Advantages:</p>
+          <input style={{...styles.input, marginBottom: '8px'}} placeholder="Advantage 1" onChange={(e) => onChange('a1q2_vec_adv1', e.target.value)} value={userAnswers.a1q2_vec_adv1 || ''}/>
+          <input style={styles.input} placeholder="Advantage 2" onChange={(e) => onChange('a1q2_vec_adv2', e.target.value)} value={userAnswers.a1q2_vec_adv2 || ''}/>
         </div>
       </div>
       {showAnswers && (
         <div style={styles.answerKey}>
-          <b>Bitmap:</b> Stores as pixels. Adv: Real-life images, common tools. <br/>
-          <b>Vector:</b> Mathematical formulae. Adv: Smaller size, no rough edges/blur when scaled.
+          <b>Bitmap:</b> Stores images as a series of pixels. Adv: 1. Real life images are usually bitmap images 2. Can be edited by common image editing tools<br/>
+          <b>Vector:</b> Stores image as mathematical formulae. Adv: 1. Tends to have smaller file size 2. Does not have rough edges and does not become blurry when scaled up
         </div>
       )}
     </div>
 
     {/* Q3: Information Processing */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Information Processing Steps</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Information Processing Steps</h3>
+        <StarButton questionId="a1q3" />
+      </div>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
         {[1, 2, 3, 4].map(i => (
           <input key={i} style={styles.input} placeholder={`Step ${i}`} onChange={(e) => onChange(`a1q3_s${i}`, e.target.value)} value={userAnswers[`a1q3_s${i}`] || ''}/>
         ))}
       </div>
-      {showAnswers && <div style={styles.answerKey}>1. Data Collection, 2. Organization, 3. Processing & Analysis, 4. Transmission & Presentation.</div>}
+      {showAnswers && <div style={styles.answerKey}>1. Data Collection, 2. Organization, 3. Processing and Analysis, 4. Transmission and Presentation</div>}
     </div>
 
     {/* Q4: Information Age */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: The Information Age</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: The Information Age</h3>
+        <StarButton questionId="a1q4" />
+      </div>
       <p>Definition:</p>
       <input style={styles.input} onChange={(e) => onChange('a1q4_def', e.target.value)} value={userAnswers.a1q4_def || ''}/>
       
-      <p style={{marginTop: '10px'}}>Causes (4 points):</p>
-      <textarea style={styles.input} rows="3" placeholder="" onChange={(e) => onChange('a1q4_cause', e.target.value)} value={userAnswers.a1q4_cause || ''}/>
+      <p style={{marginTop: '15px'}}>Causes (4 points):</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+        {[1, 2, 3, 4].map(i => (
+          <input key={i} style={styles.input} placeholder={`Cause ${i}`} onChange={(e) => onChange(`a1q4_cause_${i}`, e.target.value)} value={userAnswers[`a1q4_cause_${i}`] || ''}/>
+        ))}
+      </div>
       
-      <p style={{marginTop: '10px'}}>Key Developments (3 points):</p>
+      <p style={{marginTop: '15px'}}>Key Developments (3 points):</p>
       <div style={{display: 'flex', gap: '10px'}}>
         <input style={styles.input} placeholder="1" onChange={(e) => onChange('a1q4_dev1', e.target.value)} value={userAnswers.a1q4_dev1 || ''}/>
         <input style={styles.input} placeholder="2" onChange={(e) => onChange('a1q4_dev2', e.target.value)} value={userAnswers.a1q4_dev2 || ''}/>
@@ -176,246 +386,298 @@ const A_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
       </div>
       {showAnswers && (
         <div style={styles.answerKey}>
-          Def: Fast development of ICT. Causes: 1. Lower price, 2. Better performance, 3. Better UI, 4. Faster network. Developments: IoT, Big Data, AI.
+          Def: Fast development of Information and Communication Technology. Causes: 1. Lower price of device 2. Better performance of devices 3. Better user interface design 4. Faster network connection. Developments: 1. IoT 2. Big Data 3. AI
         </div>
       )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
   </div>
 );
 
-const A_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_A_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: GIGO */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: GIGO & Input Errors</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: GIGO & Input Errors</h3>
+        <StarButton questionId="a2q1" />
+      </div>
       <p>Definition of <b>GIGO</b>:</p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('a2q1_gigo', e.target.value)} value={userAnswers.a2q1_gigo || ''}/>
       
-      <p style={{marginTop: '15px'}}><b>Input Errors:</b></p>
+      <p style={{marginTop: '15px'}}><b>Input Errors (Name & Definition):</b></p>
       <table style={styles.table}>
         <thead>
-          <tr><th style={styles.th}>Error Type</th><th style={styles.th}>Definition</th></tr>
+          <tr><th style={styles.th}>Error Type Name</th><th style={styles.th}>Definition</th></tr>
         </thead>
         <tbody>
-          {['Data Source Error', 'Transcription Error', 'Transposition Error'].map(err => (
-            <tr key={err}>
-              <td><b>{err}</b></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a2q1_${err}`, e.target.value)} value={userAnswers[`a2q1_${err}`] || ''}/></td>
+          {['1', '2', '3'].map(idx => (
+            <tr key={idx}>
+              <td><input style={styles.input} onChange={(e) => onChange(`a2q1_err_name_${idx}`, e.target.value)} value={userAnswers[`a2q1_err_name_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a2q1_err_def_${idx}`, e.target.value)} value={userAnswers[`a2q1_err_def_${idx}`] || ''}/></td>
             </tr>
           ))}
         </tbody>
       </table>
       {showAnswers && (
         <div style={styles.answerKey}>
-          GIGO: Analysis isn't useful if input is unreliable. 1. Source: Incorrect data used. 2. Transcription: Misread/misheard. 3. Transposition: Wrong position/order.
+          GIGO: The result of data analysis is not useful when the input data is not reliable.<br/>
+          1. Data Source Error: Use incorrect data<br/>
+          2. Transcription Error: Data is misread/misheard and inputted<br/>
+          3. Transposition Error: The position of input data is wrong
         </div>
       )}
     </div>
 
     {/* Q2: Data Validation */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Data Validation</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Data Validation</h3>
+        <StarButton questionId="a2q2" />
+      </div>
       <p>Is validation done by computer or human?</p>
       <input style={styles.input} onChange={(e) => onChange('a2q2_who', e.target.value)} value={userAnswers.a2q2_who || ''}/>
       
-      <p style={{marginTop: '15px'}}>List the names of common data checks (Range, Format, etc.):</p>
-      <textarea style={styles.input} rows="2" placeholder="List 7 types..." onChange={(e) => onChange('a2q2_types', e.target.value)} value={userAnswers.a2q2_types || ''}/>
+      <p style={{marginTop: '15px'}}>Name of 7 data checking types:</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px'}}>
+        {[1, 2, 3, 4, 5, 6, 7].map(i => (
+          <input key={i} style={styles.input} onChange={(e) => onChange(`a2q2_check_${i}`, e.target.value)} value={userAnswers[`a2q2_check_${i}`] || ''}/>
+        ))}
+      </div>
 
-      <p style={{marginTop: '15px'}}>How UI elements apply validation:</p>
+      <p style={{marginTop: '15px'}}><b>How UI elements apply data validation:</b></p>
       <table style={styles.table}>
         <thead>
-          <tr><th style={styles.th}>UI Element</th><th style={styles.th}>Check Type applied</th></tr>
+          <tr><th style={styles.th}>UI Element</th><th style={styles.th}>Check Type Applied</th></tr>
         </thead>
         <tbody>
-          <tr><td>Radio Button / Drop-down</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui1', e.target.value)} value={userAnswers.a2q2_ui1 || ''}/></td></tr>
+          <tr><td>Radio Button / Drop-down List</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui1', e.target.value)} value={userAnswers.a2q2_ui1 || ''}/></td></tr>
           <tr><td>Check Boxes</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui2', e.target.value)} value={userAnswers.a2q2_ui2 || ''}/></td></tr>
           <tr><td>Date Picker</td><td><input style={styles.input} onChange={(e) => onChange('a2q2_ui3', e.target.value)} value={userAnswers.a2q2_ui3 || ''}/></td></tr>
         </tbody>
       </table>
 
       <div style={{marginTop: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-        <div>
-          <p><b>Check Digit</b> Attributes:</p>
-          <textarea style={styles.input} rows="5" onChange={(e) => onChange('a2q2_cd', e.target.value)} value={userAnswers.a2q2_cd || ''}/>
+        <div style={{padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+          <p style={{fontSize: '1rem', fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}><b>Check Digit Attributes:</b></p>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>1. Use for:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_cd_1', e.target.value)} value={userAnswers.a2q2_cd_1 || ''}/>
+            </div>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>2. How generated and appended:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_cd_2', e.target.value)} value={userAnswers.a2q2_cd_2 || ''}/>
+            </div>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>3. Number of check digits allowed:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_cd_3', e.target.value)} value={userAnswers.a2q2_cd_3 || ''}/>
+            </div>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>4. Validity condition:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_cd_4', e.target.value)} value={userAnswers.a2q2_cd_4 || ''}/>
+            </div>
+          </div>
         </div>
-        <div>
-          <p><b>Parity Check</b> Attributes:</p>
-          <textarea style={styles.input} rows="5" onChange={(e) => onChange('a2q2_pc', e.target.value)} value={userAnswers.a2q2_pc || ''}/>
+        <div style={{padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+          <p style={{fontSize: '1rem', fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}><b>Parity Check Attributes:</b></p>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>1. Purpose:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_pc_1', e.target.value)} value={userAnswers.a2q2_pc_1 || ''}/>
+            </div>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>2. Parity bit function:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_pc_2', e.target.value)} value={userAnswers.a2q2_pc_2 || ''}/>
+            </div>
+            <div>
+              <p style={{fontSize: '0.85rem', color: '#64748b', marginBottom: '4px'}}>3. What it cannot detect:</p>
+              <input style={styles.input} onChange={(e) => onChange('a2q2_pc_3', e.target.value)} value={userAnswers.a2q2_pc_3 || ''}/>
+            </div>
+          </div>
         </div>
       </div>
       {showAnswers && (
         <div style={styles.answerKey}>
-          Checks: Range, Format, Presence, Fixed Value, Type, Length, Uniqueness. <br/>
-          Radio/List: Fixed value. Date: Format/Type. <br/>
-          Check Digit: Algorithm-based, appended to end. <br/>
-          Parity: Bit appended (odd/even) for transmission; fails on transposition.
+          Who: Computer<br/>
+          Checks: Range Check, Format Check, Presence Check, Fixed Value Check, Type Check, Length Check, Uniqueness Check<br/>
+          UI: Radio/Dropdown: Fixed Value Check | Checkboxes: Fixed Value Check, allows multiple values | Date Picker: Format Check and Type Check<br/>
+          Check Digit: 1. Numeric data 2. Generated by algorithm and appended to end 3. Allow more than one 4. If passes algorithm = valid, else invalid<br/>
+          Parity Check: 1. Detect error during transmission 2. Parity bit appended to ensure number of 1s is odd or even 3. Cannot detect transposition
         </div>
       )}
     </div>
 
     {/* Q3: Data Verification */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Data Verification</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Data Verification</h3>
+        <StarButton questionId="a2q3" />
+      </div>
       <p>Is verification done by computer or human?</p>
       <input style={styles.input} onChange={(e) => onChange('a2q3_who', e.target.value)} value={userAnswers.a2q3_who || ''}/>
       
-      <p style={{marginTop: '15px'}}>Methods of Verification:</p>
+      <p style={{marginTop: '15px'}}><b>Name 3 data verification methods:</b></p>
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-        <input style={styles.input} placeholder="Method 1" onChange={(e) => onChange('a2q3_m1', e.target.value)} value={userAnswers.a2q3_m1 || ''}/>
-        <input style={styles.input} placeholder="Method 2" onChange={(e) => onChange('a2q3_m2', e.target.value)} value={userAnswers.a2q3_m2 || ''}/>
-        <input style={styles.input} placeholder="Method 3" onChange={(e) => onChange('a2q3_m3', e.target.value)} value={userAnswers.a2q3_m3 || ''}/>
+        <input style={styles.input} onChange={(e) => onChange('a2q3_m1', e.target.value)} value={userAnswers.a2q3_m1 || ''}/>
+        <input style={styles.input} onChange={(e) => onChange('a2q3_m2', e.target.value)} value={userAnswers.a2q3_m2 || ''}/>
+        <input style={styles.input} onChange={(e) => onChange('a2q3_m3', e.target.value)} value={userAnswers.a2q3_m3 || ''}/>
       </div>
-      {showAnswers && <div style={styles.answerKey}>1. Double data entry, 2. Inputting data twice, 3. Proofreading.</div>}
+      {showAnswers && <div style={styles.answerKey}>Verification done by: Human. Methods: 1. Double data entry 2. Input data twice 3. Proofreading data</div>}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
   </div>
 );
 
-const A_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_A_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Unit of Data */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Unit of Data & Conversions</h3>
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Unit of Data</h3>
+        <StarButton questionId="a3q1" />
+      </div>
+      <p>Unit of data (smallest):</p>
+      <input style={styles.input} onChange={(e) => onChange('a3q1_unit', e.target.value)} value={userAnswers.a3q1_unit || ''}/>
+      
+      <p style={{marginTop: '10px'}}>Conversion of unit:</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
         <div>
-          <p>Smallest unit of data:</p>
-          <input style={styles.input} placeholder="Unit (symbol)" onChange={(e) => onChange('a3q1_u1', e.target.value)} value={userAnswers.a3q1_u1 || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b'}}>8 bit =</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q1_conv1', e.target.value)} value={userAnswers.a3q1_conv1 || ''}/>
         </div>
         <div>
-          <p>8 bits = ?</p>
-          <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_u2', e.target.value)} value={userAnswers.a3q1_u2 || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b'}}>1 KB =</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q1_conv2', e.target.value)} value={userAnswers.a3q1_conv2 || ''}/>
         </div>
       </div>
-      <p style={{marginTop: '10px'}}>1024 B = ?</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_u3', e.target.value)} value={userAnswers.a3q1_u3 || ''}/>
-      
-      <p style={{marginTop: '15px'}}>Unit for data transfer rate (per unit time):</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_tr', e.target.value)} value={userAnswers.a3q1_tr || ''}/>
-      <p style={{marginTop: '5px'}}>1000 bps = ?</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q1_tr2', e.target.value)} value={userAnswers.a3q1_tr2 || ''}/>
 
-      <p style={{marginTop: '15px'}}>Max patterns representable by <b>n</b> bits:</p>
-      <input style={styles.input} placeholder="Formula" onChange={(e) => onChange('a3q1_formula', e.target.value)} value={userAnswers.a3q1_formula || ''}/>
+      <p style={{marginTop: '15px'}}>Unit of data transferred per unit time:</p>
+      <input style={styles.input} onChange={(e) => onChange('a3q1_transfer', e.target.value)} value={userAnswers.a3q1_transfer || ''}/>
       
-      {showAnswers && <div style={styles.answerKey}>Unit: bit (b). 8b=1B. 1024B=1KB. Transfer: bps (1000bps=1kbps). Patterns: 2^n.</div>}
+      <p style={{marginTop: '10px'}}>Conversion:</p>
+      <input style={styles.input} placeholder="1 kbps =" onChange={(e) => onChange('a3q1_transfer_conv', e.target.value)} value={userAnswers.a3q1_transfer_conv || ''}/>
+
+      <p style={{marginTop: '15px'}}>Maximum number of patterns represented by binary number (n bits):</p>
+      <input style={styles.input} onChange={(e) => onChange('a3q1_patterns', e.target.value)} value={userAnswers.a3q1_patterns || ''}/>
+      
+      {showAnswers && <div style={styles.answerKey}>Unit: bit (b). Conversions: 8 bit = 1 byte, 1024 B = 1 KB. Transfer unit: bps. Conversion: 1000 bps = 1 kbps. Patterns: 2^n</div>}
     </div>
 
     {/* Q2: Representing Numbers */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Representing Numbers</h3>
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
-        <div>
-          <p><b>Unsigned Integer</b> Def & Range:</p>
-          <input style={styles.input} placeholder="Definition" onChange={(e) => onChange('a3q2_u_def', e.target.value)} value={userAnswers.a3q2_u_def || ''}/>
-          <input style={{...styles.input, marginTop: '5px'}} placeholder="" onChange={(e) => onChange('a3q2_u_range', e.target.value)} value={userAnswers.a3q2_u_range || ''}/>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Representing Numbers</h3>
+        <StarButton questionId="a3q2" />
+      </div>
+      
+      <div style={{marginBottom: '20px'}}>
+        <p><b>Unsigned Integer</b></p>
+        <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '8px'}}>Definition:</p>
+        <input style={styles.input} onChange={(e) => onChange('a3q2_u_def', e.target.value)} value={userAnswers.a3q2_u_def || ''}/>
+        <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: '10px', marginBottom: '8px'}}>Range (n bits):</p>
+        <input style={styles.input} onChange={(e) => onChange('a3q2_u_range', e.target.value)} value={userAnswers.a3q2_u_range || ''}/>
+      </div>
+
+      <div style={{marginBottom: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <p style={{fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}><b>Signed Integer (Two Methods)</b></p>
+        
+        <div style={{marginBottom: '15px'}}>
+          <p><b>Two's Complement Representation</b></p>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '8px'}}>First bit meaning (0/1):</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q2_tcr_bit', e.target.value)} value={userAnswers.a3q2_tcr_bit || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: '10px', marginBottom: '8px'}}>Range (n bits):</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q2_tcr_range', e.target.value)} value={userAnswers.a3q2_tcr_range || ''}/>
         </div>
+
         <div>
-          <p><b>Two's Complement Representation:</b></p>
-          <p style={{fontSize: '0.8rem'}}>1st bit meaning (0/1):</p>
-          <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_s_bit', e.target.value)} value={userAnswers.a3q2_s_bit || ''}/>
+          <p><b>Two's Complement</b></p>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '8px'}}>Conversion method:</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q2_tc_method', e.target.value)} value={userAnswers.a3q2_tc_method || ''}/>
+          <p style={{fontSize: '0.9rem', color: '#64748b', marginTop: '10px', marginBottom: '8px'}}>Range (n bits):</p>
+          <input style={styles.input} onChange={(e) => onChange('a3q2_tc_range', e.target.value)} value={userAnswers.a3q2_tc_range || ''}/>
         </div>
       </div>
 
-      <p style={{marginTop: '15px'}}>Comparison of Two Methods (n bits):</p>
-      <table style={styles.table}>
-        <thead>
-          <tr><th style={styles.th}>Method</th><th style={styles.th}>Conversion/Rule</th><th style={styles.th}>Range</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Two's Comp Representation</td>
-            <td>Refer to pervious answer</td>
-            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r1', e.target.value)} value={userAnswers.a3q2_r1 || ''}/></td>
-          </tr>
-          <tr>
-            <td>Two's Complement</td>
-            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r2_rule', e.target.value)} value={userAnswers.a3q2_r2_rule || ''}/></td>
-            <td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_r2', e.target.value)} value={userAnswers.a3q2_r2 || ''}/></td>
-          </tr>
-        </tbody>
-      </table>
-      <p style={{marginTop: '10px'}}>Relationship: Two's complement of X is the representation of...?</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q2_rel', e.target.value)} value={userAnswers.a3q2_rel || ''}/>
-      {showAnswers && <div style={styles.answerKey}>Unsigned: Positive only, 0 to (2^n)-1. Repr Range: -(2^(n-1)) to 2^(n-1)-1. Comp Range: -(2^(n-1))+1 to 2^(n-1). Relation: Two's complement of X = Two's complement representation of -X.</div>}
+      <p><b>Relationship between Two's Complement and Two's Complement Representation</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q2_rel', e.target.value)} value={userAnswers.a3q2_rel || ''}/>
+      
+      {showAnswers && <div style={styles.answerKey}>Unsigned: Positive integer, Range 0 to (2^n)-1. Two's Complement Representation: First bit 1=negative 0=positive, Range -(2^(n-1)) to 2^(n-1)-1. Two's Complement: Interchange 1 and 0 then add 1, Range -(2^(n-1))+1 to 2^(n-1). Relationship: Two's complement of X is the two's complement representation of -X</div>}
     </div>
 
-{/* Q3: Character Encoding */}
+    {/* Q3: Character Encoding */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Character Encoding Systems</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Character Encoding Systems</h3>
+        <StarButton questionId="a3q3" />
+      </div>
       
       <table style={styles.table}>
         <thead>
           <tr>
             <th style={styles.th}>Encoding System</th>
             <th style={styles.th}>Language / Characters</th>
-            <th style={styles.th}>Bit/Byte Used</th>
+            <th style={styles.th}>Bits Used</th>
           </tr>
         </thead>
         <tbody>
-          {[
-            { id: 'ascii', name: 'ASCII' },
-            { id: 'big5', name: 'Big-5' },
-            { id: 'gb', name: 'GB' },
-            { id: 'unicode', name: 'Unicode (UTF-8)' }
-          ].map((item) => (
-            <tr key={item.id}>
-              <td style={{padding: '10px'}}><b>{item.name}</b></td>
-              <td>
-                <input 
-                  style={styles.input} 
-                  placeholder="Language" 
-                  onChange={(e) => onChange(`a3q3_${item.id}_lang`, e.target.value)} 
-                  value={userAnswers[`a3q3_${item.id}_lang`] || ''}
-                />
-              </td>
-              <td>
-                <input 
-                  style={styles.input} 
-                  placeholder="" 
-                  onChange={(e) => onChange(`a3q3_${item.id}_size`, e.target.value)} 
-                  value={userAnswers[`a3q3_${item.id}_size`] || ''}
-                />
-              </td>
-            </tr>
-          ))}
+          <tr>
+            <td><b>ASCII</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_ascii_lang', e.target.value)} value={userAnswers.a3q3_ascii_lang || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_ascii_bits', e.target.value)} value={userAnswers.a3q3_ascii_bits || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Big-5</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_big5_lang', e.target.value)} value={userAnswers.a3q3_big5_lang || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_big5_bits', e.target.value)} value={userAnswers.a3q3_big5_bits || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>GuoBiao (GB)</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_gb_lang', e.target.value)} value={userAnswers.a3q3_gb_lang || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_gb_bits', e.target.value)} value={userAnswers.a3q3_gb_bits || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Unicode</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_unicode_lang', e.target.value)} value={userAnswers.a3q3_unicode_lang || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q3_unicode_bits', e.target.value)} value={userAnswers.a3q3_unicode_bits || ''}/></td>
+          </tr>
         </tbody>
       </table>
 
-      <div style={{marginTop: '20px'}}>
-        <p><b>Why use an extra bit in ASCII (8-bit) instead of 7-bit? (3 reasons):</b></p>
-        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '5px'}}>
-          <input style={styles.input} placeholder="Reason 1" onChange={(e) => onChange('a3q3_ascii_r1', e.target.value)} value={userAnswers.a3q3_ascii_r1 || ''}/>
-          <input style={styles.input} placeholder="Reason 2" onChange={(e) => onChange('a3q3_ascii_r2', e.target.value)} value={userAnswers.a3q3_ascii_r2 || ''}/>
-          <input style={styles.input} placeholder="Reason 3" onChange={(e) => onChange('a3q3_ascii_r3', e.target.value)} value={userAnswers.a3q3_ascii_r3 || ''}/>
+      <div style={{marginTop: '20px', padding: '15px', border: '1px solid #e2e8f0', borderRadius: '8px'}}>
+        <p><b>Why use an extra bit for ASCII? (3 reasons)</b></p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px'}}>
+          <input style={styles.input} onChange={(e) => onChange('a3q3_reason1', e.target.value)} value={userAnswers.a3q3_reason1 || ''}/>
+          <input style={styles.input} onChange={(e) => onChange('a3q3_reason2', e.target.value)} value={userAnswers.a3q3_reason2 || ''}/>
+          <input style={styles.input} onChange={(e) => onChange('a3q3_reason3', e.target.value)} value={userAnswers.a3q3_reason3 || ''}/>
         </div>
       </div>
 
-      <div style={{marginTop: '20px'}}>
-        <p><b>Consequence of wrong encoding:</b></p>
-        <textarea 
-          style={styles.input} 
-          rows="2" 
-          placeholder="" 
-          onChange={(e) => onChange('a3q3_wrong_enc', e.target.value)} 
-          value={userAnswers.a3q3_wrong_enc || ''}
-        />
+      <div style={{marginTop: '15px'}}>
+        <p><b>Consequence of using wrong character encoding system:</b></p>
+        <input style={styles.input} onChange={(e) => onChange('a3q3_consequence', e.target.value)} value={userAnswers.a3q3_consequence || ''}/>
       </div>
 
       {showAnswers && (
         <div style={styles.answerKey}>
-          <b>Table:</b><br/>
-          - ASCII: English / 7 bits (standard) or 1 Byte.<br/>
-          - Big-5: Traditional Chinese / 2 Bytes.<br/>
-          - GB: Simplified Chinese / 2 Bytes.<br/>
-          - Unicode: All languages / 1 to 4 Bytes.<br/><br/>
-          <b>ASCII Extra Bit:</b> 1. Parity check, 2. Store extra symbols (Extended ASCII), 3. Data alignment (processing as whole bytes).<br/><br/>
-          <b>Consequence:</b> Characters appear as garbled text (Mojibake), meaningless symbols, or boxes because the computer interprets the binary data using the wrong character map.
+          ASCII: English, 7 bit. Big-5: Traditional Chinese, 2 bytes. GuoBiao: Simplified Chinese, 2 bytes. Unicode: Multi-language, 2 to 4 bytes.<br/>
+          Reasons for extra bit: 1. Some system process data in byte 2. Represent more character 3. As parity bit<br/>
+          Consequence: Garbled text is shown
         </div>
       )}
     </div>
 
     {/* Q4: Barcode vs QR Code */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Barcode vs QR Code</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Barcode and QR Code</h3>
+        <StarButton questionId="a3q4" />
+      </div>
+      <p style={{marginBottom: '15px'}}>List out comparison of Barcode and QR code in different aspects. Input both aspect name and values:</p>
       <table style={styles.table}>
         <thead>
           <tr><th style={styles.th}>Aspect Name</th><th style={styles.th}>Barcode</th><th style={styles.th}>QR Code</th></tr>
@@ -423,28 +685,44 @@ const A_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
         <tbody>
           {[1, 2, 3].map(i => (
             <tr key={i}>
-              <td><input style={styles.input} placeholder="" onChange={(e) => onChange(`a3q4_asp_${i}`, e.target.value)} value={userAnswers[`a3q4_asp_${i}`] || ''}/></td>
-              <td><textarea style={styles.input} onChange={(e) => onChange(`a3q4_bar_${i}`, e.target.value)} value={userAnswers[`a3q4_bar_${i}`] || ''}/></td>
-              <td><textarea style={styles.input} onChange={(e) => onChange(`a3q4_qr_${i}`, e.target.value)} value={userAnswers[`a3q4_qr_${i}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q4_asp_${i}`, e.target.value)} value={userAnswers[`a3q4_asp_${i}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q4_bar_${i}`, e.target.value)} value={userAnswers[`a3q4_bar_${i}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q4_qr_${i}`, e.target.value)} value={userAnswers[`a3q4_qr_${i}`] || ''}/></td>
             </tr>
           ))}
         </tbody>
       </table>
-      {showAnswers && <div style={styles.answerKey}>1. Character Set: Barcode (ASCII/Num) vs QR (Unicode). 2. Length: Barcode (50) vs QR (1000+). 3. Scanning: Barcode (0/180 deg) vs QR (Any angle).</div>}
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          1. Character Set: Barcode - limited to ASCII code or number, QR Code - Unicode<br/>
+          2. Character Length: Barcode - 50 max, QR Code - at least 1000<br/>
+          3. Easy to Scan: Barcode - only from 0 degree or 180 degree, QR Code - any direction and angle
+        </div>
+      )}
     </div>
 
     {/* Q5: Analog vs Digital */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q5: Analog & Digital Data</h3>
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
-        <textarea style={styles.input} placeholder="Analog Definition" onChange={(e) => onChange('a3q5_a_def', e.target.value)} value={userAnswers.a3q5_a_def || ''}/>
-        <textarea style={styles.input} placeholder="Digital Definition" onChange={(e) => onChange('a3q5_d_def', e.target.value)} value={userAnswers.a3q5_d_def || ''}/>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: Analog and Digital Data</h3>
+        <StarButton questionId="a3q5" />
       </div>
       
-      <p style={{marginTop: '15px'}}>Comparison (Name aspect & values):</p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px'}}>
+        <div>
+          <p><b>Definition of Analog Data:</b></p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q5_a_def', e.target.value)} value={userAnswers.a3q5_a_def || ''}/>
+        </div>
+        <div>
+          <p><b>Definition of Digital Data:</b></p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q5_d_def', e.target.value)} value={userAnswers.a3q5_d_def || ''}/>
+        </div>
+      </div>
+      
+      <p><b>Comparison of Analog and Digital Data. Input both aspect name and values:</b></p>
       <table style={styles.table}>
         <thead>
-          <tr><th style={styles.th}>Aspect</th><th style={styles.th}>Analog</th><th style={styles.th}>Digital</th></tr>
+          <tr><th style={styles.th}>Aspect Name</th><th style={styles.th}>Analog</th><th style={styles.th}>Digital</th></tr>
         </thead>
         <tbody>
           {[1, 2, 3, 4].map(i => (
@@ -457,118 +735,206 @@ const A_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </tbody>
       </table>
 
-      <p style={{marginTop: '15px'}}>Digitalizing Audio (Steps):</p>
-      <div style={{display: 'flex', gap: '10px'}}>
-        <div style={{flex: 1}}>
-          <p>Step 1: Discretization</p>
-          <textarea style={styles.input} placeholder="Description" onChange={(e) => onChange('a3q5_s1', e.target.value)} value={userAnswers.a3q5_s1 || ''}/>
+      <p style={{marginTop: '20px'}}><b>Digitalizing Audio - Procedure and Steps:</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+        <div>
+          <p style={{fontWeight: '700', color: '#4338ca'}}>Step 1: Discretization</p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q5_s1', e.target.value)} value={userAnswers.a3q5_s1 || ''}/>
         </div>
-        <div style={{flex: 1}}>
-          <p>Step 2: Quantization</p>
-          <textarea style={styles.input} placeholder="Description" onChange={(e) => onChange('a3q5_s2', e.target.value)} value={userAnswers.a3q5_s2 || ''}/>
+        <div>
+          <p style={{fontWeight: '700', color: '#4338ca'}}>Step 2: Quantization</p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q5_s2', e.target.value)} value={userAnswers.a3q5_s2 || ''}/>
         </div>
       </div>
-      <p style={{marginTop: '10px'}}>Digitalizing Books (Name):</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q5_ocr', e.target.value)} value={userAnswers.a3q5_ocr || ''}/>
-      {showAnswers && <div style={styles.answerKey}>Aspects: Presentation, Lifespan/Durability, Compression, Resistance to corruption. S1: Sample at intervals. S2: Assign discrete values. Books: OCR.</div>}
+
+      <p style={{marginTop: '15px'}}>Way to digitalize books (name):</p>
+      <input style={styles.input} onChange={(e) => onChange('a3q5_books', e.target.value)} value={userAnswers.a3q5_books || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Analog: Data represented physically with continuous values. Digital: Data represented by discrete symbols.<br/>
+          Aspects: 1. Way of presentation - Analog: Physical matter, Digital: Discrete symbols | 2. Lifespan and durability - Analog: Shorter and less durable, Digital: Longer and more durable | 3. Viability to be compressed - Analog: Lower, Digital: Higher | 4. Resistance to data corruption - Analog: Lower, Digital: Higher<br/>
+          S1: Sample the analog signal at fixed time interval. S2: Assign samples discrete value from set of fixed discrete values. Books: OCR
+        </div>
+      )}
     </div>
 
     {/* Q6: Compression */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q6: Compression</h3>
-      <textarea style={styles.input} placeholder="Definition of Compression" onChange={(e) => onChange('a3q6_def', e.target.value)} value={userAnswers.a3q6_def || ''}/>
-      <div style={{marginTop: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: Compression</h3>
+        <StarButton questionId="a3q6" />
+      </div>
+      <p><b>Definition of Compression:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q6_def', e.target.value)} value={userAnswers.a3q6_def || ''}/>
+      
+      <div style={{marginTop: '15px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
         <div>
-          <p><b>Lossy</b> Definition:</p>
-          <textarea style={styles.input} onChange={(e) => onChange('a3q6_lossy', e.target.value)} value={userAnswers.a3q6_lossy || ''}/>
+          <p><b>Lossy Compression Definition:</b></p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q6_lossy', e.target.value)} value={userAnswers.a3q6_lossy || ''}/>
         </div>
         <div>
-          <p><b>Lossless</b> Definition:</p>
-          <textarea style={styles.input} onChange={(e) => onChange('a3q6_lossless', e.target.value)} value={userAnswers.a3q6_lossless || ''}/>
+          <p><b>Lossless Compression Definition:</b></p>
+          <textarea style={styles.input} rows="2" onChange={(e) => onChange('a3q6_lossless', e.target.value)} value={userAnswers.a3q6_lossless || ''}/>
         </div>
       </div>
-      <p style={{marginTop: '10px'}}>Compression Ratio Formula:</p>
-      <input style={styles.input} placeholder="" onChange={(e) => onChange('a3q6_ratio', e.target.value)} value={userAnswers.a3q6_ratio || ''}/>
-      {showAnswers && <div style={styles.answerKey}>Lossy: Data lost, higher ratio. Lossless: No data lost. Ratio = Uncompressed Size / Compressed Size.</div>}
+
+      <p style={{marginTop: '15px'}}>Compression Ratio Formula:</p>
+      <input style={styles.input} onChange={(e) => onChange('a3q6_ratio', e.target.value)} value={userAnswers.a3q6_ratio || ''}/>
+      
+      {showAnswers && <div style={styles.answerKey}>Compression: Reduce the size of file to save storage space and facilitate transmission. Lossy: An amount data is lost during compression, but have a higher compression ratio. Lossless: No data is lost during compression. Ratio: Uncompressed size / Compressed size</div>}
     </div>
 
     {/* Q7: File Size Calculations */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q7: File Size Formulas</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7: File Size Calculations</h3>
+        <StarButton questionId="a3q7" />
+      </div>
       <table style={styles.table}>
         <thead>
-          <tr><th style={styles.th}>File Type</th><th style={styles.th}>Formula / Attribute</th></tr>
+          <tr><th style={styles.th}>File Type</th><th style={styles.th}>Formula or Attribute</th></tr>
         </thead>
         <tbody>
-          <tr><td>Plain Text</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f1', e.target.value)} value={userAnswers.a3q7_f1 || ''}/></td></tr>
-          <tr><td>Bitmap Image</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f2', e.target.value)} value={userAnswers.a3q7_f2 || ''}/></td></tr>
-          <tr><td>Audio</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f3', e.target.value)} value={userAnswers.a3q7_f3 || ''}/></td></tr>
-          <tr><td>Video</td><td><input style={styles.input} placeholder="" onChange={(e) => onChange('a3q7_f4', e.target.value)} value={userAnswers.a3q7_f4 || ''}/></td></tr>
+          <tr>
+            <td><b>Plain Text</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_plain', e.target.value)} value={userAnswers.a3q7_plain || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Formatted Text</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_formatted', e.target.value)} value={userAnswers.a3q7_formatted || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Bitmap Image</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_bitmap', e.target.value)} value={userAnswers.a3q7_bitmap || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Vector Image</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_vector', e.target.value)} value={userAnswers.a3q7_vector || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Audio</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_audio', e.target.value)} value={userAnswers.a3q7_audio || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Video</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a3q7_video', e.target.value)} value={userAnswers.a3q7_video || ''}/></td>
+          </tr>
         </tbody>
       </table>
-      {showAnswers && <div style={styles.answerKey}>Text: chars*size. Image: W*H*depth. Audio: SampleRate*BitDepth*Secs*Channels. Video: (FrameSize*FPS*Secs) + Audio.</div>}
+      {showAnswers && <div style={styles.answerKey}>Plain Text: Number of character * size of one character. Formatted Text: Usually larger size. Bitmap Image: Height * width * colour depth. Vector Image: Usually smaller file size. Audio: Sampling rate * bit depth * length * number of channels. Video: Image * fps + audio</div>}
     </div>
 
     {/* Q8: File Formats */}
-<div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q8: File Formats</h3>
-      
-      <p><b>Text Formats:</b></p>
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: File Formats - Text</h3>
+        <StarButton questionId="a3q8" />
+      </div>
       <table style={styles.table}>
-        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Type</th><th style={styles.th}>Attribute</th></tr></thead>
+        <thead><tr><th style={styles.th}>Extension</th><th style={styles.th}>File Type</th><th style={styles.th}>Attribute</th></tr></thead>
         <tbody>
-          {['1', '2', '3', '4'].map(idx => (
+          {[
+            {ext: '.TXT', type: 'Plain text', attr: 'Has smaller file size'},
+            {ext: '.RTF', type: 'Formatted text', attr: 'Can add hyperlinks to the file'},
+            {ext: '.DOCX', type: 'Formatted text', attr: 'Can add multimedia to file'},
+            {ext: '.PDF', type: 'Formatted text', attr: 'Provide a uniform layout across different platforms'}
+          ].map((item, idx) => (
             <tr key={idx}>
-              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_t_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_ext_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_t_type_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_type_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_t_attr_${idx}`, e.target.value)} value={userAnswers[`a3q8_t_attr_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8t_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8t_ext_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8t_type_${idx}`, e.target.value)} value={userAnswers[`a3q8t_type_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8t_attr_${idx}`, e.target.value)} value={userAnswers[`a3q8t_attr_${idx}`] || ''}/></td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <p style={{marginTop: '15px'}}><b>Image Formats:</b></p>
+      <p style={{marginTop: '20px'}}><b>File Formats - Image</b></p>
       <table style={styles.table}>
-        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Transparent? (Y/N)</th><th style={styles.th}>Animation? (Y/N)</th><th style={styles.th}>Compression Type</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
+        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Transparent</th><th style={styles.th}>Animation</th><th style={styles.th}>Compression</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
         <tbody>
-          {['1', '2', '3', '4', '5', '6'].map(idx => (
+          {[
+            {ext: '.BMP', trans: 'N', anim: 'N', comp: 'Uncompressed', attr1: '24 bits of colour depth', attr2: 'Relatively large file size'},
+            {ext: '.JPG', trans: 'N', anim: 'N', comp: 'Lossy', attr1: '24 bits of colour depth', attr2: 'Relatively small file size'},
+            {ext: '.PNG', trans: 'Y', anim: 'N', comp: 'Lossless', attr1: '48 bits of colour depth', attr2: ''},
+            {ext: '.WebP', trans: 'Y', anim: 'Y', comp: 'Lossy or lossless', attr1: '24 bits of colour depth', attr2: 'Relatively small file size'},
+            {ext: '.GIF', trans: 'Y', anim: 'Y', comp: 'Lossless', attr1: '8 bits of colour depth only', attr2: ''},
+            {ext: '.SVG', trans: 'Y', anim: 'Y', comp: 'Uncompressed', attr1: 'Has a lossless compressed version called SVGZ', attr2: ''}
+          ].map((item, idx) => (
             <tr key={idx}>
-              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_i_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_ext_${idx}`] || ''}/></td>
-              <td><input style={{...styles.input, width: '40px'}} onChange={(e) => onChange(`a3q8_i_tr_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_tr_${idx}`] || ''}/></td>
-              <td><input style={{...styles.input, width: '40px'}} onChange={(e) => onChange(`a3q8_i_an_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_an_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_co_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_co_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_at1_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_at1_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_i_at2_${idx}`, e.target.value)} value={userAnswers[`a3q8_i_at2_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '60px'}} onChange={(e) => onChange(`a3q8i_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8i_ext_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '50px'}} onChange={(e) => onChange(`a3q8i_trans_${idx}`, e.target.value)} value={userAnswers[`a3q8i_trans_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '50px'}} onChange={(e) => onChange(`a3q8i_anim_${idx}`, e.target.value)} value={userAnswers[`a3q8i_anim_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8i_comp_${idx}`, e.target.value)} value={userAnswers[`a3q8i_comp_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8i_attr1_${idx}`, e.target.value)} value={userAnswers[`a3q8i_attr1_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8i_attr2_${idx}`, e.target.value)} value={userAnswers[`a3q8i_attr2_${idx}`] || ''}/></td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <p style={{marginTop: '15px'}}><b>Audio & Video Formats:</b></p>
+      <p style={{marginTop: '20px'}}><b>File Formats - Audio</b></p>
       <table style={styles.table}>
-        <thead><tr><th style={styles.th}>Ext</th><th style={styles.th}>Compression Type</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
+        <thead><tr><th style={styles.th}>Extension</th><th style={styles.th}>Compression Type</th><th style={styles.th}>Attribute 1</th><th style={styles.th}>Attribute 2</th></tr></thead>
         <tbody>
-          {['1', '2', '3', '4', '5', '6', '7', '8'].map(idx => (
+          {[
+            {ext: '.WAV', comp: 'Uncompressed', attr1: 'High audio quality', attr2: 'Large file size'},
+            {ext: '.MP3', comp: 'Lossy', attr1: 'Small file size', attr2: ''},
+            {ext: '.WMA', comp: 'Lossy or lossless', attr1: 'File size depends on compression methods', attr2: ''},
+            {ext: '.MIDI', comp: 'Uncompressed', attr1: 'Stores musical notes or sampled music', attr2: 'But not real life sound'}
+          ].map((item, idx) => (
             <tr key={idx}>
-              <td><input style={{...styles.input, width: '80px'}} placeholder=".ext" onChange={(e) => onChange(`a3q8_av_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_ext_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_co_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_co_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_at1_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_at1_${idx}`] || ''}/></td>
-              <td><input style={styles.input} onChange={(e) => onChange(`a3q8_av_at2_${idx}`, e.target.value)} value={userAnswers[`a3q8_av_at2_${idx}`] || ''}/></td>
+              <td><input style={{...styles.input, width: '60px'}} onChange={(e) => onChange(`a3q8a_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8a_ext_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8a_comp_${idx}`, e.target.value)} value={userAnswers[`a3q8a_comp_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8a_attr1_${idx}`, e.target.value)} value={userAnswers[`a3q8a_attr1_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8a_attr2_${idx}`, e.target.value)} value={userAnswers[`a3q8a_attr2_${idx}`] || ''}/></td>
             </tr>
           ))}
         </tbody>
       </table>
-      {showAnswers && <div style={styles.answerKey}>Verify against notes: BMP (uncomp), JPG (lossy), PNG (lossless), GIF (8-bit), PDF (uniform layout), MIDI (notes, no real sound).</div>}
+
+      <p style={{marginTop: '20px'}}><b>File Formats - Video</b></p>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Extension</th><th style={styles.th}>Compression Type</th></tr></thead>
+        <tbody>
+          {[
+            {ext: '.AVI', comp: 'Uncompressed'},
+            {ext: '.MP4', comp: 'Lossy'},
+            {ext: '.WebM', comp: 'Lossy or lossless'},
+            {ext: '.MOV', comp: 'Lossy'}
+          ].map((item, idx) => (
+            <tr key={idx}>
+              <td><input style={{...styles.input, width: '60px'}} onChange={(e) => onChange(`a3q8v_ext_${idx}`, e.target.value)} value={userAnswers[`a3q8v_ext_${idx}`] || ''}/></td>
+              <td><input style={styles.input} onChange={(e) => onChange(`a3q8v_comp_${idx}`, e.target.value)} value={userAnswers[`a3q8v_comp_${idx}`] || ''}/></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Text:</b> .TXT, .RTF, .DOCX, .PDF - see table data<br/>
+          <b>Image:</b> .BMP through .SVG - see table data<br/>
+          <b>Audio:</b> .WAV through .MIDI - see table data<br/>
+          <b>Video:</b> .AVI (Uncompressed), .MP4 (Lossy), .WebM (Lossy or lossless), .MOV (Lossy)
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
   </div>
 );
 
 // --- COMPULSORY B CH 1: OUTPUT DEVICES ---
-const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_B_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Comparison of monitor types */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Comparison of Monitor Types</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Comparison of Monitor Types</h3>
+        <StarButton questionId="b1q1" />
+      </div>
       <table style={styles.table}>
         <thead>
           <tr>
@@ -600,7 +966,10 @@ const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q2: Ports of monitors */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Ports of Monitors</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Ports of Monitors</h3>
+        <StarButton questionId="b1q2" />
+      </div>
       <p>Input the 4 names of port types:</p>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px'}}>
         {[1,2,3,4].map(i => <input key={i} style={styles.input} placeholder={`Port Name ${i}`} onChange={(e) => onChange(`b1q2_p${i}`, e.target.value)} value={userAnswers[`b1q2_p${i}`] || ''}/>)}
@@ -617,7 +986,10 @@ const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q3: Comparison with projectors */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Comparison with Projectors</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Comparison with Projectors</h3>
+        <StarButton questionId="b1q3" />
+      </div>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
         <div>
           <p>Advantages of <b>Projector</b>:</p>
@@ -638,7 +1010,10 @@ const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q4: Comparison of printers */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Comparison of Printers</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Comparison of Printers</h3>
+        <StarButton questionId="b1q4" />
+      </div>
       <table style={styles.table}>
         <thead>
           <tr>
@@ -665,14 +1040,20 @@ const B_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
 
 // --- COMPULSORY B CH 2: SYSTEM UNIT ---
-const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_B_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Overview</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Overview</h3>
+        <StarButton questionId="b2q1" />
+      </div>
       <p>Name the components of a system unit:</p>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '15px'}}>
         {[1,2,3,4,5,6].map(i => <input key={i} style={styles.input} placeholder={`Comp ${i}`} onChange={(e) => onChange(`b2q1_c${i}`, e.target.value)} value={userAnswers[`b2q1_c${i}`] || ''}/>)}
@@ -691,7 +1072,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Motherboard</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Motherboard</h3>
+        <StarButton questionId="b2q2" />
+      </div>
       <p>Definition:</p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('b2q2_def', e.target.value)} value={userAnswers.b2q2_def || ''}/>
       <p style={{marginTop: '15px'}}>Ports & Connected Devices:</p>
@@ -712,7 +1096,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: PSU</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: PSU</h3>
+        <StarButton questionId="b2q3" />
+      </div>
       <p>Use:</p>
       <input style={styles.input} onChange={(e) => onChange('b2q3_use', e.target.value)} value={userAnswers.b2q3_use || ''}/>
       <p style={{marginTop: '10px'}}>Essential Requirements & Purpose:</p>
@@ -728,7 +1115,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
 <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Bus</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Bus</h3>
+        <StarButton questionId="b2q4" />
+      </div>
       <p>Use of Bus:</p>
       <input style={styles.input} placeholder="General use of bus..." onChange={(e) => onChange('b2q4_use', e.target.value)} value={userAnswers.b2q4_use || ''}/>
       
@@ -786,7 +1176,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
 <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q5: CPU (Central Processing Unit)</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: CPU (Central Processing Unit)</h3>
+        <StarButton questionId="b2q5" />
+      </div>
       
       {/* Definitions */}
       <div style={{marginBottom: '20px'}}>
@@ -880,7 +1273,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q6: GPU</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: GPU</h3>
+        <StarButton questionId="b2q6" />
+      </div>
       <p>Difference with CPU:</p>
       <textarea style={styles.input} onChange={(e) => onChange('b2q6_diff', e.target.value)} value={userAnswers.b2q6_diff || ''}/>
       <p style={{marginTop: '15px'}}>Graphic Card vs iGPU Adv:</p>
@@ -891,7 +1287,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
 <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q7: Storage Device - Main Memory</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7: Storage Device - Main Memory</h3>
+        <StarButton questionId="b2q7" />
+      </div>
       <table style={styles.table}>
         <thead>
           <tr>
@@ -928,7 +1327,10 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
 
 <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q8: Secondary Storage</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: Secondary Storage</h3>
+        <StarButton questionId="b2q8" />
+      </div>
       <div style={{display: 'flex', gap: '10px', marginBottom: '15px'}}>
         <div style={{flex: 1}}>
           <p>Definition:</p>
@@ -1023,15 +1425,21 @@ const B_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
 
 // --- COMPULSORY B CH 3: SOFTWARE (COMPLETE NEW UPDATE) ---
-const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_B_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Introduction */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Introduction to Software</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Introduction to Software</h3>
+        <StarButton questionId="b3q1" />
+      </div>
       <p>Use of <b>System Software</b>:</p>
       <input style={styles.input} onChange={(e) => onChange('b3q1_sys', e.target.value)} value={userAnswers.b3q1_sys || ''}/>
       <p style={{marginTop: '10px'}}>Use of <b>Application Software</b>:</p>
@@ -1041,7 +1449,10 @@ const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q2: Operating System (OS) */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Operating System (OS)</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Operating System (OS)</h3>
+        <StarButton questionId="b3q2" />
+      </div>
       <p>Is OS System or Application software?</p>
       <select style={styles.select} onChange={(e) => onChange('b3q2_type', e.target.value)} value={userAnswers.b3q2_type || ''}>
         <option value="">Select...</option>
@@ -1073,7 +1484,10 @@ const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q3: Utility Program */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Utility Program</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Utility Program</h3>
+        <StarButton questionId="b3q3" />
+      </div>
       <p>Is it System or Application software?</p>
       <select style={styles.select} onChange={(e) => onChange('b3q3_type', e.target.value)} value={userAnswers.b3q3_type || ''}>
         <option value="">Select...</option>
@@ -1100,7 +1514,10 @@ const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q4: Driver Program */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Driver Program</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Driver Program</h3>
+        <StarButton questionId="b3q4" />
+      </div>
       <p>Is it System or Application software?</p>
       <select style={styles.select} onChange={(e) => onChange('b3q4_type', e.target.value)} value={userAnswers.b3q4_type || ''}>
         <option value="">Select...</option>
@@ -1121,14 +1538,20 @@ const B_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
 
-const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_C_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Network Architecture */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Network Architecture</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Network Architecture</h3>
+        <StarButton questionId="c1q1" />
+      </div>
       
       <p style={{marginBottom: '10px'}}><b>LAN vs WAN Definitions:</b></p>
       <table style={styles.table}>
@@ -1186,7 +1609,10 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q2: Network Services */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Network Services</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Network Services</h3>
+        <StarButton questionId="c1q2" />
+      </div>
       <p>List 6 Services (Name, Description, Attribute):</p>
       <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
         {[1, 2, 3, 4, 5, 6].map(i => (
@@ -1206,7 +1632,10 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
 {/* Q3: Network Hardware */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Network Hardware</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Network Hardware</h3>
+        <StarButton questionId="c1q3" />
+      </div>
       
       <p style={{fontWeight: 'bold'}}>NIC</p>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px'}}>
@@ -1249,7 +1678,10 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q4: Wireless Communication */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Wireless Communication</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Wireless Communication</h3>
+        <StarButton questionId="c1q4" />
+      </div>
       
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
         <div>
@@ -1296,7 +1728,10 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
     </div>
     {/* Q5: Wired vs Wireless */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q5: Wired vs Wireless Network</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: Wired vs Wireless Network</h3>
+        <StarButton questionId="c1q5" />
+      </div>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px'}}>
         <div>
           <p><b>Wired</b></p>
@@ -1314,7 +1749,10 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q6: Internet Access */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q6: Method of Internet Access</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: Method of Internet Access</h3>
+        <StarButton questionId="c1q6" />
+      </div>
       <p style={{fontWeight: 'bold'}}>Broadband</p>
       <textarea style={styles.input} rows="2" placeholder="Method, Attr, Comparison" onChange={(e) => onChange('c1q6_bb', e.target.value)} value={userAnswers.c1q6_bb || ''}/>
       
@@ -1332,15 +1770,21 @@ const C_Ch1 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
 
 // --- COMPULSORY C CH 2 ---
-const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_C_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: Protocol */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Protocol</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Protocol</h3>
+        <StarButton questionId="c2q1" />
+      </div>
       <p>Definition of a <b>Protocol</b>:</p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('c2q1_def', e.target.value)} value={userAnswers.c2q1_def || ''}/>
       {showAnswers && <div style={styles.answerKey}>A set of rules that specify the format and order of data sent and received between devices.</div>}
@@ -1348,7 +1792,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q2: TCP/IP */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: TCP/IP</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: TCP/IP</h3>
+        <StarButton questionId="c2q2" />
+      </div>
       <p>What is TCP/IP?</p>
       <input style={styles.input} onChange={(e) => onChange('c2q2_def', e.target.value)} value={userAnswers.c2q2_def || ''}/>
       
@@ -1381,7 +1828,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q3: IP Address */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: IP Address</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: IP Address</h3>
+        <StarButton questionId="c2q3" />
+      </div>
       <p>Definition:</p>
       <input style={styles.input} onChange={(e) => onChange('c2q3_def', e.target.value)} value={userAnswers.c2q3_def || ''}/>
       
@@ -1444,7 +1894,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q4: DNS */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: DNS</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: DNS</h3>
+        <StarButton questionId="c2q4" />
+      </div>
       <p>Use of Domain Name:</p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('c2q4_dn_use', e.target.value)} value={userAnswers.c2q4_dn_use || ''}/>
       <p style={{marginTop: '10px'}}>Use of DNS Server:</p>
@@ -1481,7 +1934,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q5: URL */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q5: URL</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: URL</h3>
+        <StarButton questionId="c2q5" />
+      </div>
       <p>Use of Port Number:</p>
       <input style={styles.input} onChange={(e) => onChange('c2q5_port', e.target.value)} value={userAnswers.c2q5_port || ''}/>
       <p style={{marginTop: '10px'}}>Use of Path:</p>
@@ -1495,7 +1951,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q6: Network Protocol */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q6: HTTP & HTTPS</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: HTTP & HTTPS</h3>
+        <StarButton questionId="c2q6" />
+      </div>
       <p>Use of HTTP/HTTPS:</p>
       <input style={styles.input} onChange={(e) => onChange('c2q6_use', e.target.value)} value={userAnswers.c2q6_use || ''}/>
       <p style={{marginTop: '10px'}}>Use of HTTP Server:</p>
@@ -1517,7 +1976,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q7: Email Protocol */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q7: Email Protocol</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7: Email Protocol</h3>
+        <StarButton questionId="c2q7" />
+      </div>
       <p>2 Uses of SMTP:</p>
       <div style={{display: 'flex', gap: '10px'}}>
         <input style={styles.input} placeholder="1" onChange={(e) => onChange('c2q7_smtp1', e.target.value)} value={userAnswers.c2q7_smtp1 || ''}/>
@@ -1562,7 +2024,10 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q8: FTP */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q8: FTP</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: FTP</h3>
+        <StarButton questionId="c2q8" />
+      </div>
       <p>Use:</p>
       <input style={styles.input} onChange={(e) => onChange('c2q8_use', e.target.value)} value={userAnswers.c2q8_use || ''}/>
       <p style={{marginTop: '10px'}}>Requirement:</p>
@@ -1573,15 +2038,21 @@ const C_Ch2 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
 
 // --- COMPULSORY C CH 3 ---
-const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
+const ICT_Comp_C_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
     {/* Q1: IoT */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q1: Internet of Things (IoT)</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Internet of Things (IoT)</h3>
+        <StarButton questionId="c3q1" />
+      </div>
       <p><b>Type:</b> (Application / Service)</p>
       <input style={styles.input} onChange={(e) => onChange('c3q1_type', e.target.value)} value={userAnswers.c3q1_type || ''}/>
       
@@ -1606,7 +2077,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q2: Cloud Service */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q2: Cloud Service</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Cloud Service</h3>
+        <StarButton questionId="c3q2" />
+      </div>
       <p><b>Type:</b></p>
       <input style={styles.input} onChange={(e) => onChange('c3q2_type', e.target.value)} value={userAnswers.c3q2_type || ''}/>
 
@@ -1639,7 +2113,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q3: Smart City */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q3: Smart City</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Smart City</h3>
+        <StarButton questionId="c3q3" />
+      </div>
       <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block', marginLeft: '10px'}} onChange={(e) => onChange('c3q3_type', e.target.value)} value={userAnswers.c3q3_type || ''}/></p>
       
       <p style={{marginTop: '15px'}}><b>Smart Economy (2 Uses):</b></p>
@@ -1679,7 +2156,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q4: Email */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q4: Email</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Email</h3>
+        <StarButton questionId="c3q4" />
+      </div>
       <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block', marginLeft: '10px'}} onChange={(e) => onChange('c3q4_type', e.target.value)} value={userAnswers.c3q4_type || ''}/></p>
       
       <p style={{marginTop: '10px'}}><b>Address Format:</b> iloveict@gmail.com</p>
@@ -1755,7 +2235,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q5: Remote Logon */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q5: Remote Logon</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: Remote Logon</h3>
+        <StarButton questionId="c3q5" />
+      </div>
       <p>Type: <input style={{...styles.input, width: '200px', display: 'inline-block'}} onChange={(e) => onChange('c3q5_type', e.target.value)} value={userAnswers.c3q5_type || ''}/></p>
       <p style={{marginTop: '10px'}}><b>Uses:</b></p>
       <textarea style={styles.input} rows="2" onChange={(e) => onChange('c3q5_use', e.target.value)} value={userAnswers.c3q5_use || ''}/>
@@ -1768,7 +2251,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q6, Q7, Q10: Short Questions */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q6, Q7, Q10: Service Checks</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6, Q7, Q10: Service Checks</h3>
+        <StarButton questionId="c3q6" />
+      </div>
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
         <div>
           <p><b>Q6 Online Chat</b> (Type, Use, Ex):</p>
@@ -1794,7 +2280,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q8: File Transfer */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q8: File Transfer</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: File Transfer</h3>
+        <StarButton questionId="c3q8" />
+      </div>
       <p>Type: <input style={{...styles.input, width: '150px', display: 'inline-block'}} onChange={(e) => onChange('c3q8_type', e.target.value)} value={userAnswers.c3q8_type || ''}/> Factors: <input style={{...styles.input, width: '300px', display: 'inline-block'}} onChange={(e) => onChange('c3q8_fac', e.target.value)} value={userAnswers.c3q8_fac || ''}/></p>
       
       <div style={{overflowX: 'auto', marginTop: '15px'}}>
@@ -1842,7 +2331,10 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
 
     {/* Q9: Information Searching */}
     <div style={styles.qSection}>
-      <h3 style={styles.qTitle}>Q9: Information Searching</h3>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q9: Information Searching</h3>
+        <StarButton questionId="c3q9" />
+      </div>
       <p>Type: <input style={{...styles.input, width: '150px', display: 'inline-block'}} onChange={(e) => onChange('c3q9_type', e.target.value)} value={userAnswers.c3q9_type || ''}/></p>
       
       <p style={{marginTop: '15px'}}><b>Search Engine vs Database:</b></p>
@@ -1902,6 +2394,1416 @@ const C_Ch3 = ({ userAnswers, onChange, showAnswers, styles }) => (
         </div>
       )}
     </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
   </div>
 );
+
+// --- COMPULSORY A CH 4 ---
+const ICT_Comp_C_Ch4 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Build a Website */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Building a Website</h3>
+        <StarButton questionId="c4q1" />
+      </div>
+      <p><b>3 Elements to design a website:</b></p>
+      <div style={{display: 'flex', gap: '10px', marginBottom: '15px'}}>
+        <input style={styles.input} placeholder="1. Structure" onChange={(e) => onChange('a4q1_e1', e.target.value)} value={userAnswers.a4q1_e1 || ''}/>
+        <input style={styles.input} placeholder="2. Presentation" onChange={(e) => onChange('a4q1_e2', e.target.value)} value={userAnswers.a4q1_e2 || ''}/>
+        <input style={styles.input} placeholder="3. Behavior" onChange={(e) => onChange('a4q1_e3', e.target.value)} value={userAnswers.a4q1_e3 || ''}/>
+      </div>
+      
+      <p><b>HTML Definition:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('a4q1_def', e.target.value)} value={userAnswers.a4q1_def || ''}/>
+      <p style={{marginTop: '10px'}}><b>HTML Attribute:</b></p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('a4q1_attr', e.target.value)} value={userAnswers.a4q1_attr || ''}/>
+      
+      {showAnswers && <div style={styles.answerKey}>Elements: HTML, CSS, JavaScript.<br/>Def: A markup language.<br/>Attr: Cross-platform compatible.</div>}
+    </div>
+
+    {/* Q2: HTML Editor */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: HTML Editors</h3>
+        <StarButton questionId="c4q2" />
+      </div>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Type</th><th style={styles.th}>Advantages</th><th style={styles.th}>Examples</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Text Editors</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('a4q2_txt_adv', e.target.value)} value={userAnswers.a4q2_txt_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q2_txt_ex', e.target.value)} value={userAnswers.a4q2_txt_ex || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Web Authoring Tools</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('a4q2_web_adv', e.target.value)} value={userAnswers.a4q2_web_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q2_web_ex', e.target.value)} value={userAnswers.a4q2_web_ex || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Text Editors:</b> Simple, all OS, good for simple code. Ex: Notepad++.<br/>
+          <b>Web Tools:</b> Templates, auto-indent, debug/testing env, smoother authoring. Ex: VS Code.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: HTML Tags */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: HTML Tags</h3>
+        <StarButton questionId="c4q3" />
+      </div>
+      
+      <p><b>Base Elements (Give Tags):</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px'}}>
+        <div>Title: <input style={styles.input} onChange={(e) => onChange('a4q3_title', e.target.value)} value={userAnswers.a4q3_title || ''}/></div>
+        <div>Paragraph: <input style={styles.input} onChange={(e) => onChange('a4q3_p', e.target.value)} value={userAnswers.a4q3_p || ''}/></div>
+        <div>Line Break: <input style={styles.input} onChange={(e) => onChange('a4q3_br', e.target.value)} value={userAnswers.a4q3_br || ''}/></div>
+        <div>Horiz. Line: <input style={styles.input} onChange={(e) => onChange('a4q3_hr', e.target.value)} value={userAnswers.a4q3_hr || ''}/></div>
+      </div>
+
+      <p><b>Text Formats:</b></p>
+      <div style={{display: 'flex', gap: '10px', marginBottom: '15px'}}>
+        <input style={styles.input} placeholder="Bold tag" onChange={(e) => onChange('a4q3_b', e.target.value)} value={userAnswers.a4q3_b || ''}/>
+        <input style={styles.input} placeholder="Italic tag" onChange={(e) => onChange('a4q3_i', e.target.value)} value={userAnswers.a4q3_i || ''}/>
+        <input style={styles.input} placeholder="Underline tag" onChange={(e) => onChange('a4q3_u', e.target.value)} value={userAnswers.a4q3_u || ''}/>
+      </div>
+
+      <p><b>Attributes (Fill in style="..."):</b></p>
+      <table style={styles.table}>
+        <tbody>
+          <tr><td>Font</td><td><input style={styles.input} placeholder='' onChange={(e) => onChange('a4q3_s_font', e.target.value)} value={userAnswers.a4q3_s_font || ''}/></td></tr>
+          <tr><td>Size</td><td><input style={styles.input} placeholder='' onChange={(e) => onChange('a4q3_s_size', e.target.value)} value={userAnswers.a4q3_s_size || ''}/></td></tr>
+          <tr><td>Alignment</td><td><input style={styles.input} placeholder='' onChange={(e) => onChange('a4q3_s_align', e.target.value)} value={userAnswers.a4q3_s_align || ''}/></td></tr>
+          <tr><td>Color</td><td><input style={styles.input} placeholder='' onChange={(e) => onChange('a4q3_s_col', e.target.value)} value={userAnswers.a4q3_s_col || ''}/></td></tr>
+          <tr><td>Bg Color</td><td><input style={styles.input} placeholder='' onChange={(e) => onChange('a4q3_s_bg', e.target.value)} value={userAnswers.a4q3_s_bg || ''}/></td></tr>
+        </tbody>
+      </table>
+      <p style={{marginTop: '10px'}}>Separator for multiple values: <input style={{...styles.input, width: '50px', display: 'inline-block'}} onChange={(e) => onChange('a4q3_sep', e.target.value)} value={userAnswers.a4q3_sep || ''}/></p>
+
+      {/* Application Question Inserted Here */}
+      <div style={{marginTop: '15px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '5px'}}>
+        <p><b>Application:</b> Write the HTML code for a paragraph with:</p>
+        <ul style={{fontSize: '0.9rem', margin: '5px 0 10px 20px'}}>
+          <li>20px font size</li>
+          <li>Aligned at centre</li>
+          <li>Red text colour</li>
+          <li>Green background colour</li>
+        </ul>
+        <textarea 
+          style={{...styles.input, fontFamily: 'monospace'}} 
+          rows="2" 
+          placeholder='' 
+          onChange={(e) => onChange('a4q3_app_code', e.target.value)} 
+          value={userAnswers.a4q3_app_code || ''}
+        />
+        {showAnswers && (
+          <div style={{marginTop: '5px', fontSize: '0.9rem', color: '#0369a1', fontFamily: 'monospace'}}>
+            &lt;p style="font-size: 20px; text-align: center; color: red; background-color: green"&gt; ... &lt;/p&gt;
+          </div>
+        )}
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Lists (Tags):</b></p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="Unordered" onChange={(e) => onChange('a4q3_ul', e.target.value)} value={userAnswers.a4q3_ul || ''}/>
+        <input style={styles.input} placeholder="Ordered" onChange={(e) => onChange('a4q3_ol', e.target.value)} value={userAnswers.a4q3_ol || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Tables:</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <input style={styles.input} placeholder="Define Table Tag" onChange={(e) => onChange('a4q3_tab', e.target.value)} value={userAnswers.a4q3_tab || ''}/>
+        <input style={styles.input} placeholder="Define Row Tag" onChange={(e) => onChange('a4q3_tr', e.target.value)} value={userAnswers.a4q3_tr || ''}/>
+        <input style={styles.input} placeholder="Define Data Tag" onChange={(e) => onChange('a4q3_td', e.target.value)} value={userAnswers.a4q3_td || ''}/>
+        <input style={styles.input} placeholder="Define Header Tag" onChange={(e) => onChange('a4q3_th', e.target.value)} value={userAnswers.a4q3_th || ''}/>
+      </div>
+      <p style={{marginTop: '10px'}}>Attributes:</p>
+      <input style={styles.input} placeholder="Border (Def)" onChange={(e) => onChange('a4q3_bord', e.target.value)} value={userAnswers.a4q3_bord || ''}/>
+      <input style={{...styles.input, marginTop: '5px'}} placeholder="Style Values (4)" onChange={(e) => onChange('a4q3_tstyle', e.target.value)} value={userAnswers.a4q3_tstyle || ''}/>
+      <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+        <input style={styles.input} placeholder="Colspan Def" onChange={(e) => onChange('a4q3_cspan', e.target.value)} value={userAnswers.a4q3_cspan || ''}/>
+        <input style={styles.input} placeholder="Rowspan Def" onChange={(e) => onChange('a4q3_rspan', e.target.value)} value={userAnswers.a4q3_rspan || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Image & Link:</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px'}}>
+        <input style={styles.input} placeholder="Image Tag & Attr" onChange={(e) => onChange('a4q3_img', e.target.value)} value={userAnswers.a4q3_img || ''}/>
+        <input style={styles.input} placeholder="Hyperlink Tag" onChange={(e) => onChange('a4q3_link', e.target.value)} value={userAnswers.a4q3_link || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Base: h1/h2, p, br, hr. Fmt: b, i, u.<br/>
+          Styles: font-family, font-size, text-align, color, background-color. Sep: ;<br/>
+          Lists: ul/li, ol/li.<br/>
+          Table: table, tr, td, th. Border: thickness. Style: height, width, padding, border-spacing.<br/>
+          Span: Colspan (horiz merge), Rowspan (vert merge).<br/>
+          Img: img (src, height, width). Link: a href.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Web Interface Design */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Web Interface Design (UI/UX)</h3>
+        <StarButton questionId="c4q4" />
+      </div>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Name</th><th style={styles.th}>Methods</th><th style={styles.th}>Benefits</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>(A) Navigation</td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_a_meth', e.target.value)} value={userAnswers.a4q4_a_meth || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_a_ben', e.target.value)} value={userAnswers.a4q4_a_ben || ''}/></td>
+          </tr>
+          <tr>
+            <td>(B) Responsive Website</td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_b_meth', e.target.value)} value={userAnswers.a4q4_b_meth || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_b_ben', e.target.value)} value={userAnswers.a4q4_b_ben || ''}/></td>
+          </tr>
+          <tr>
+            <td>(C) Readability</td>
+            <td><textarea style={styles.input} rows="2" onChange={(e) => onChange('a4q4_c_meth', e.target.value)} value={userAnswers.a4q4_c_meth || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_c_ben', e.target.value)} value={userAnswers.a4q4_c_ben || ''}/></td>
+          </tr>
+          <tr>
+            <td>(D) Data Input</td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_d_meth', e.target.value)} value={userAnswers.a4q4_d_meth || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_d_ben', e.target.value)} value={userAnswers.a4q4_d_ben || ''}/></td>
+          </tr>
+          <tr>
+            <td>(E) Accessibility</td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('a4q4_e_meth', e.target.value)} value={userAnswers.a4q4_e_meth || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('a4q4_e_ben', e.target.value)} value={userAnswers.a4q4_e_ben || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          A: Nav bars/sitemaps. Ben: Find info quickly.<br/>
+          B: Mobile/Desktop versions. Ben: Adapt to screen sizes.<br/>
+          C: Lists/tables/contrast. Ben: Easier to read.<br/>
+          D: Pickers/Drop-downs. Ben: Reduce error/validation.<br/>
+          E: Resize text/Alt text/Multi-lang. Ben: Accessible to disabled.
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- COMPULSORY C CH 5 ---
+const ICT_Comp_C_Ch5 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Malware */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Security Threats - Malware</h3>
+        <StarButton questionId="c5q1" />
+      </div>
+      <p><b>What is the use of Malware?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q1_use', e.target.value)} value={userAnswers.c5q1_use || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Types Comparison:</b></p>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Type</th>
+            <th style={styles.th}>Spread/Behaviour</th>
+            <th style={styles.th}>Attached to file? (Y/N)</th>
+            <th style={styles.th}>Self-Replicating? (Y/N)</th>
+            <th style={styles.th}>Auto-Spread Net? (Y/N)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Virus</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_vir_beh', e.target.value)} value={userAnswers.c5q1_vir_beh || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_vir_att', e.target.value)} value={userAnswers.c5q1_vir_att || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_vir_rep', e.target.value)} value={userAnswers.c5q1_vir_rep || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_vir_net', e.target.value)} value={userAnswers.c5q1_vir_net || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Worm</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_worm_beh', e.target.value)} value={userAnswers.c5q1_worm_beh || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_worm_att', e.target.value)} value={userAnswers.c5q1_worm_att || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_worm_rep', e.target.value)} value={userAnswers.c5q1_worm_rep || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_worm_net', e.target.value)} value={userAnswers.c5q1_worm_net || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>Trojan</b></td>
+            <td><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_troj_beh', e.target.value)} value={userAnswers.c5q1_troj_beh || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_troj_att', e.target.value)} value={userAnswers.c5q1_troj_att || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_troj_rep', e.target.value)} value={userAnswers.c5q1_troj_rep || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q1_troj_net', e.target.value)} value={userAnswers.c5q1_troj_net || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style={{marginTop: '15px'}}><b>How Malware Spreads:</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p><b>1. Dynamic Web Pages (Client-side script)</b></p>
+          <p style={{fontSize: '0.85rem'}}>Mechanism:</p>
+          <textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_spr_web', e.target.value)} value={userAnswers.c5q1_spr_web || ''}/>
+        </div>
+        <div>
+          <p><b>2. Communication Software & Email</b></p>
+          <p style={{fontSize: '0.85rem'}}>Mechanism:</p>
+          <textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_spr_email', e.target.value)} value={userAnswers.c5q1_spr_email || ''}/>
+        </div>
+        <div>
+          <p><b>3. Storage Device (e.g., USB/CD)</b></p>
+          <p style={{fontSize: '0.85rem'}}>Mechanism:</p>
+          <textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_spr_usb', e.target.value)} value={userAnswers.c5q1_spr_usb || ''}/>
+        </div>
+        <div>
+          <p><b>4. Freeware / Shareware</b></p>
+          <p style={{fontSize: '0.85rem'}}>Mechanism:</p>
+          <textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q1_spr_free', e.target.value)} value={userAnswers.c5q1_spr_free || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Use:</b> Damage functions, steal data, unauthorized access.<br/>
+          <b>Virus:</b> Attaches to files. Deletes/destroys files. Y, Y, N.<br/>
+          <b>Worm:</b> No file attach needed. Uses email. Y, Y, Y.<br/>
+          <b>Trojan:</b> Disguises as useful app. Backdoor access. Y, N, N.<br/>
+          <b>Spread:</b> 1. Malicious script in browser/pop-ups. 2. Attachments/links in email. 3. Auto-install when plugged in. 4. Bundled with download.
+        </div>
+      )}
+    </div>
+
+    {/* Q2: MITM Attack */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Man-in-the-middle (MITM)</h3>
+        <StarButton questionId="c5q2" />
+      </div>
+      <p><b>Mechanism:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q2_mech', e.target.value)} value={userAnswers.c5q2_mech || ''}/>
+      <p style={{marginTop: '10px'}}><b>Why difficult to detect?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q2_diff', e.target.value)} value={userAnswers.c5q2_diff || ''}/>
+      <div style={{marginTop: '10px', padding: '10px', border: '1px dashed #ccc'}}>
+        <p><b>Evil Twin Attack (Mechanism):</b></p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q2_evil', e.target.value)} value={userAnswers.c5q2_evil || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Mech: Intercepts/tampers communication. Independent connections to both parties.<br/>
+          Detect: Communication works "normally".<br/>
+          Evil Twin: Fake WiFi (no pass), intercepts victim's traffic.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: DoS / DDoS */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Denial-of-Service (DoS)</h3>
+        <StarButton questionId="c5q3" />
+      </div>
+      <p><b>Mechanism:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q3_mech', e.target.value)} value={userAnswers.c5q3_mech || ''}/>
+      <div style={{display: 'flex', gap: '15px', marginTop: '10px'}}>
+        <div style={{flex: 1}}><p><b>Meaning of Zombie Computer:</b></p><input style={styles.input} onChange={(e) => onChange('c5q3_zom', e.target.value)} value={userAnswers.c5q3_zom || ''}/></div>
+        <div style={{flex: 1}}><p><b>Meaning of DDoS:</b></p><input style={styles.input} onChange={(e) => onChange('c5q3_ddos', e.target.value)} value={userAnswers.c5q3_ddos || ''}/></div>
+      </div>
+      <p style={{marginTop: '10px'}}><b>Consequence:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q3_cons', e.target.value)} value={userAnswers.c5q3_cons || ''}/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Mech: Botnet sends mass requests. Resource exhaustion.<br/>
+          Zombie: Remotely controlled PC.<br/>
+          DDoS: Distributed (many zombies from different places).<br/>
+          Cons: System paralysed, service unavailable.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Antivirus */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Antivirus Software</h3>
+        <StarButton questionId="c5q4" />
+      </div>
+      <p><b>2 Functions:</b> <input style={{...styles.input, width: '45%', marginRight: '10px', display: 'inline-block'}} onChange={(e) => onChange('c5q4_f1', e.target.value)} value={userAnswers.c5q4_f1 || ''}/> <input style={{...styles.input, width: '45%', display: 'inline-block'}} onChange={(e) => onChange('c5q4_f2', e.target.value)} value={userAnswers.c5q4_f2 || ''}/></p>
+      <p style={{marginTop: '10px'}}><b>Mechanism (Real-time):</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q4_mech', e.target.value)} value={userAnswers.c5q4_mech || ''}/>
+      <p style={{marginTop: '10px'}}><b>Virus Signatures & Update Reminder:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q4_sig', e.target.value)} value={userAnswers.c5q4_sig || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Func: Scan info, Isolate/Remove infected files. Mech: Compare file to virus signature database. Update: To identify latest viruses.</div>}
+    </div>
+
+    {/* Q5: Firewall */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: Firewall</h3>
+        <StarButton questionId="c5q5" />
+      </div>
+      <p><b>Function of firewall:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q5_func', e.target.value)} value={userAnswers.c5q5_func || ''}/>
+      <p style={{marginTop: '10px'}}><b>Mechanism:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('c5q5_mech', e.target.value)} value={userAnswers.c5q5_mech || ''}/>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Type</th><th style={styles.th}>Location</th><th style={styles.th}>Advantage</th><th style={styles.th}>Disadvantage</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Software</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_soft_loc', e.target.value)} value={userAnswers.c5q5_soft_loc || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_soft_adv', e.target.value)} value={userAnswers.c5q5_soft_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_soft_dis', e.target.value)} value={userAnswers.c5q5_soft_dis || ''}/></td>
+          </tr>
+          <tr>
+            <td>Hardware</td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_hard_loc', e.target.value)} value={userAnswers.c5q5_hard_loc || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_hard_adv', e.target.value)} value={userAnswers.c5q5_hard_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('c5q5_hard_dis', e.target.value)} value={userAnswers.c5q5_hard_dis || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Func: Filter packets, block malicious data/access. Mech: Check IP/Port against rules.<br/>
+          Software: In OS. Adv: Cheap/Easy. Dis: Protects 1 device only.<br/>
+          Hardware: Btn Router & Modem. Adv: Efficient/Stable. Dis: Expensive.
+        </div>
+      )}
+    </div>
+
+    {/* Q6: Access Control */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: Access Control</h3>
+        <StarButton questionId="c5q6" />
+      </div>
+      <p><b>Definition:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q6_def', e.target.value)} value={userAnswers.c5q6_def || ''}/>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginTop: '10px'}}>
+        <div><p><b>Authentication</b></p><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q6_auth', e.target.value)} value={userAnswers.c5q6_auth || ''}/></div>
+        <div><p><b>Authorization</b></p><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q6_author', e.target.value)} value={userAnswers.c5q6_author || ''}/></div>
+        <div><p><b>Accounting</b></p><textarea style={styles.input} rows="3" onChange={(e) => onChange('c5q6_acc', e.target.value)} value={userAnswers.c5q6_acc || ''}/></div>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>Def: Restrict log in/authorize rights.<br/>Auth: Verify identity. Author: Grant rights. Acc: Monitor records.</div>}
+    </div>
+
+    {/* Q7: VPN */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7: VPN (Virtual Private Network)</h3>
+        <StarButton questionId="c5q7" />
+      </div>
+      <p><b>Mechanism:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q7_mech', e.target.value)} value={userAnswers.c5q7_mech || ''}/>
+      <p style={{marginTop: '10px'}}><b>Protocol (and usage):</b></p>
+      <input style={styles.input} onChange={(e) => onChange('c5q7_proto', e.target.value)} value={userAnswers.c5q7_proto || ''}/>
+      
+      <p style={{marginTop: '10px'}}><b>3 Functions:</b></p>
+      <ul style={{listStyle: 'none', padding: 0}}>
+        <li>1. <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q7_f1', e.target.value)} value={userAnswers.c5q7_f1 || ''}/></li>
+        <li style={{marginTop: '5px'}}>2. <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q7_f2', e.target.value)} value={userAnswers.c5q7_f2 || ''}/></li>
+        <li style={{marginTop: '5px'}}>3. <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q7_f3', e.target.value)} value={userAnswers.c5q7_f3 || ''}/></li>
+      </ul>
+
+      <p style={{marginTop: '10px'}}><b>Applications:</b></p>
+      <div style={{display: 'flex', gap: '10px'}}>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q7_app1', e.target.value)} value={userAnswers.c5q7_app1 || ''}/>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q7_app2', e.target.value)} value={userAnswers.c5q7_app2 || ''}/>
+      </div>
+      
+      <div style={{display: 'flex', gap: '15px', marginTop: '10px'}}>
+        <div style={{flex: 1}}><p><b>Advantage:</b></p><input style={styles.input} onChange={(e) => onChange('c5q7_adv', e.target.value)} value={userAnswers.c5q7_adv || ''}/></div>
+        <div style={{flex: 1}}><p><b>Disadvantage:</b></p><input style={styles.input} onChange={(e) => onChange('c5q7_dis', e.target.value)} value={userAnswers.c5q7_dis || ''}/></div>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Mech: Tunnel between user/server. Proto: IPSec (Encrypt packets).<br/>
+          Func: Encrypt data, Hide IP (Location), Hide History from ISP.<br/>
+          Apps: Intranet across branches, Remote Access (WAN via VPN).<br/>
+          Adv: Security. Dis: Slower speed.
+        </div>
+      )}
+    </div>
+
+    {/* Q8: Wi-Fi Security */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: Wi-Fi Security</h3>
+        <StarButton questionId="c5q8" />
+      </div>
+      <table style={styles.table}>
+        <thead><tr><th style={styles.th}>Protocol</th><th style={styles.th}>Attribute / Note</th></tr></thead>
+        <tbody>
+          <tr><td>WEP</td><td><input style={styles.input} onChange={(e) => onChange('c5q8_wep', e.target.value)} value={userAnswers.c5q8_wep || ''}/></td></tr>
+          <tr><td>WPA</td><td><input style={styles.input} onChange={(e) => onChange('c5q8_wpa', e.target.value)} value={userAnswers.c5q8_wpa || ''}/></td></tr>
+          <tr><td>WPA2</td><td><input style={styles.input} onChange={(e) => onChange('c5q8_wpa2', e.target.value)} value={userAnswers.c5q8_wpa2 || ''}/></td></tr>
+        </tbody>
+      </table>
+      
+      <p style={{marginTop: '15px'}}><b>Other Methods:</b></p>
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px'}}>
+        <div><p><b>Hide SSID</b></p><textarea style={styles.input} rows="3" placeholder="Desc..." onChange={(e) => onChange('c5q8_ssid', e.target.value)} value={userAnswers.c5q8_ssid || ''}/></div>
+        <div><p><b>MAC Filtering</b></p><textarea style={styles.input} rows="3" placeholder="Desc..." onChange={(e) => onChange('c5q8_mac', e.target.value)} value={userAnswers.c5q8_mac || ''}/></div>
+        <div><p><b>Public WiFi</b></p><textarea style={styles.input} rows="3" placeholder="Recommendation..." onChange={(e) => onChange('c5q8_pub', e.target.value)} value={userAnswers.c5q8_pub || ''}/></div>
+      </div>
+      {showAnswers && <div style={styles.answerKey}>WEP: Cracked quickly. WPA: TKIP/Changing key. WPA2: Advanced. Hide SSID: Prevent unsolicited access. MAC Filter: Block unauth devices. Public WiFi: Use Mobile Net/VPN.</div>}
+    </div>
+
+    {/* Q9: Browser Settings */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q9: Browser Settings</h3>
+        <StarButton questionId="c5q9" />
+      </div>
+      <p>1. <input style={{...styles.input, width: '80%'}} onChange={(e) => onChange('c5q9_s1', e.target.value)} value={userAnswers.c5q9_s1 || ''}/></p>
+      <p style={{marginTop: '5px'}}>2. <input style={{...styles.input, width: '80%'}} onChange={(e) => onChange('c5q9_s2', e.target.value)} value={userAnswers.c5q9_s2 || ''}/></p>
+      {showAnswers && <div style={styles.answerKey}>1. Disable pop-ups/redirects. 2. Enable auto-update (fix vulnerabilities).</div>}
+    </div>
+
+    {/* Q10: Privacy Threats */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q10: Privacy Threats</h3>
+        <StarButton questionId="c5q10" />
+      </div>
+      
+      <p><b>Eavesdropping:</b></p>
+      <textarea style={styles.input} rows="2" placeholder="Mechanism & Why difficult to detect?" onChange={(e) => onChange('c5q10_eave', e.target.value)} value={userAnswers.c5q10_eave || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Hacking:</b></p>
+      <p>Meaning:</p>
+      <input style={styles.input} onChange={(e) => onChange('c5q10_hack_mean', e.target.value)} value={userAnswers.c5q10_hack_mean || ''}/>
+      <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+        <div style={{flex: 1}}><p><b>Ent Conseq:</b></p><input style={styles.input} onChange={(e) => onChange('c5q10_hack_ent', e.target.value)} value={userAnswers.c5q10_hack_ent || ''}/></div>
+        <div style={{flex: 1}}><p><b>Citizen Conseq:</b></p><input style={styles.input} onChange={(e) => onChange('c5q10_hack_cit', e.target.value)} value={userAnswers.c5q10_hack_cit || ''}/></div>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Social Engineering:</b></p>
+      <p>Meaning:</p>
+      <input style={styles.input} onChange={(e) => onChange('c5q10_soc_mean', e.target.value)} value={userAnswers.c5q10_soc_mean || ''}/>
+      <div style={{marginTop: '5px', padding: '10px', border: '1px solid #eee'}}>
+        <p><b>Phishing:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('c5q10_phish_attr', e.target.value)} value={userAnswers.c5q10_phish_attr || ''}/>
+        <input style={{...styles.input, marginTop: '5px'}} placeholder="" onChange={(e) => onChange('c5q10_phish_prev', e.target.value)} value={userAnswers.c5q10_phish_prev || ''}/>
+      </div>
+      
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Eavesdropping: Unauth interception. Hard to detect (net normal).<br/>
+          Hacking: Attack security/gain access. Ent (Rev loss/Reputation). Cit (Stolen info/Criminal Trans).<br/>
+          Social Eng: Manipulate trust/greed. Phishing: Looks real, QR codes. Prev: Check digital cert.
+        </div>
+      )}
+    </div>
+
+    {/* Q11: Protect Online Privacy */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q11: Protecting Privacy (Anonymous/Proxy)</h3>
+        <StarButton questionId="c5q11" />
+      </div>
+      
+      <div style={{marginBottom: '15px'}}>
+        <p><b>1. Clear Browsing History & Cookies</b></p>
+        <p style={{fontSize: '0.85rem'}}>Mechanism:</p>
+        <input style={styles.input} onChange={(e) => onChange('c5q11_cook_mech', e.target.value)} value={userAnswers.c5q11_cook_mech || ''}/>
+        <p style={{fontSize: '0.85rem', marginTop: '5px'}}>3 Uses of Cookies:</p>
+        <input style={styles.input} onChange={(e) => onChange('c5q11_cook_uses', e.target.value)} value={userAnswers.c5q11_cook_uses || ''}/>
+        <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+          <input style={styles.input} placeholder="Advantage" onChange={(e) => onChange('c5q11_cook_adv', e.target.value)} value={userAnswers.c5q11_cook_adv || ''}/>
+          <input style={styles.input} placeholder="Disadvantage" onChange={(e) => onChange('c5q11_cook_dis', e.target.value)} value={userAnswers.c5q11_cook_dis || ''}/>
+        </div>
+        <input style={{...styles.input, marginTop: '5px'}} placeholder="Good Practice" onChange={(e) => onChange('c5q11_cook_prac', e.target.value)} value={userAnswers.c5q11_cook_prac || ''}/>
+      </div>
+
+      <div style={{marginBottom: '15px'}}>
+        <p><b>2. Turn off Autofill Function</b></p>
+        <div style={{display: 'flex', gap: '10px'}}>
+            <input style={styles.input} placeholder="Mechanism" onChange={(e) => onChange('c5q11_fill_mech', e.target.value)} value={userAnswers.c5q11_fill_mech || ''}/>
+            <input style={styles.input} placeholder="Good Practice" onChange={(e) => onChange('c5q11_fill_prac', e.target.value)} value={userAnswers.c5q11_fill_prac || ''}/>
+        </div>
+      </div>
+
+      <div style={{marginBottom: '15px'}}>
+        <p><b>3. Use Private Browsing</b></p>
+        <input style={styles.input} placeholder="Mechanism" onChange={(e) => onChange('c5q11_priv_mech', e.target.value)} value={userAnswers.c5q11_priv_mech || ''}/>
+      </div>
+
+      <div style={{marginBottom: '15px'}}>
+        <p><b>4. Proxy Server</b></p>
+        <p style={{fontSize: '0.85rem'}}>3 Functions:</p>
+        <input style={styles.input} onChange={(e) => onChange('c5q11_prox_func', e.target.value)} value={userAnswers.c5q11_prox_func || ''}/>
+        <div style={{display: 'flex', gap: '10px', marginTop: '5px'}}>
+          <input style={styles.input} placeholder="Advantage" onChange={(e) => onChange('c5q11_prox_adv', e.target.value)} value={userAnswers.c5q11_prox_adv || ''}/>
+          <input style={styles.input} placeholder="Disadv (vs VPN)" onChange={(e) => onChange('c5q11_prox_dis', e.target.value)} value={userAnswers.c5q11_prox_dis || ''}/>
+        </div>
+        <input style={{...styles.input, marginTop: '5px'}} placeholder="Mechanism" onChange={(e) => onChange('c5q11_prox_mech', e.target.value)} value={userAnswers.c5q11_prox_mech || ''}/>
+      </div>
+
+      <div>
+        <p><b>Use Suitable Password (Criteria):</b></p>
+        <input style={styles.input} placeholder="e.g. Length..." onChange={(e) => onChange('c5q11_pass', e.target.value)} value={userAnswers.c5q11_pass || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Cookies: Mech (Store info on device). Uses (Pref, Login, Settings). Adv (User exp). Dis (Privacy). Prac (Clear on public PC).<br/>
+          Autofill: Mech (Pass appears). Prac (Off on public/Private mode).<br/>
+          Private: Mech (Deletes data on close).<br/>
+          Proxy: Func (Intermediate, Filter, Cache). Adv (Hide IP). Dis (Not Encrypted). Mech (Server only sees Proxy IP).<br/>
+          Password: Special char, larger than 8 chars, Upper/Lower case.
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- PHYSICS COMPULSORY 4 CH 2: ELECTRIC CIRCUITS ---
+const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
+  const questions = [
+    { id: 1, correct: 'B', options: [{ text: '(1) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 2, correct: 'A', options: [{ text: '0V' }, { text: '6V' }, { text: '12V' }, { text: '18V' }] },
+    { id: 3, correct: 'B', options: [{ text: 'r = 5Ω,  R = 20Ω' }, { text: 'r = 5Ω, R = 100Ω' }, { text: 'r = 20Ω, R = 5Ω' }, { text: 'r = 100Ω, R = 5Ω' }] },
+    { id: 4, correct: 'C', options: [{ text: '1V' }, { text: '2V' }, { text: '3V' }, { text: '4V' }] },
+    { id: 5, correct: 'A', options: [{ text: '-2V, 1V, 0V' }, { text: '-1V, 2V, 0V' }, { text: '0V, 3V, 1.5V' }, { text: '0V, 3V, 2V' }] },
+    { id: 6, correct: 'A', options: [{ text: 'unchanged, unchanged' }, { text: 'doubled, halved' }, { text: 'unchanged, doubled' }, { text: 'doubled, unchanged' }] },
+    { id: 7, correct: 'B', options: [{ text: 'The ammeter burns out.' }, { text: 'The reading of the ammeter becomes zero.' }, { text: 'The voltmeter burns out.' }, { text: 'The reading of the voltmeter becomes zero.' }] },
+    { id: 8, correct: 'B', options: [{ text: 'The voltmeter has finite resistance.' }, { text: 'The battery has internal resistance.' }, { text: 'The resistance of the bulb is very large.' }, { text: 'There is a voltage drop across the bulb.' }] },
+    { id: 9, correct: 'A', options: [{ text: '0V' }, { text: '1.8V' }, { text: '3V' }, { text: '4.5V' }] },
+    { id: 10, correct: 'A', options: [{ text: '0V' }, { text: '1V' }, { text: '3V' }, { text: '6V' }] },
+    { id: 11, correct: 'D', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 12, correct: 'B', options: [{ text: '4V' }, { text: '6V' }, { text: '8V' }, { text: '12V' }] },
+    { id: 13, correct: 'C', options: [{ text: 'R > R1 > R2' }, { text: 'R < R1 < R2' }, { text: 'R1 < R < R2' }, { text: 'R1 > R > R2' }] },
+    { id: 14, correct: 'B', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 15, correct: 'D', options: [{ text: '1:1' }, { text: '3:1' }, { text: '1:7' }, { text: '9:1' }] },
+    { id: 16, correct: 'C', options: [{ text: '0.67Ω' }, { text: '0.8Ω' }, { text: '1Ω' }, { text: '1.44Ω' }] },
+    { id: 17, correct: 'C', options: [{ text: '6V' }, { text: '2V' }, { text: '-2V' }, { text: '-6V' }] },
+    { id: 18, correct: 'A', options: [{ text: '0.12V' }, { text: '0.48V' }, { text: '0.96A' }, { text: '1.44A' }] }
+  ];
+
+  const getAnswerStyle = (qId, option) => {
+    if (!showAnswers) return {};
+    const userAnswer = userAnswers[`phy4ch2q${qId}`];
+    const isCorrect = userAnswer === questions[qId - 1].correct;
+    if (userAnswer === option) {
+      return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
+    }
+    if (!isCorrect && option === questions[qId - 1].correct) {
+      return { backgroundColor: '#d1fae5', borderColor: '#10b981' };
+    }
+    return {};
+  };
+
+  return (
+    <div>
+      {questions.map(q => (
+        <div key={q.id} style={styles.qSection}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+            <h3 style={styles.qTitle}>Q{q.id}{q.id === 18 && <span style={{marginLeft: '8px', color: '#f97316'}}>&#9733;</span>}</h3>
+            <StarButton questionId={`phy4ch2q${q.id}`} />
+          </div>
+          
+          {/* Question Image */}
+          <img src={`/mcdata/PHY COMP 4 CH2/q/${q.id}.png`} style={{maxWidth: '100%', marginBottom: '15px'}} alt={`Question ${q.id}`} />
+          
+          {/* Multiple Choice Options */}
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
+            {['A', 'B', 'C', 'D'].map((option, idx) => (
+              <label key={option} style={{display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', border: '2px solid #ddd', borderRadius: '4px', cursor: 'pointer', ...getAnswerStyle(q.id, option)}}>
+                <input 
+                  type="radio" 
+                  name={`phy4ch2q${q.id}`}
+                  value={option}
+                  checked={userAnswers[`phy4ch2q${q.id}`] === option}
+                  onChange={(e) => onChange(`phy4ch2q${q.id}`, e.target.value)}
+                  disabled={showAnswers}
+                />
+                <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '8px'}}>
+                  <span style={{fontWeight: 'bold', minWidth: '20px'}}>{option}.</span>
+                  {q.options[idx].text ? (
+                    <span>{q.options[idx].text}</span>
+                  ) : (
+                    <img src={`/mcdata/PHY COMP 4 CH2/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
+                  )}
+                </div>
+              </label>
+            ))}
+          </div>
+          
+          {/* Solution */}
+          {showAnswers && (
+            <div style={styles.answerKey}>
+              <p><b>Solution:</b></p>
+              <img src={`/mcdata/PHY COMP 4 CH2/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
+            </div>
+          )}
+        </div>
+      ))}
+      
+      <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+        <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+      </div>
+    </div>
+  );
+};
+
+// --- PHYSICS ELECTIVE 2 CH 1 ---
+const Phy_E_2_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Rutherford's Model */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Rutherford's Model</h3>
+        <StarButton questionId="e2q1" />
+      </div>
+      <p>What does Rutherford's model propose? (State 3 main propositions)</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Proposition 1: " onChange={(e) => onChange('e2q1_p1', e.target.value)} value={userAnswers.e2q1_p1 || ''}/>
+        <textarea style={styles.input} rows="2" placeholder="Proposition 2: " onChange={(e) => onChange('e2q1_p2', e.target.value)} value={userAnswers.e2q1_p2 || ''}/>
+        <textarea style={styles.input} rows="2" placeholder="Proposition 3: " onChange={(e) => onChange('e2q1_p3', e.target.value)} value={userAnswers.e2q1_p3 || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          1. Most of the space inside an atom is empty space<br/>
+          2. All the positive charge and most of the mass are concentrated at the nucleus<br/>
+          3. The electron orbit around the nucleus where the electric force provides the centripetal force
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Scattering Experiment */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Scattering Experiment</h3>
+        <StarButton questionId="e2q2" />
+      </div>
+      
+      <p><b>Purpose of the experiment:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e2q2_purpose', e.target.value)} value={userAnswers.e2q2_purpose || ''} placeholder="Purpose..."/>
+      
+      <p style={{marginTop: '15px'}}><b>Results (State 2 key observations):</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <input style={styles.input} placeholder="Result 1: " onChange={(e) => onChange('e2q2_r1', e.target.value)} value={userAnswers.e2q2_r1 || ''}/>
+        <input style={styles.input} placeholder="Result 2: " onChange={(e) => onChange('e2q2_r2', e.target.value)} value={userAnswers.e2q2_r2 || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>How does Rutherford's model explain the results?</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Explanation 1: " onChange={(e) => onChange('e2q2_exp1', e.target.value)} value={userAnswers.e2q2_exp1 || ''}/>
+        <textarea style={styles.input} rows="2" placeholder="Explanation 2: " onChange={(e) => onChange('e2q2_exp2', e.target.value)} value={userAnswers.e2q2_exp2 || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Purpose:</b> To study the scattering of alpha particles by thin metal foil<br/>
+          <b>Results:</b><br/>
+          1. Nearly all alpha particles pass straight through the foil<br/>
+          2. A few number of alpha particles were deflected or bounced back<br/>
+          <b>Explanation:</b><br/>
+          - Most of the space inside an atom is empty space explains nearly all alpha particles pass straight through the foil<br/>
+          - The repulsive electric force deflects the particle, explained by electric force between electron and nucleus
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Limitations of Rutherford's Model */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Limitations of Rutherford's Model</h3>
+        <StarButton questionId="e2q3" />
+      </div>
+      
+      <p><b>Limitation 1: Collapse of Atom</b></p>
+      <p>State the prediction based on the model:</p>
+      <textarea style={styles.input} rows="3" placeholder="Prediction: " onChange={(e) => onChange('e2q3_l1_pred', e.target.value)} value={userAnswers.e2q3_l1_pred || ''}/>
+      <p style={{marginTop: '10px'}}>How does it contradict the fact?</p>
+      <input style={styles.input} placeholder="Fact: " onChange={(e) => onChange('e2q3_l1_fact', e.target.value)} value={userAnswers.e2q3_l1_fact || ''}/>
+
+      <p style={{marginTop: '20px'}}><b>Limitation 2: Emission of EM Waves</b></p>
+      <p>State the prediction based on the model:</p>
+      <textarea style={styles.input} rows="3" placeholder="Prediction: " onChange={(e) => onChange('e2q3_l2_pred', e.target.value)} value={userAnswers.e2q3_l2_pred || ''}/>
+      <p style={{marginTop: '10px'}}>How does it contradict the fact?</p>
+      <input style={styles.input} placeholder="Fact: " onChange={(e) => onChange('e2q3_l2_fact', e.target.value)} value={userAnswers.e2q3_l2_fact || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Limitation 1 - Collapse of Atom:</b><br/>
+          <b>Prediction:</b> Since the electron orbits around the nucleus, thus there is a centripetal acceleration and the electron will emit EM waves to lose energy. As a result, the electron spiral inwards to crash into the nucleus, making the atom unstable and collapse.<br/>
+          <b>Fact:</b> Atoms do not collapse.<br/>
+          <br/>
+          <b>Limitation 2 - Emission of EM Waves:</b><br/>
+          <b>Prediction:</b> Electrons should emit EM waves with a continuous range of frequency.<br/>
+          <b>Fact:</b> Atoms emit EM waves of discrete frequency only.
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- PHYSICS ELECTIVE 3 CH 1 ---
+const Phy_E_3_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Efficiency */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Efficiency</h3>
+        <StarButton questionId="e3c1q1" />
+      </div>
+      <p>Give the formula of efficiency:</p>
+      <input style={styles.input} placeholder="Formula..." onChange={(e) => onChange('e3q1_form', e.target.value)} value={userAnswers.e3q1_form || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Power output / Power input</div>}
+    </div>
+
+    {/* Q2: Electron Transition */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Lighting - Emission & Electron Transition</h3>
+        <StarButton questionId="e3c1q2" />
+      </div>
+      <p>Describe the process of electron transition:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <input style={styles.input} placeholder="Step 1: When electron..." onChange={(e) => onChange('e3q2_s1', e.target.value)} value={userAnswers.e3q2_s1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2: When atom is..." onChange={(e) => onChange('e3q2_s2', e.target.value)} value={userAnswers.e3q2_s2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 3: This releases..." onChange={(e) => onChange('e3q2_s3', e.target.value)} value={userAnswers.e3q2_s3 || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          1. When electron absorbs a specific amount of energy, it can be excited to a higher energy level.<br/>
+          2. When atom is excited, it becomes unstable and eventually moves to a lower energy level.<br/>
+          3. This releases energy in form of EM waves.
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Incandescent Lamps */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Lighting - Incandescent Lamps</h3>
+        <StarButton questionId="e3c1q3" />
+      </div>
+      <p><b>Mechanism:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+        <input style={styles.input} placeholder="Step 1" onChange={(e) => onChange('e3q3_mech1', e.target.value)} value={userAnswers.e3q3_mech1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2" onChange={(e) => onChange('e3q3_mech2', e.target.value)} value={userAnswers.e3q3_mech2 || ''}/>
+      </div>
+
+      <p><b>Efficiency:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Emission details..." onChange={(e) => onChange('e3q3_eff1', e.target.value)} value={userAnswers.e3q3_eff1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Conclusion on efficiency" onChange={(e) => onChange('e3q3_eff2', e.target.value)} value={userAnswers.e3q3_eff2 || ''}/>
+      </div>
+
+      <p><b>Advanced Version:</b></p>
+      <input style={{...styles.input, marginBottom: '10px'}} placeholder="Name of advanced version" onChange={(e) => onChange('e3q3_adv_name', e.target.value)} value={userAnswers.e3q3_adv_name || ''}/>
+      
+      <p>Mechanism of advanced version:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Construction..." onChange={(e) => onChange('e3q3_adv_m1', e.target.value)} value={userAnswers.e3q3_adv_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Result" onChange={(e) => onChange('e3q3_adv_m2', e.target.value)} value={userAnswers.e3q3_adv_m2 || ''}/>
+      </div>
+      
+      <p>Caution:</p>
+      <input style={styles.input} onChange={(e) => onChange('e3q3_caution', e.target.value)} value={userAnswers.e3q3_caution || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Mech:</b> Electric current flows through filament and heats it to high temp thus results in electron transitions in filament.<br/>
+          <b>Eff:</b> Only 5-20% is visible light, most is IR (heat) thus Low end-use energy efficiency.<br/>
+          <b>Advanced:</b> Halogen lamps.<br/>
+          <b>Adv Mech:</b> Incandescent lamps that contain halogen gas, longer lifespan & higher temp thus emit more visible light & slightly more efficient.<br/>
+          <b>Caution:</b> UV radiation produced, UV filter should be fitted.
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Gas Discharge Lamps */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Lighting - Gas Discharge Lamps</h3>
+        <StarButton questionId="e3c1q4" />
+      </div>
+      <p>General Mechanism:</p>
+      <input style={styles.input} onChange={(e) => onChange('e3q4_gen', e.target.value)} value={userAnswers.e3q4_gen || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Fluorescent Tube Lamp (FTL) Mechanism:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Step 1: Electrode..." onChange={(e) => onChange('e3q4_ftl1', e.target.value)} value={userAnswers.e3q4_ftl1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2: Transition..." onChange={(e) => onChange('e3q4_ftl2', e.target.value)} value={userAnswers.e3q4_ftl2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 3: Fluorescence..." onChange={(e) => onChange('e3q4_ftl3', e.target.value)} value={userAnswers.e3q4_ftl3 || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}>End-use Efficiency: <input style={{...styles.input, width: '100px', display: 'inline-block'}} onChange={(e) => onChange('e3q4_eff', e.target.value)} value={userAnswers.e3q4_eff || ''}/></p>
+      
+      <p style={{marginTop: '15px'}}>Mechanism of CFL:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3q4_cfl', e.target.value)} value={userAnswers.e3q4_cfl || ''}/>
+
+      <p style={{marginTop: '15px'}}>Mechanism of HID:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3q4_hid', e.target.value)} value={userAnswers.e3q4_hid || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Gen:</b> Passing electron between 2 electrodes through a gas.<br/>
+          <b>FTL:</b> -ve electrode emits electrons that ionize Mercury gas to form current that vaporizes mercury thus electron transition occurs in mercury atoms & emits UV thus Phosphor coating absorbs UV & emits visible light.<br/>
+          <b>Eff:</b> High.<br/>
+          <b>CFL:</b> Similar to FTL but tube is twisted & pins rearranged.<br/>
+          <b>HID:</b> Similar to FTL but high intensity brightness (street lights).
+        </div>
+      )}
+    </div>
+
+    {/* Q5: LED */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: LED</h3>
+        <StarButton questionId="e3c1q5" />
+      </div>
+      <p>Mechanism:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+        <input style={styles.input} placeholder="Structure..." onChange={(e) => onChange('e3q5_m1', e.target.value)} value={userAnswers.e3q5_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Colour determination..." onChange={(e) => onChange('e3q5_m2', e.target.value)} value={userAnswers.e3q5_m2 || ''}/>
+      </div>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          Has a layer of n-type and p-type semiconductors, only used with d.c. thus colour determined by fixed difference of energy level of p-layer and n-layer.
+        </div>
+      )}
+    </div>
+
+    {/* Q6: Comparison */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: Comparison of Lamps</h3>
+        <StarButton questionId="e3c1q6" />
+      </div>
+      <table style={styles.table}>
+        <thead>
+          <tr><th style={styles.th}>Lamp Type</th><th style={styles.th}>Advantage</th><th style={styles.th}>Disadvantage</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Incandescent</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_inc_adv', e.target.value)} value={userAnswers.e3q6_inc_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_inc_dis', e.target.value)} value={userAnswers.e3q6_inc_dis || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>FTL & CFL</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_ftl_adv', e.target.value)} value={userAnswers.e3q6_ftl_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_ftl_dis', e.target.value)} value={userAnswers.e3q6_ftl_dis || ''}/></td>
+          </tr>
+          <tr>
+            <td><b>LED</b></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_led_adv', e.target.value)} value={userAnswers.e3q6_led_adv || ''}/></td>
+            <td><input style={styles.input} onChange={(e) => onChange('e3q6_led_dis', e.target.value)} value={userAnswers.e3q6_led_dis || ''}/></td>
+          </tr>
+        </tbody>
+      </table>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Inc:</b> Adv: Low price. Dis: Low efficiency.<br/>
+          <b>FTL/CFL:</b> Adv: High efficiency, long life. Dis: Pollution (mercury).<br/>
+          <b>LED:</b> Adv: Long life, no UV. Dis: Expensive, d.c. only.
+        </div>
+      )}
+    </div>
+
+    {/* Q7: Cooking */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7: Cooking without Fire</h3>
+        <StarButton questionId="e3c1q7" />
+      </div>
+      
+      <p><b>Electric Hotplate:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px'}}>
+        <input style={styles.input} placeholder="Step 1: Structure" onChange={(e) => onChange('e3q7_hp_m1', e.target.value)} value={userAnswers.e3q7_hp_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2: Heating" onChange={(e) => onChange('e3q7_hp_m2', e.target.value)} value={userAnswers.e3q7_hp_m2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 3: Transfer" onChange={(e) => onChange('e3q7_hp_m3', e.target.value)} value={userAnswers.e3q7_hp_m3 || ''}/>
+      </div>
+      <p>Energy Conversion:</p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('e3q7_hp_conv', e.target.value)} value={userAnswers.e3q7_hp_conv || ''}/>
+
+      <hr style={{margin: '20px 0', border: 'none', borderTop: '1px solid #e2e8f0'}}/>
+
+      <p><b>Induction Cooker:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px'}}>
+        <input style={styles.input} placeholder="Step 1: Structure" onChange={(e) => onChange('e3q7_ind_m1', e.target.value)} value={userAnswers.e3q7_ind_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2: Operation" onChange={(e) => onChange('e3q7_ind_m2', e.target.value)} value={userAnswers.e3q7_ind_m2 || ''}/>
+      </div>
+      <p>Why not non-conducting container?</p>
+      <input style={styles.input} onChange={(e) => onChange('e3q7_ind_why', e.target.value)} value={userAnswers.e3q7_ind_why || ''}/>
+
+      <hr style={{margin: '20px 0', border: 'none', borderTop: '1px solid #e2e8f0'}}/>
+
+      <p><b>Microwave Oven:</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '10px'}}>
+        <input style={styles.input} placeholder="Step 1: Frequency..." onChange={(e) => onChange('e3q7_mw_m1', e.target.value)} value={userAnswers.e3q7_mw_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 2: Water molecules..." onChange={(e) => onChange('e3q7_mw_m2', e.target.value)} value={userAnswers.e3q7_mw_m2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <input style={styles.input} placeholder="Step 3: Heating..." onChange={(e) => onChange('e3q7_mw_m3', e.target.value)} value={userAnswers.e3q7_mw_m3 || ''}/>
+      </div>
+
+      <p><b>Efficiency Arrangement (Highest to Lowest):</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3q7_rank', e.target.value)} value={userAnswers.e3q7_rank || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Hotplate:</b> Coil of resistance wire thus Current heats wire (heating effect) thus Heat transferred by conduction/radiation.<br/>
+          <b>Conv:</b> Electrical thus Thermal (wire/cookware) thus Internal (food).<br/>
+          <b>Induction:</b> Coil under plate thus a.c. creates changing flux & induces eddy current in cookware.<br/>
+          <b>Non-conduct:</b> No eddy current can flow.<br/>
+          <b>Microwave:</b> Exposed to 2.45GHz thus Oscillating E field flips water molecules thus KE spread through food.<br/>
+          <b>Rank:</b> Induction cooker more efficient than Electric hotplate more efficient than Microwave oven.
+        </div>
+      )}
+    </div>
+
+    {/* Q8: Air Conditioning */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8: Air Conditioning</h3>
+        <StarButton questionId="e3c1q8" />
+      </div>
+      <p>Mechanism of cooling indoor air:</p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Step 1: Absorption" onChange={(e) => onChange('e3q8_m1', e.target.value)} value={userAnswers.e3q8_m1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 2: Compression" onChange={(e) => onChange('e3q8_m2', e.target.value)} value={userAnswers.e3q8_m2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 3: Release" onChange={(e) => onChange('e3q8_m3', e.target.value)} value={userAnswers.e3q8_m3 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 4: Expansion" onChange={(e) => onChange('e3q8_m4', e.target.value)} value={userAnswers.e3q8_m4 || ''}/>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px'}}>
+        <div>
+          <p>Formula of Cooling Capacity:</p>
+          <input style={styles.input} onChange={(e) => onChange('e3q8_cap', e.target.value)} value={userAnswers.e3q8_cap || ''}/>
+        </div>
+        <div>
+          <p>Formula of COP:</p>
+          <input style={styles.input} onChange={(e) => onChange('e3q8_cop', e.target.value)} value={userAnswers.e3q8_cop || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Mech:</b> Cool refrigerant absorbs heat (evaporates) -&gt; Vapour compressed (pressure/temp UP) -&gt; Releases heat outside -&gt; Liquid expanded (temp DOWN).<br/>
+          <b>Capacity:</b> Max heat removed / time.<br/>
+          <b>COP:</b> Cooling capacity / Power input.
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- ELECTIVE 3 CH 2: ENERGY EFFICIENCY IN BUILDINGS & VEHICLES ---
+const Phy_E_3_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Conduction & Radiation */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Energy Efficiency in Buildings - Conduction & Radiation</h3>
+        <StarButton questionId="e3c2q1" />
+      </div>
+      
+      <p style={{marginTop: '15px'}}><b>Formula of Rate of Energy Transferred by Conduction (without U-value):</b></p>
+      <input style={styles.input} placeholder="Q/t = ..." onChange={(e) => onChange('e3ch2_q1_cond_no_u', e.target.value)} value={userAnswers.e3ch2_q1_cond_no_u || ''}/>
+      
+      <p style={{marginTop: '15px'}}><b>Formula of Rate of Energy Transferred by Conduction (with U-value):</b></p>
+      <input style={styles.input} placeholder="Q/t = ..." onChange={(e) => onChange('e3ch2_q1_cond_u', e.target.value)} value={userAnswers.e3ch2_q1_cond_u || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of OTTV (Overall Thermal Transmittance Value):</b></p>
+      <input style={styles.input} placeholder="OTTV = ..." onChange={(e) => onChange('e3ch2_q1_ottv', e.target.value)} value={userAnswers.e3ch2_q1_ottv || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Methods to Reduce Energy Transfer by Conduction and Radiation:</b></p>
+      
+      <div style={{marginTop: '10px', marginBottom: '10px'}}>
+        <p><b>Conduction:</b></p>
+        <p>Example method:</p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch2_q1_cond_method', e.target.value)} value={userAnswers.e3ch2_q1_cond_method || ''}/>
+      </div>
+
+      <div style={{marginTop: '10px', marginBottom: '10px'}}>
+        <p><b>Radiation:</b></p>
+        <p>Method 1:</p>
+        <input style={styles.input} onChange={(e) => onChange('e3ch2_q1_rad_m1', e.target.value)} value={userAnswers.e3ch2_q1_rad_m1 || ''}/>
+        
+        <p style={{marginTop: '10px'}}>Method 2: Solar Control Film</p>
+        <p style={{fontSize: '0.9rem', color: '#64748b'}}>Advantages of solar control film (list 4):</p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+          <input style={styles.input} placeholder="Adv 1" onChange={(e) => onChange('e3ch2_q1_scf_adv1', e.target.value)} value={userAnswers.e3ch2_q1_scf_adv1 || ''}/>
+          <input style={styles.input} placeholder="Adv 2" onChange={(e) => onChange('e3ch2_q1_scf_adv2', e.target.value)} value={userAnswers.e3ch2_q1_scf_adv2 || ''}/>
+          <input style={styles.input} placeholder="Adv 3" onChange={(e) => onChange('e3ch2_q1_scf_adv3', e.target.value)} value={userAnswers.e3ch2_q1_scf_adv3 || ''}/>
+          <input style={styles.input} placeholder="Adv 4" onChange={(e) => onChange('e3ch2_q1_scf_adv4', e.target.value)} value={userAnswers.e3ch2_q1_scf_adv4 || ''}/>
+        </div>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Conduction (no U):</b> Q/t = kA(T<sub>H</sub> - T<sub>C</sub>)/d<br/>
+          <b>Conduction (with U):</b> Q/t = uA(T<sub>H</sub> - T<sub>C</sub>)<br/>
+          <b>OTTV:</b> (Q<sub>c</sub>/t + Q<sub>s</sub>/t) / A<br/>
+          <b>Cond Method:</b> Use layer with low thermal conductivity (e.g., double-glazed window)<br/>
+          <b>Rad Method 1:</b> Use tinted glass, reflective glass, and low-e glass<br/>
+          <b>SCF Advantages:</b> 1. Reflect IR and UV radiation, 2. Let through visible light, 3. Easy to install, 4. Cheap
+        </div>
+      )}
+    </div>
+
+    {/* Q2: Vehicles */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Vehicles - Energy Efficiency</h3>
+        <StarButton questionId="e3c2q2" />
+      </div>
+      
+      {/* Conventional Vehicles */}
+      <div style={{marginBottom: '25px', paddingBottom: '15px', borderBottom: '2px solid #f1f5f9'}}>
+        <h4 style={{fontSize: '1.1rem', fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}>Conventional Fossil-Fuel Vehicle</h4>
+        
+        <p><b>Mechanism of propulsion:</b></p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch2_q2_conv_mech', e.target.value)} value={userAnswers.e3ch2_q2_conv_mech || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Conservation of Energy for Propulsion:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_conv_prop', e.target.value)} value={userAnswers.e3ch2_q2_conv_prop || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Conservation of Energy for Braking:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_conv_brake', e.target.value)} value={userAnswers.e3ch2_q2_conv_brake || ''}/>
+      </div>
+
+      {/* Electric Vehicle */}
+      <div style={{marginBottom: '25px', paddingBottom: '15px', borderBottom: '2px solid #f1f5f9'}}>
+        <h4 style={{fontSize: '1.1rem', fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}>Electric Vehicle</h4>
+        
+        <p><b>Mechanism of propulsion:</b></p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch2_q2_ev_mech', e.target.value)} value={userAnswers.e3ch2_q2_ev_mech || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Regenerative Braking System:</b></p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch2_q2_ev_regen', e.target.value)} value={userAnswers.e3ch2_q2_ev_regen || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Property of Regenerative Braking System:</b></p>
+        <textarea style={styles.input} rows="1" onChange={(e) => onChange('e3ch2_q2_ev_regen_prop', e.target.value)} value={userAnswers.e3ch2_q2_ev_regen_prop || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Conservation of Energy for Propulsion:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_ev_prop', e.target.value)} value={userAnswers.e3ch2_q2_ev_prop || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Conservation of Energy for Braking:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_ev_brake', e.target.value)} value={userAnswers.e3ch2_q2_ev_brake || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Advantages of EV over conventional vehicle:</b></p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+          <input style={styles.input} placeholder="Adv 1" onChange={(e) => onChange('e3ch2_q2_ev_adv1', e.target.value)} value={userAnswers.e3ch2_q2_ev_adv1 || ''}/>
+          <input style={styles.input} placeholder="Adv 2" onChange={(e) => onChange('e3ch2_q2_ev_adv2', e.target.value)} value={userAnswers.e3ch2_q2_ev_adv2 || ''}/>
+          <input style={styles.input} placeholder="Adv 3" onChange={(e) => onChange('e3ch2_q2_ev_adv3', e.target.value)} value={userAnswers.e3ch2_q2_ev_adv3 || ''}/>
+        </div>
+
+        <p style={{marginTop: '15px'}}><b>Disadvantages of EV over conventional vehicle:</b></p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+          <input style={styles.input} placeholder="Dis 1" onChange={(e) => onChange('e3ch2_q2_ev_dis1', e.target.value)} value={userAnswers.e3ch2_q2_ev_dis1 || ''}/>
+          <input style={styles.input} placeholder="Dis 2" onChange={(e) => onChange('e3ch2_q2_ev_dis2', e.target.value)} value={userAnswers.e3ch2_q2_ev_dis2 || ''}/>
+          <input style={styles.input} placeholder="Dis 3" onChange={(e) => onChange('e3ch2_q2_ev_dis3', e.target.value)} value={userAnswers.e3ch2_q2_ev_dis3 || ''}/>
+        </div>
+      </div>
+
+      {/* Hybrid Vehicle */}
+      <div style={{marginBottom: '25px', paddingBottom: '15px', borderBottom: '2px solid #f1f5f9'}}>
+        <h4 style={{fontSize: '1.1rem', fontWeight: '700', color: '#4338ca', marginBottom: '10px'}}>Hybrid Vehicle</h4>
+        
+        <p><b>Mechanism of hybrid vehicles:</b></p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch2_q2_hybrid_mech', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_mech || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Energy Flow When Combustion Engine is Used for Propulsion:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_hybrid_eng', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_eng || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Energy Flow When Electric Motor is Used for Propulsion:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_hybrid_motor', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_motor || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Energy Flow in Regenerative Braking:</b></p>
+        <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch2_q2_hybrid_brake', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_brake || ''}/>
+
+        <p style={{marginTop: '15px'}}><b>Advantages of Hybrid Vehicles:</b></p>
+        <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+          <input style={styles.input} placeholder="Adv 1" onChange={(e) => onChange('e3ch2_q2_hybrid_adv1', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_adv1 || ''}/>
+          <input style={styles.input} placeholder="Adv 2" onChange={(e) => onChange('e3ch2_q2_hybrid_adv2', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_adv2 || ''}/>
+          <input style={styles.input} placeholder="Adv 3" onChange={(e) => onChange('e3ch2_q2_hybrid_adv3', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_adv3 || ''}/>
+        </div>
+
+        <p style={{marginTop: '15px'}}><b>Disadvantages of Hybrid Vehicles:</b></p>
+        <input style={styles.input} placeholder="Dis 1" onChange={(e) => onChange('e3ch2_q2_hybrid_dis', e.target.value)} value={userAnswers.e3ch2_q2_hybrid_dis || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Conventional Vehicle:</b><br/>
+          - Mech: Use internal combustion engine, energy wasted as heat<br/>
+          - Propulsion: Chemical energy (petrol) → Combustion engine → KE of vehicle<br/>
+          - Braking: KE of vehicle → Frictional braking system → Internal and sound energy<br/><br/>
+
+          <b>Electric Vehicle:</b><br/>
+          - Mech: Electric motor for propulsion, no air pollutant<br/>
+          - Regenerative: Motor acts as generator when braking to reduce energy waste<br/>
+          - Regen Property: Not effective at low speed<br/>
+          - Propulsion: Chemical energy (battery) → Battery → Electrical energy → Electric motor → KE of vehicle<br/>
+          - Braking: KE of vehicle → Electric generator → Electrical energy → Battery → Chemical energy in battery<br/>
+          - Advantages: 1. No air pollutant, 2. Quieter, 3. Higher end-use energy efficiency<br/>
+          - Disadvantages: 1. Shorter range, 2. Requires long time to charge, 3. Expensive<br/><br/>
+
+          <b>Hybrid Vehicle:</b><br/>
+          - Mech: Combines fossil-fuel and electric vehicle with both frictional and regenerative braking<br/>
+          - Combustion: Petrol → Combustion engine → KE of car<br/>
+          - Electric: Battery → Motor → KE of car<br/>
+          - Braking: KE of car → Generator → Battery<br/>
+          - Advantages: 1. Quieter, 2. Higher end-use energy efficiency, 3. Produce less greenhouse gas<br/>
+          - Disadvantages: More expensive
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- ELECTIVE 3 CH 3: RENEWABLE ENERGY ---
+const Phy_E_3_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+  <div>
+    {/* Q1: Introduction */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1: Introduction to Renewable Energy</h3>
+        <StarButton questionId="e3c3q1" />
+      </div>
+      <p>Definition of renewable energy:</p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q1_def', e.target.value)} value={userAnswers.e3ch3_q1_def || ''}/>
+      {showAnswers && <div style={styles.answerKey}>Energy that comes from natural resources that are replenished constantly.</div>}
+    </div>
+
+    {/* Q2: Nuclear Energy */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Nuclear Energy</h3>
+        <StarButton questionId="e3c3q2" />
+      </div>
+      
+      <p><b>Is nuclear energy renewable?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_renewable', e.target.value)} value={userAnswers.e3ch3_q2_renewable || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Definition of binding energy:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q2_be_def', e.target.value)} value={userAnswers.e3ch3_q2_be_def || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of binding energy (for E in J and Δm in kg):</b></p>
+      <input style={styles.input} placeholder="E = ..." onChange={(e) => onChange('e3ch3_q2_be_formula_j', e.target.value)} value={userAnswers.e3ch3_q2_be_formula_j || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of binding energy (for E in MeV and Δm in u):</b></p>
+      <input style={styles.input} placeholder="E = ..." onChange={(e) => onChange('e3ch3_q2_be_formula_mev', e.target.value)} value={userAnswers.e3ch3_q2_be_formula_mev || ''}/>
+      <img src="/images/BEG.jpg" alt="description" style={{maxWidth: '100%', marginTop: '10px'}} />
+      <p style={{marginTop: '15px'}}><b>How to study the stability of a nucleus:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q2_stability', e.target.value)} value={userAnswers.e3ch3_q2_stability || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>What is A?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_A_def', e.target.value)} value={userAnswers.e3ch3_q2_A_def || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>What does higher E<sub>b</sub>/A mean?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_higher_eb', e.target.value)} value={userAnswers.e3ch3_q2_higher_eb || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>What is the most stable nucleus?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_most_stable', e.target.value)} value={userAnswers.e3ch3_q2_most_stable || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Tendency of nuclear reactions:</b></p>
+      <p style={{fontSize: '0.9rem', color: '#64748b'}}>For A &lt; 56:</p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_reaction_low', e.target.value)} value={userAnswers.e3ch3_q2_reaction_low || ''}/>
+      <p style={{marginTop: '10px', fontSize: '0.9rem', color: '#64748b'}}>For A &gt; 56:</p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q2_reaction_high', e.target.value)} value={userAnswers.e3ch3_q2_reaction_high || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Method to find binding energy of a nucleus from graph:</b></p>
+      <input style={styles.input} placeholder="Eb = ..." onChange={(e) => onChange('e3ch3_q2_from_graph', e.target.value)} value={userAnswers.e3ch3_q2_from_graph || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Renewable:</b> No<br/>
+          <b>BE Def:</b> Energy required to completely separate all nucleons of a nucleus<br/>
+          <b>BE (J):</b> E = Δmc²<br/>
+          <b>BE (MeV):</b> E = 931Δm<br/>
+          <b>Stability:</b> Compare binding energy per nucleon (E<sub>b</sub>/A)<br/>
+          <b>A:</b> Mass number<br/>
+          <b>Higher E<sub>b</sub>/A:</b> The nucleus is more stable<br/>
+          <b>Most Stable:</b> Fe-56<br/>
+          <b>Reaction Tendency:</b> A &lt; 56: Tends to combine by fusion. A &gt; 56: Tends to split by fission<br/>
+          <b>From Graph:</b> E<sub>b</sub> = (E<sub>b</sub>/A) × A
+        </div>
+      )}
+    </div>
+
+    {/* Q3: Pressurized Water Fission Reactor */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3: Pressurized Water Fission Reactor</h3>
+        <StarButton questionId="e3c3q3" />
+      </div>
+      
+      <p><b>Function of pressurized water fission reactor:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q3_function', e.target.value)} value={userAnswers.e3ch3_q3_function || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Energy flow:</b></p>
+      <input style={styles.input} placeholder="Nuclear energy → ... → Electrical energy" onChange={(e) => onChange('e3ch3_q3_energy_flow', e.target.value)} value={userAnswers.e3ch3_q3_energy_flow || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Function of key components:</b></p>
+      <div style={{marginTop: '10px'}}>
+        <p style={{fontWeight: '600', color: '#4338ca'}}>Moderator:</p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q3_moderator', e.target.value)} value={userAnswers.e3ch3_q3_moderator || ''}/>
+      </div>
+      
+      <div style={{marginTop: '15px'}}>
+        <p style={{fontWeight: '600', color: '#4338ca'}}>Control rod:</p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q3_control_rod', e.target.value)} value={userAnswers.e3ch3_q3_control_rod || ''}/>
+      </div>
+
+      <div style={{marginTop: '15px'}}>
+        <p style={{fontWeight: '600', color: '#4338ca'}}>Pressurized water:</p>
+        <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q3_water', e.target.value)} value={userAnswers.e3ch3_q3_water || ''}/>
+      </div>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Function:</b> Use nuclear fission to generate electricity from nuclear energy<br/>
+          <b>Energy Flow:</b> Nuclear energy → Internal energy of water → KE of turbine → Electrical energy<br/>
+          <b>Moderator:</b> Slow down fast-moving neutrons produced in fission to maintain chain reaction<br/>
+          <b>Control Rod:</b> Absorb electrons and control the rate of fission<br/>
+          <b>Pressurized Water:</b> Slow down neutrons and absorb heat from reactor; pressurized to increase its boiling point
+        </div>
+      )}
+    </div>
+
+    {/* Q4: Wind Power */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4: Wind Power</h3>
+        <StarButton questionId="e3c3q4" />
+      </div>
+      
+      <p><b>Energy flow of wind turbine:</b></p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch3_q4_energy_flow', e.target.value)} value={userAnswers.e3ch3_q4_energy_flow || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of total kinetic energy of the air:</b></p>
+      <input style={styles.input} placeholder="KE = ..." onChange={(e) => onChange('e3ch3_q4_ke_formula', e.target.value)} value={userAnswers.e3ch3_q4_ke_formula || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of maximum power of turbine:</b></p>
+      <input style={styles.input} placeholder="P<sub>max</sub> = ..." onChange={(e) => onChange('e3ch3_q4_power_formula', e.target.value)} value={userAnswers.e3ch3_q4_power_formula || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>What happens when wind speed is too low?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q4_low_wind', e.target.value)} value={userAnswers.e3ch3_q4_low_wind || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>What happens when wind speed is too high?</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q4_high_wind', e.target.value)} value={userAnswers.e3ch3_q4_high_wind || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Energy Flow:</b> KE of air → KE of rotor → Electrical energy<br/>
+          <b>KE Formula:</b> (1/2)ρAtv³<br/>
+          <b>Max Power:</b> P<sub>max</sub> = η(1/2)ρAv³ (where η is efficiency and A = πr²)<br/>
+          <b>Low Wind:</b> Wind turbine may not function properly<br/>
+          <b>High Wind:</b> Wind turbine is locked for safety reason
+        </div>
+      )}
+    </div>
+
+    {/* Q5: Hydroelectric Power */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5: Hydroelectric Power</h3>
+        <StarButton questionId="e3c3q5" />
+      </div>
+      
+      <p><b>Energy flow of hydroelectric power:</b></p>
+      <input style={styles.input} placeholder="" onChange={(e) => onChange('e3ch3_q5_energy_flow', e.target.value)} value={userAnswers.e3ch3_q5_energy_flow || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of maximum power:</b></p>
+      <input style={styles.input} placeholder="P<sub>max</sub> = ..." onChange={(e) => onChange('e3ch3_q5_power_formula', e.target.value)} value={userAnswers.e3ch3_q5_power_formula || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Energy Flow:</b> GPE of water → KE of water → KE of turbine → Electrical energy<br/>
+          <b>Max Power:</b> P<sub>max</sub> = ηmgh/t (where η is efficiency)
+        </div>
+      )}
+    </div>
+
+    {/* Q6: Solar Energy */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6: Solar Energy</h3>
+        <StarButton questionId="e3c3q6" />
+      </div>
+      
+      <p><b>Meaning of Solar constant:</b></p>
+      <textarea style={styles.input} rows="2" onChange={(e) => onChange('e3ch3_q6_solar_constant', e.target.value)} value={userAnswers.e3ch3_q6_solar_constant || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Formula of total power received per unit area by solar cell:</b></p>
+      <input style={styles.input} placeholder="P = ..." onChange={(e) => onChange('e3ch3_q6_power_formula', e.target.value)} value={userAnswers.e3ch3_q6_power_formula || ''}/>
+
+      <p style={{marginTop: '15px'}}><b>Mechanism of solar cell (describe the process step by step):</b></p>
+      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px'}}>
+        <textarea style={styles.input} rows="2" placeholder="Step 1: Structure..." onChange={(e) => onChange('e3ch3_q6_mech_1', e.target.value)} value={userAnswers.e3ch3_q6_mech_1 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 2: Absorption and delocalization..." onChange={(e) => onChange('e3ch3_q6_mech_2', e.target.value)} value={userAnswers.e3ch3_q6_mech_2 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 3: Movement under E field..." onChange={(e) => onChange('e3ch3_q6_mech_3', e.target.value)} value={userAnswers.e3ch3_q6_mech_3 || ''}/>
+        <div style={{textAlign: 'center', color: '#64748b'}}>↓</div>
+        <textarea style={styles.input} rows="2" placeholder="Step 4: Current formation..." onChange={(e) => onChange('e3ch3_q6_mech_4', e.target.value)} value={userAnswers.e3ch3_q6_mech_4 || ''}/>
+      </div>
+
+      <p style={{marginTop: '15px'}}><b>Efficiency of solar cell:</b></p>
+      <input style={styles.input} onChange={(e) => onChange('e3ch3_q6_efficiency', e.target.value)} value={userAnswers.e3ch3_q6_efficiency || ''}/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Solar Constant:</b> The total EM radiation radiated at normal incidence per unit area per unit time, at mean distance between Earth and Sun, measured outside Earth's atmosphere<br/>
+          <b>Power Formula:</b> P = Solar constant × cos(x) (where x is angle between sunlight and normal)<br/>
+          <b>Mechanism:</b><br/>
+          1. Consists of p-type and n-type semiconductor with a PN junction in between<br/>
+          2. Electrons are delocalized after absorbing sunlight and leave holes<br/>
+          3. Under E field, free electrons move to n-side and holes move to p-side<br/>
+          4. When appliance is connected, current flows from p-side to n-side<br/>
+          <b>Efficiency:</b> 10 to 20%
+        </div>
+      )}
+    </div>
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
+  </div>
+);
+
+// --- CRITICAL FIX: EXPORT THE APP COMPONENT ---
 export default App;
