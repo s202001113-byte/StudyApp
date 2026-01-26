@@ -8,6 +8,7 @@ const App = () => {
   const [showAnswers, setShowAnswers] = useState(false);
   const [subject, setSubject] = useState('ICT');
   const [countdown, setCountdown] = useState({});
+  const [currentPage, setCurrentPage] = useState('questionBank'); // 'questionBank' or 'scheduler'
   const [starredQuestions, setStarredQuestions] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('starredQuestions')) || {};
@@ -169,6 +170,13 @@ const App = () => {
       backgroundColor: isActive ? '#4f46e5' : '#e2e8f0', color: isActive ? 'white' : '#64748b', boxShadow: isActive ? '0 4px 12px rgba(79, 70, 229, 0.3)' : 'none'
     }),
 
+    // Page Toggle Container
+    pageToggleContainer: { display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', borderBottom: '2px solid #e2e8f0', paddingBottom: '20px' },
+    pageBtn: (isActive) => ({
+      padding: '12px 28px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: '700', fontSize: '1rem', transition: 'all 0.2s',
+      backgroundColor: isActive ? '#4f46e5' : '#f3f4f6', color: isActive ? 'white' : '#64748b', boxShadow: isActive ? '0 4px 12px rgba(79, 70, 229, 0.3)' : 'none'
+    }),
+
     categoryTitle: { fontSize: '1.25rem', fontWeight: '700', marginBottom: '20px', borderLeft: '4px solid #4f46e5', paddingLeft: '15px', color: '#334155', marginTop: '40px' },
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' },
     card: { display: 'flex', alignItems: 'center', padding: '24px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' },
@@ -234,14 +242,24 @@ const App = () => {
                 </div>
               </div>
               
-              {/* Subject Selector */}
-              <div style={styles.subjectToggleContainer}>
-                <button style={styles.subjectBtn(subject === 'ICT')} onClick={() => setSubject('ICT')}>ICT</button>
-                <button style={styles.subjectBtn(subject === 'Physics')} onClick={() => setSubject('Physics')}>Physics</button>
-              </div>
+              {/* Subject Selector - Only show on Question Bank */}
+              {currentPage === 'questionBank' && (
+                <div style={styles.subjectToggleContainer}>
+                  <button style={styles.subjectBtn(subject === 'ICT')} onClick={() => setSubject('ICT')}>ICT</button>
+                  <button style={styles.subjectBtn(subject === 'Physics')} onClick={() => setSubject('Physics')}>Physics</button>
+                </div>
+              )}
             </header>
             
-            {categories[subject].map(cat => (
+            {/* Page Toggle */}
+            <div style={styles.pageToggleContainer}>
+              <button style={styles.pageBtn(currentPage === 'questionBank')} onClick={() => setCurrentPage('questionBank')}>📚 Question Bank</button>
+              <button style={styles.pageBtn(currentPage === 'scheduler')} onClick={() => setCurrentPage('scheduler')}>📅 Plan Your Study Schedule</button>
+            </div>
+
+            {currentPage === 'questionBank' ? (
+              <div>
+                {categories[subject].map(cat => (
               <div key={cat}>
                 <h2 style={styles.categoryTitle}>{cat}</h2>
                 <div style={styles.grid}>
@@ -257,6 +275,10 @@ const App = () => {
                 </div>
               </div>
             ))}
+              </div>
+            ) : (
+              <StudyScheduler examDates={examDates} styles={styles} StarButton={StarButton} />
+            )}
           </div>
         ) : (
           <div style={styles.quizBox}>
@@ -3895,6 +3917,685 @@ const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton
       <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
         <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
       </div>
+    </div>
+  );
+};
+
+// --- STUDY SCHEDULER COMPONENT ---
+const StudyScheduler = ({ examDates, styles, StarButton }) => {
+  const [allSchedules, setAllSchedules] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('studySchedules')) || { 'My Plan 1': {} };
+    } catch {
+      return { 'My Plan 1': {} };
+    }
+  });
+  const [currentScheduleName, setCurrentScheduleName] = useState('My Plan 1');
+  const [selectedMonth, setSelectedMonth] = useState('2026-02');
+  const [newScheduleName, setNewScheduleName] = useState('');
+  const [renameMode, setRenameMode] = useState(null); // null or schedule name being renamed
+  const [renameInput, setRenameInput] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null); // null or task id being edited
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [taskInput, setTaskInput] = useState('');
+  const [emergencyLevel, setEmergencyLevel] = useState(5);
+
+  const currentSchedule = allSchedules[currentScheduleName] || {};
+
+  // Get color based on emergency level
+  const getColorByLevel = (level) => {
+    if (level <= 2) return '#22c55e'; // Green
+    if (level <= 4) return '#84cc16'; // Lime
+    if (level <= 6) return '#eab308'; // Yellow
+    if (level <= 8) return '#f97316'; // Orange
+    return '#ef4444'; // Red
+  };
+
+  // Save schedule to localStorage
+  const saveSchedule = (updatedSchedule) => {
+    const updated = { ...allSchedules, [currentScheduleName]: updatedSchedule };
+    setAllSchedules(updated);
+    localStorage.setItem('studySchedules', JSON.stringify(updated));
+  };
+
+  // Add or edit task to date
+  const saveTask = () => {
+    if (!taskInput.trim()) {
+      alert('Please enter a task name');
+      return;
+    }
+    if (!selectedDate) return;
+
+    const dateKey = selectedDate;
+    const updatedSchedule = { ...currentSchedule };
+    
+    if (!updatedSchedule[dateKey]) {
+      updatedSchedule[dateKey] = [];
+    }
+    
+    if (editingTaskId) {
+      // Edit existing task
+      const taskIndex = updatedSchedule[dateKey].findIndex(t => t.id === editingTaskId);
+      if (taskIndex !== -1) {
+        updatedSchedule[dateKey][taskIndex] = {
+          id: editingTaskId,
+          task: taskInput,
+          level: emergencyLevel
+        };
+      }
+    } else {
+      // Add new task
+      updatedSchedule[dateKey].push({
+        id: Date.now(),
+        task: taskInput,
+        level: emergencyLevel
+      });
+    }
+    
+    saveSchedule(updatedSchedule);
+    setTaskInput('');
+    setEmergencyLevel(5);
+    setEditingTaskId(null);
+    setModalOpen(false);
+  };
+
+  // Edit task
+  const editTask = (dateKey, taskId) => {
+    const task = currentSchedule[dateKey].find(t => t.id === taskId);
+    if (task) {
+      setTaskInput(task.task);
+      setEmergencyLevel(task.level);
+      setSelectedDate(dateKey);
+      setEditingTaskId(taskId);
+      setModalOpen(true);
+    }
+  };
+
+  // Delete task
+  const deleteTask = (dateKey, taskId) => {
+    const updatedSchedule = { ...currentSchedule };
+    updatedSchedule[dateKey] = updatedSchedule[dateKey].filter(t => t.id !== taskId);
+    if (updatedSchedule[dateKey].length === 0) {
+      delete updatedSchedule[dateKey];
+    }
+    saveSchedule(updatedSchedule);
+  };
+
+  // Rename schedule
+  const renameSchedule = (oldName, newName) => {
+    if (!newName.trim()) {
+      alert('Please enter a schedule name');
+      setRenameMode(null);
+      return;
+    }
+    if (newName !== oldName && allSchedules[newName]) {
+      alert('Schedule already exists');
+      return;
+    }
+    
+    const updated = { ...allSchedules };
+    updated[newName] = updated[oldName];
+    delete updated[oldName];
+    setAllSchedules(updated);
+    setCurrentScheduleName(newName);
+    localStorage.setItem('studySchedules', JSON.stringify(updated));
+    setRenameMode(null);
+    setRenameInput('');
+  };
+
+  // Add new schedule
+  const addNewSchedule = () => {
+    if (newScheduleName.trim() === '') {
+      alert('Please enter a schedule name');
+      return;
+    }
+    if (allSchedules[newScheduleName]) {
+      alert('Schedule already exists');
+      return;
+    }
+    const updated = { ...allSchedules, [newScheduleName]: {} };
+    setAllSchedules(updated);
+    setCurrentScheduleName(newScheduleName);
+    setNewScheduleName('');
+    localStorage.setItem('studySchedules', JSON.stringify(updated));
+  };
+
+  // Delete schedule
+  const deleteSchedule = (name) => {
+    if (Object.keys(allSchedules).length === 1) {
+      alert('You must keep at least one schedule');
+      return;
+    }
+    const updated = { ...allSchedules };
+    delete updated[name];
+    setAllSchedules(updated);
+    setCurrentScheduleName(Object.keys(updated)[0]);
+    localStorage.setItem('studySchedules', JSON.stringify(updated));
+  };
+
+  // Get exam dates for the month
+  const getExamDatesForMonth = (monthStr) => {
+    const examDatesForMonth = {};
+    Object.entries(examDates).forEach(([subject, dateStr]) => {
+      const dateObj = new Date(dateStr);
+      const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+      if (monthKey === monthStr) {
+        const day = dateObj.getDate();
+        examDatesForMonth[day] = subject;
+      }
+    });
+    return examDatesForMonth;
+  };
+
+  // Calendar component for a month
+  const CalendarMonth = ({ monthStr }) => {
+    const [year, month] = monthStr.split('-').map(Number);
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const examDatesInMonth = getExamDatesForMonth(monthStr);
+
+    const days = [];
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i);
+    }
+
+    return (
+      <div style={{marginBottom: '40px'}}>
+        <h3 style={{fontSize: '1.3rem', fontWeight: '700', marginBottom: '20px', color: '#1e1b4b'}}>{monthNames[month - 1]} {year}</h3>
+        
+        {/* Weekday Headers */}
+        <div style={{display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0', marginBottom: '0'}}>
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+            <div key={day} style={{textAlign: 'center', fontWeight: '700', color: '#fff', padding: '12px', fontSize: '1rem', backgroundColor: '#4f46e5'}}>
+              {day}
+            </div>
+          ))}
+          
+          {/* Calendar Days */}
+          {days.map((day, idx) => {
+            const dateKey = day ? `${monthStr}-${String(day).padStart(2, '0')}` : null;
+            const tasksForDay = dateKey ? currentSchedule[dateKey] || [] : [];
+            const isExamDay = day && examDatesInMonth[day];
+
+            return (
+              <div
+                key={idx}
+                onClick={() => {
+                  if (day) {
+                    setSelectedDate(dateKey);
+                    setModalOpen(true);
+                  }
+                }}
+                style={{
+                  minHeight: '180px',
+                  padding: '12px',
+                  border: '1px solid #e2e8f0',
+                  backgroundColor: isExamDay ? '#fef3c7' : (day ? '#fff' : '#f9fafb'),
+                  cursor: day ? 'pointer' : 'default',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (day) e.currentTarget.style.backgroundColor = '#f3f4f6';
+                }}
+                onMouseLeave={(e) => {
+                  if (day) e.currentTarget.style.backgroundColor = isExamDay ? '#fef3c7' : '#fff';
+                }}
+              >
+                {day && (
+                  <>
+                    <div style={{fontWeight: '700', color: '#1e1b4b', marginBottom: '8px', fontSize: '1rem'}}>
+                      {day}
+                    </div>
+                    
+                    {isExamDay && (
+                      <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        color: '#fff',
+                        backgroundColor: '#10b981',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        marginBottom: '8px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
+                        📝 {examDatesInMonth[day]}
+                      </div>
+                    )}
+                    
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '6px', flex: 1}}>
+                      {tasksForDay.slice(0, 4).map((task, i) => (
+                        <div
+                          key={task.id}
+                          style={{
+                            backgroundColor: getColorByLevel(task.level),
+                            color: '#fff',
+                            padding: '6px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            position: 'relative',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.opacity = '0.9';
+                            e.currentTarget.style.boxShadow = '0 0 6px rgba(0,0,0,0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.opacity = '1';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                          title={`${task.task} (Level ${task.level})\nLeft-click to delete | Double-click to edit`}
+                        >
+                          <span style={{flex: 1, overflow: 'hidden', textOverflow: 'ellipsis'}}>{task.task}</span>
+                          <span 
+                            style={{marginLeft: '4px', fontSize: '0.7rem', cursor: 'pointer', flexShrink: 0}}
+                            onDoubleClick={(e) => {
+                              e.stopPropagation();
+                              editTask(dateKey, task.id);
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm(`Delete "${task.task}"?`)) {
+                                deleteTask(dateKey, task.id);
+                              }
+                            }}
+                          >
+                            ✕
+                          </span>
+                        </div>
+                      ))}
+                      {tasksForDay.length > 4 && (
+                        <div style={{fontSize: '0.75rem', color: '#64748b', fontWeight: '700', cursor: 'pointer'}} title="Click to view all tasks">
+                          +{tasksForDay.length - 4} more
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // Modal Component
+  const Modal = () => {
+    if (!modalOpen) return null;
+
+    const dateObj = new Date(selectedDate + 'T00:00:00');
+    const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000
+      }}>
+        <div style={{
+          backgroundColor: '#fff',
+          borderRadius: '12px',
+          padding: '30px',
+          maxWidth: '500px',
+          width: '90%',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+        }}>
+          <h3 style={{fontSize: '1.3rem', fontWeight: '800', marginBottom: '10px', color: '#1e1b4b'}}>
+            {editingTaskId ? '✏️ Edit Study Task' : '➕ Add Study Task'}
+          </h3>
+          <p style={{fontSize: '0.95rem', color: '#64748b', marginBottom: '20px'}}>
+            {dayName}, {dateStr}
+          </p>
+
+          <label style={{display: 'block', marginBottom: '15px'}}>
+            <div style={{fontSize: '0.95rem', fontWeight: '700', marginBottom: '8px', color: '#334155'}}>
+              Task Name
+            </div>
+            <input
+              type="text"
+              placeholder="e.g., Practice Ch2 questions, Review notes"
+              value={taskInput}
+              onChange={(e) => setTaskInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && addTask()}
+              autoFocus
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '2px solid #e2e8f0',
+                fontSize: '0.95rem',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => e.currentTarget.style.borderColor = '#4f46e5'}
+              onBlur={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+            />
+          </label>
+
+          <label style={{display: 'block', marginBottom: '20px'}}>
+            <div style={{fontSize: '0.95rem', fontWeight: '700', marginBottom: '12px', color: '#334155'}}>
+              Emergency Level: <span style={{color: getColorByLevel(emergencyLevel), fontWeight: '800'}}>{emergencyLevel}</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              value={emergencyLevel}
+              onChange={(e) => setEmergencyLevel(parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '8px',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                background: `linear-gradient(to right, #22c55e 0%, #84cc16 25%, #eab308 50%, #f97316 75%, #ef4444 100%)`
+              }}
+            />
+            <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px', marginTop: '10px', fontSize: '0.8rem'}}>
+              <div style={{textAlign: 'center', color: '#22c55e', fontWeight: '700'}}>1-2<br/>Low</div>
+              <div style={{textAlign: 'center', color: '#84cc16', fontWeight: '700'}}>3-4<br/>Medium</div>
+              <div style={{textAlign: 'center', color: '#eab308', fontWeight: '700'}}>5-6<br/>High</div>
+              <div style={{textAlign: 'center', color: '#f97316', fontWeight: '700'}}>7-8<br/>V.High</div>
+              <div style={{textAlign: 'center', color: '#ef4444', fontWeight: '700'}}>9-10<br/>Urgent</div>
+            </div>
+          </label>
+
+          <div style={{display: 'flex', gap: '12px'}}>
+            <button
+              onClick={() => {
+                setModalOpen(false);
+                setTaskInput('');
+                setEmergencyLevel(5);
+                setEditingTaskId(null);
+              }}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '8px',
+                border: '2px solid #e2e8f0',
+                backgroundColor: '#fff',
+                color: '#64748b',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '0.95rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#64748b';
+                e.currentTarget.style.color = '#1e1b4b';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e2e8f0';
+                e.currentTarget.style.color = '#64748b';
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveTask}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: '#4f46e5',
+                color: '#fff',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '0.95rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4338ca'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4f46e5'}
+            >
+              {editingTaskId ? 'Update Task' : 'Add Task'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div>
+      <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>📅 Plan Your Study Schedule</h2>
+      
+      {/* Schedule Management */}
+      <div style={{backgroundColor: '#f9fafb', padding: '20px', borderRadius: '12px', marginBottom: '30px', border: '1px solid #e2e8f0'}}>
+        <h3 style={{fontSize: '1.1rem', fontWeight: '700', marginBottom: '15px', color: '#334155'}}>Your Study Plans</h3>
+        
+        <div style={{display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap'}}>
+          {Object.keys(allSchedules).map(name => (
+            <div key={name} style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
+              {renameMode === name ? (
+                <>
+                  <input
+                    type="text"
+                    value={renameInput}
+                    onChange={(e) => setRenameInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && renameSchedule(name, renameInput)}
+                    autoFocus
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: '2px solid #4f46e5',
+                      fontSize: '0.85rem'
+                    }}
+                  />
+                  <button
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontWeight: '700',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={() => renameSchedule(name, renameInput)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: '1px solid #64748b',
+                      backgroundColor: 'white',
+                      color: '#64748b',
+                      cursor: 'pointer',
+                      fontWeight: '700',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={() => setRenameMode(null)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: '700',
+                      backgroundColor: currentScheduleName === name ? '#4f46e5' : '#e2e8f0',
+                      color: currentScheduleName === name ? 'white' : '#64748b',
+                      transition: 'all 0.2s'
+                    }}
+                    onClick={() => setCurrentScheduleName(name)}
+                  >
+                    {name}
+                  </button>
+                  <button
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: '1px solid #4f46e5',
+                      backgroundColor: 'white',
+                      color: '#4f46e5',
+                      cursor: 'pointer',
+                      fontWeight: '700',
+                      fontSize: '0.8rem'
+                    }}
+                    onClick={() => {
+                      setRenameMode(name);
+                      setRenameInput(name);
+                    }}
+                  >
+                    Rename
+                  </button>
+                  {Object.keys(allSchedules).length > 1 && (
+                    <button
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '4px',
+                        border: '1px solid #ef4444',
+                        backgroundColor: 'white',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        fontWeight: '700',
+                        fontSize: '0.85rem'
+                      }}
+                      onClick={() => deleteSchedule(name)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{display: 'flex', gap: '8px'}}>
+          <input
+            type="text"
+            placeholder="New schedule name (e.g., 'My Plan 2')"
+            value={newScheduleName}
+            onChange={(e) => setNewScheduleName(e.target.value)}
+            style={{
+              padding: '10px',
+              borderRadius: '6px',
+              border: '1px solid #ddd',
+              flex: 1,
+              fontSize: '0.9rem'
+            }}
+            onKeyPress={(e) => e.key === 'Enter' && addNewSchedule()}
+          />
+          <button
+            style={{
+              padding: '10px 20px',
+              borderRadius: '6px',
+              border: 'none',
+              backgroundColor: '#10b981',
+              color: 'white',
+              cursor: 'pointer',
+              fontWeight: '700'
+            }}
+            onClick={addNewSchedule}
+          >
+            + Add Schedule
+          </button>
+        </div>
+      </div>
+
+      {/* Month Selector */}
+      <div style={{marginBottom: '30px', display: 'flex', gap: '10px'}}>
+        {['2026-02', '2026-03', '2026-04'].map(month => (
+          <button
+            key={month}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: '700',
+              backgroundColor: selectedMonth === month ? '#4f46e5' : '#e2e8f0',
+              color: selectedMonth === month ? 'white' : '#64748b',
+              transition: 'all 0.2s'
+            }}
+            onClick={() => setSelectedMonth(month)}
+          >
+            {['Feb', 'Mar', 'Apr'][['2026-02', '2026-03', '2026-04'].indexOf(month)]} 2026
+          </button>
+        ))}
+      </div>
+
+      {/* Calendar */}
+      <div style={{backgroundColor: '#fff', borderRadius: '12px', padding: '20px', border: '1px solid #e2e8f0', overflowX: 'auto'}}>
+        <CalendarMonth monthStr={selectedMonth} />
+        
+        {/* Legend */}
+        <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#f9fafb', borderRadius: '8px', borderLeft: '4px solid #4f46e5'}}>
+          <h4 style={{marginBottom: '15px', fontWeight: '700', color: '#334155'}}>How to Use:</h4>
+          <ul style={{marginBottom: '15px', paddingLeft: '20px', fontSize: '0.9rem', color: '#64748b', lineHeight: '1.6'}}>
+            <li>Click on any date to add a study task</li>
+            <li>Set the emergency level (1 = low priority, 10 = urgent)</li>
+            <li>Click on a task box to delete it</li>
+            <li>Up to 4 tasks shown per day; excess tasks show a "+N more" indicator</li>
+            <li>Yellow boxes indicate exam days</li>
+          </ul>
+          
+          <h4 style={{marginBottom: '15px', fontWeight: '700', color: '#334155'}}>Emergency Level Colors:</h4>
+          <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px'}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{width: '20px', height: '20px', backgroundColor: '#22c55e', borderRadius: '4px'}}></div>
+              <span style={{fontSize: '0.85rem'}}>1-2: Low</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{width: '20px', height: '20px', backgroundColor: '#84cc16', borderRadius: '4px'}}></div>
+              <span style={{fontSize: '0.85rem'}}>3-4: Medium</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{width: '20px', height: '20px', backgroundColor: '#eab308', borderRadius: '4px'}}></div>
+              <span style={{fontSize: '0.85rem'}}>5-6: High</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{width: '20px', height: '20px', backgroundColor: '#f97316', borderRadius: '4px'}}></div>
+              <span style={{fontSize: '0.85rem'}}>7-8: Very High</span>
+            </div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <div style={{width: '20px', height: '20px', backgroundColor: '#ef4444', borderRadius: '4px'}}></div>
+              <span style={{fontSize: '0.85rem'}}>9-10: Urgent</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Modal />
     </div>
   );
 };
