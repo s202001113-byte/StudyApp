@@ -266,7 +266,7 @@ const App = () => {
         ) : (
           <div style={styles.quizBox}>
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
-            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_01' ? '出師表' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
             
             {/* Chinese Components */}
             {selectedTopic === 'chinese_01' && <Chinese_01 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
@@ -3928,7 +3928,7 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
 
   return (
     <div>
-      <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第一部分：語譯 (Classical Chinese Translation)</h3>
+      <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第一部分：語譯</h3>
 
     {/* Q1 */}
     <div style={styles.qSection}>
