@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Box, CheckCircle2, Database, Monitor, Cpu, Layers, Zap, Settings, Layout, Globe, ShieldAlert, ArrowLeft, Star } from 'lucide-react';
 
 const App = () => {
@@ -118,6 +118,9 @@ const App = () => {
   );
 
   const topics = [
+    // --- Chinese Topics ---
+    { id: 'chinese_01', title: 'Ch1: 出師表', description: '語譯和問答 - Classical Chinese Translation & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
+
     // --- ICT Topics ---
     { id: 'ict_comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
     { id: 'ict_comp_a_ch2', title: 'Compulsory A Ch2: Data Control', description: 'GIGO, Data Validation & Verification', icon: <CheckCircle2 />, category: 'Compulsory A', color: '#3b82f6' },
@@ -151,6 +154,7 @@ const App = () => {
 
   // Define categories per subject
   const categories = {
+    Chinese: ['Classical Chinese'],
     ICT: ['Compulsory A', 'Compulsory B', 'Compulsory C'],
     Physics: ['Compulsory 4', 'Elective 2', 'Elective 3']
   };
@@ -236,6 +240,7 @@ const App = () => {
               
               {/* Subject Selector */}
               <div style={styles.subjectToggleContainer}>
+                <button style={styles.subjectBtn(subject === 'Chinese')} onClick={() => setSubject('Chinese')}>Chinese</button>
                 <button style={styles.subjectBtn(subject === 'ICT')} onClick={() => setSubject('ICT')}>ICT</button>
                 <button style={styles.subjectBtn(subject === 'Physics')} onClick={() => setSubject('Physics')}>Physics</button>
               </div>
@@ -262,6 +267,9 @@ const App = () => {
           <div style={styles.quizBox}>
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
             <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            
+            {/* Chinese Components */}
+            {selectedTopic === 'chinese_01' && <Chinese_01 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
             
             {/* ICT Components */}
             {selectedTopic === 'ict_comp_a_ch1' && <ICT_Comp_A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
@@ -3062,6 +3070,98 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
   );
 };
 
+// --- PHYSICS COMPULSORY 4 CH 3 ---
+const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
+  const questions = [
+    { id: 1, correct: 'A', options: [{ text: '100V' }, { text: '142V' }, { text: '200V' }, { text: '283V' }] },
+    { id: 2, correct: 'B', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 3, correct: 'C', options: [{ text: 'The brightness of each string will remain unchanged because the voltage across each string does not change.' }, { text: 'The brightness of each string will remain unchanged because the resistance of each string does not change.' }, { text: 'Each string will become brighter because the voltage across each string increases.' }, { text: 'Each string will become dimmer because the total resistance of the strings decreases.' }] },
+    { id: 4, correct: 'B', options: [{ text: 'kitchen' }, { text: 'bathroom' }, { text: 'bedroom' }, { text: 'dining room' }] },
+    { id: 5, correct: 'D', options: [{ text: 'Both statements 1 and 2 are correct and statement 2 is a correct explanation for statement 1.' }, { text: 'Both statements 1 and 2 are correct but statement 2 is not a correct explanation for statement 1.' }, { text: 'Statement 1 is correct and statement 2 is incorrect.' }, { text: 'Statement 1 is incorrect and statement 2 is correct.' }] },
+    { id: 6, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 7, correct: 'D', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 8, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 9, correct: 'B', options: [{ text: '(1) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 10, correct: 'A', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 11, correct: 'C', options: [{ text: '(1) only' }, { text: '(3) only' }, { text: '(1), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 12, correct: 'D', options: [{ text: '0.0375 Hz' }, { text: '26.7 Hz' }, { text: '53.3 Hz' }, { text: '168 Hz' }] },
+    { id: 13, correct: 'D', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 14, correct: 'C', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 15, correct: 'B', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 16, correct: 'C', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 17, correct: 'A', options: [{ text: 'L2 only' }, { text: 'L3 only' }, { text: 'L2 and L3 only' }, { text: 'none of them' }] },
+    { id: 18, correct: 'A', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 19, correct: 'C', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (2) only' }, { text: '(2), (3) only' }] },
+    { id: 20, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
+    { id: 21, correct: 'D', options: [{ text: 'The switch S has been damaged.' }, { text: 'The filament of bulb L has been burnt out and becomes an open circuit.' }, { text: 'There is a short circuit between a and d.' }, { text: 'There is an open circuit between c and d.' }] }
+  ];
+
+  const getAnswerStyle = (qId, option) => {
+    if (!showAnswers) return {};
+    const userAnswer = userAnswers[`phy4ch3q${qId}`];
+    const isCorrect = userAnswer === questions[qId - 1].correct;
+    if (userAnswer === option) {
+      return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
+    }
+    if (!isCorrect && option === questions[qId - 1].correct) {
+      return { backgroundColor: '#d1fae5', borderColor: '#10b981' };
+    }
+    return {};
+  };
+
+  return (
+    <div>
+      {questions.map(q => (
+        <div key={q.id} style={styles.qSection}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+            <h3 style={styles.qTitle}>Q{q.id}</h3>
+            <StarButton questionId={`phy4ch3q${q.id}`} />
+          </div>
+          
+          {/* Question Image */}
+          <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/q/${q.id}.png`} style={{maxWidth: '100%', marginBottom: '15px'}} alt={`Question ${q.id}`} />
+          
+          {/* Multiple Choice Options */}
+          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
+            {['A', 'B', 'C', 'D'].map((option, idx) => (
+              <label key={option} style={{display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', border: '2px solid #ddd', borderRadius: '4px', cursor: 'pointer', ...getAnswerStyle(q.id, option)}}>
+                <input 
+                  type="radio" 
+                  name={`phy4ch3q${q.id}`}
+                  value={option}
+                  checked={userAnswers[`phy4ch3q${q.id}`] === option}
+                  onChange={(e) => onChange(`phy4ch3q${q.id}`, e.target.value)}
+                  disabled={showAnswers}
+                />
+                <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '8px'}}>
+                  <span style={{fontWeight: 'bold', minWidth: '20px'}}>{option}.</span>
+                  {q.options[idx].text ? (
+                    <span>{q.options[idx].text}</span>
+                  ) : (
+                    <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
+                  )}
+                </div>
+              </label>
+            ))}
+          </div>
+          
+          {/* Solution */}
+          {showAnswers && (
+            <div style={styles.answerKey}>
+              <p><b>Solution:</b></p>
+              <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
+            </div>
+          )}
+        </div>
+      ))}
+      
+      <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+        <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+      </div>
+    </div>
+  );
+};
+
 // --- PHYSICS ELECTIVE 2 CH 1 ---
 const Phy_E_2_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
   <div>
@@ -3807,97 +3907,943 @@ const Phy_E_3_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
   </div>
 );
 
-// --- PHYSICS COMPULSORY 4 CH 3 ---
-const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
-  const questions = [
-    { id: 1, correct: 'A', options: [{ text: '100V' }, { text: '142V' }, { text: '200V' }, { text: '283V' }] },
-    { id: 2, correct: 'B', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
-    { id: 3, correct: 'C', options: [{ text: 'The brightness of each string will remain unchanged because the voltage across each string does not change.' }, { text: 'The brightness of each string will remain unchanged because the resistance of each string does not change.' }, { text: 'Each string will become brighter because the voltage across each string increases.' }, { text: 'Each string will become dimmer because the total resistance of the strings decreases.' }] },
-    { id: 4, correct: 'B', options: [{ text: 'kitchen' }, { text: 'bathroom' }, { text: 'bedroom' }, { text: 'dining room' }] },
-    { id: 5, correct: 'D', options: [{ text: 'Both statements 1 and 2 are correct and statement 2 is a correct explanation for statement 1.' }, { text: 'Both statements 1 and 2 are correct but statement 2 is not a correct explanation for statement 1.' }, { text: 'Statement 1 is correct and statement 2 is incorrect.' }, { text: 'Statement 1 is incorrect and statement 2 is correct.' }] },
-    { id: 6, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 7, correct: 'D', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 8, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 9, correct: 'B', options: [{ text: '(1) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 10, correct: 'A', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 11, correct: 'C', options: [{ text: '(1) only' }, { text: '(3) only' }, { text: '(1), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 12, correct: 'D', options: [{ text: '0.0375 Hz' }, { text: '26.7 Hz' }, { text: '53.3 Hz' }, { text: '168 Hz' }] },
-    { id: 13, correct: 'D', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 14, correct: 'C', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
-    { id: 15, correct: 'B', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
-    { id: 16, correct: 'C', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
-    { id: 17, correct: 'A', options: [{ text: 'L2 only' }, { text: 'L3 only' }, { text: 'L2 and L3 only' }, { text: 'none of them' }] },
-    { id: 18, correct: 'A', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
-    { id: 19, correct: 'C', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (2) only' }, { text: '(2), (3) only' }] },
-    { id: 20, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 21, correct: 'D', options: [{ text: 'The switch S has been damaged.' }, { text: 'The filament of bulb L has been burnt out and becomes an open circuit.' }, { text: 'There is a short circuit between a and d.' }, { text: 'There is an open circuit between c and d.' }] }
-  ];
-
-  const getAnswerStyle = (qId, option) => {
-    if (!showAnswers) return {};
-    const userAnswer = userAnswers[`phy4ch3q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct;
-    if (userAnswer === option) {
-      return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
+// --- CHINESE 01: 出師表 ---
+const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
+  // Helper function to determine input background color
+  const getInputBgColor = (questionId, answerIndex) => {
+    const answerId = `${questionId}_a${answerIndex}`;
+    const userAnswer = userAnswers[answerId];
+    
+    // Only show colors when answers are checked
+    if (!showAnswers) return '#ffffff';
+    
+    // Empty answer = red
+    if (!userAnswer || userAnswer.trim() === '') {
+      return '#fee2e2';
     }
-    if (!isCorrect && option === questions[qId - 1].correct) {
-      return { backgroundColor: '#d1fae5', borderColor: '#10b981' };
-    }
-    return {};
+    
+    // Has answer = green
+    return '#dcfce7';
   };
 
   return (
     <div>
-      {questions.map(q => (
-        <div key={q.id} style={styles.qSection}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-            <h3 style={styles.qTitle}>Q{q.id}</h3>
-            <StarButton questionId={`phy4ch3q${q.id}`} />
-          </div>
-          
-          {/* Question Image */}
-          <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/q/${q.id}.png`} style={{maxWidth: '100%', marginBottom: '15px'}} alt={`Question ${q.id}`} />
-          
-          {/* Multiple Choice Options */}
-          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px'}}>
-            {['A', 'B', 'C', 'D'].map((option, idx) => (
-              <label key={option} style={{display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', border: '2px solid #ddd', borderRadius: '4px', cursor: 'pointer', ...getAnswerStyle(q.id, option)}}>
-                <input 
-                  type="radio" 
-                  name={`phy4ch3q${q.id}`}
-                  value={option}
-                  checked={userAnswers[`phy4ch3q${q.id}`] === option}
-                  onChange={(e) => onChange(`phy4ch3q${q.id}`, e.target.value)}
-                  disabled={showAnswers}
-                />
-                <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '8px'}}>
-                  <span style={{fontWeight: 'bold', minWidth: '20px'}}>{option}.</span>
-                  {q.options[idx].text ? (
-                    <span>{q.options[idx].text}</span>
-                  ) : (
-                    <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
-                  )}
-                </div>
-              </label>
-            ))}
-          </div>
-          
-          {/* Solution */}
-          {showAnswers && (
-            <div style={styles.answerKey}>
-              <p><b>Solution:</b></p>
-              <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
-            </div>
-          )}
-        </div>
-      ))}
-      
-      <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
-        <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+      <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第一部分：語譯 (Classical Chinese Translation)</h3>
+
+    {/* Q1 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q1</h3>
+        <StarButton questionId="ch01_q1" />
       </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 先帝創業未半，而「中道」「崩殂」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「中道」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q1', 1)}} onChange={(e) => onChange('ch01_q1_a1', e.target.value)} value={userAnswers.ch01_q1_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「崩殂」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q1', 2)}} onChange={(e) => onChange('ch01_q1_a2', e.target.value)} value={userAnswers.ch01_q1_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「中道」：半途<br/>
+          「崩殂」：死
+        </div>
+      )}
+    </div>
+
+    {/* Q2 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2</h3>
+        <StarButton questionId="ch01_q2" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 益州「疲弊」，此「誠」危急存亡之「秋」也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「疲弊」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q2', 1)}} onChange={(e) => onChange('ch01_q2_a1', e.target.value)} value={userAnswers.ch01_q2_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「誠」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q2', 2)}} onChange={(e) => onChange('ch01_q2_a2', e.target.value)} value={userAnswers.ch01_q2_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「秋」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q2', 3)}} onChange={(e) => onChange('ch01_q2_a3', e.target.value)} value={userAnswers.ch01_q2_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「疲弊」：人力物力困乏<br/>
+          「誠」：實在／的確<br/>
+          「秋」：時刻／關頭
+        </div>
+      )}
+    </div>
+
+    {/* Q3 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q3</h3>
+        <StarButton questionId="ch01_q3" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「然」侍衛之臣，不「懈」於「內」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「然」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q3', 1)}} onChange={(e) => onChange('ch01_q3_a1', e.target.value)} value={userAnswers.ch01_q3_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「懈」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q3', 2)}} onChange={(e) => onChange('ch01_q3_a2', e.target.value)} value={userAnswers.ch01_q3_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「內」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q3', 3)}} onChange={(e) => onChange('ch01_q3_a3', e.target.value)} value={userAnswers.ch01_q3_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「然」：然而<br/>
+          「懈」：鬆懈<br/>
+          「內」：宮廷之內
+        </div>
+      )}
+    </div>
+
+    {/* Q4 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q4</h3>
+        <StarButton questionId="ch01_q4" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 忠志之士，「忘身」於「外」者</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「忘身」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q4', 1)}} onChange={(e) => onChange('ch01_q4_a1', e.target.value)} value={userAnswers.ch01_q4_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「外」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q4', 2)}} onChange={(e) => onChange('ch01_q4_a2', e.target.value)} value={userAnswers.ch01_q4_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「忘身」：捨身／奮不顧身<br/>
+          「外」：朝廷之外／戰場上
+        </div>
+      )}
+    </div>
+
+    {/* Q5 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q5</h3>
+        <StarButton questionId="ch01_q5" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「蓋」「追」先帝之「殊遇」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「蓋」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q5', 1)}} onChange={(e) => onChange('ch01_q5_a1', e.target.value)} value={userAnswers.ch01_q5_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「追」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q5', 2)}} onChange={(e) => onChange('ch01_q5_a2', e.target.value)} value={userAnswers.ch01_q5_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「殊遇」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q5', 3)}} onChange={(e) => onChange('ch01_q5_a3', e.target.value)} value={userAnswers.ch01_q5_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「蓋」：原來是／因為<br/>
+          「追」：追念<br/>
+          「殊遇」：特殊的恩遇
+        </div>
+      )}
+    </div>
+
+    {/* Q6 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q6</h3>
+        <StarButton questionId="ch01_q6" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「誠」「宜」「開張聖聽」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「誠」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q6', 1)}} onChange={(e) => onChange('ch01_q6_a1', e.target.value)} value={userAnswers.ch01_q6_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「宜」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q6', 2)}} onChange={(e) => onChange('ch01_q6_a2', e.target.value)} value={userAnswers.ch01_q6_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「開張聖聽」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q6', 3)}} onChange={(e) => onChange('ch01_q6_a3', e.target.value)} value={userAnswers.ch01_q6_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「誠」：確實<br/>
+          「宜」：應該<br/>
+          「開張聖聽」：擴大聖明的聽聞（廣開言路）
+        </div>
+      )}
+    </div>
+
+    {/* Q7 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q7</h3>
+        <StarButton questionId="ch01_q7" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 以「光」先帝「遺德」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「光」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q7', 1)}} onChange={(e) => onChange('ch01_q7_a1', e.target.value)} value={userAnswers.ch01_q7_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「遺德」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q7', 2)}} onChange={(e) => onChange('ch01_q7_a2', e.target.value)} value={userAnswers.ch01_q7_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「光」：發揚光大<br/>
+          「遺德」：遺留下來的美德
+        </div>
+      )}
+    </div>
+
+    {/* Q8 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q8</h3>
+        <StarButton questionId="ch01_q8" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「恢弘」志士之氣</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「恢弘」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q8', 1)}} onChange={(e) => onChange('ch01_q8_a1', e.target.value)} value={userAnswers.ch01_q8_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「恢弘」：擴大／發揚
+        </div>
+      )}
+    </div>
+
+    {/* Q9 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q9</h3>
+        <StarButton questionId="ch01_q9" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 不宜「妄自菲薄」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「妄自菲薄」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q9', 1)}} onChange={(e) => onChange('ch01_q9_a1', e.target.value)} value={userAnswers.ch01_q9_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「妄自菲薄」：過分看輕自己
+        </div>
+      )}
+    </div>
+
+    {/* Q10 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q10</h3>
+        <StarButton questionId="ch01_q10" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「引喻失義」，以「塞」忠諫之路也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「引喻失義」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q10', 1)}} onChange={(e) => onChange('ch01_q10_a1', e.target.value)} value={userAnswers.ch01_q10_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「塞」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q10', 2)}} onChange={(e) => onChange('ch01_q10_a2', e.target.value)} value={userAnswers.ch01_q10_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「引喻失義」：引用譬喻不恰當（說話不合義理）<br/>
+          「塞」：堵塞
+        </div>
+      )}
+    </div>
+
+    {/* Q11 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q11</h3>
+        <StarButton questionId="ch01_q11" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 宮中、府中，「俱」為一體</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「俱」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q11', 1)}} onChange={(e) => onChange('ch01_q11_a1', e.target.value)} value={userAnswers.ch01_q11_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「俱」：都／全
+        </div>
+      )}
+    </div>
+
+    {/* Q12 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q12</h3>
+        <StarButton questionId="ch01_q12" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「陟罰臧否」，不宜「異同」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「陟罰臧否」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q12', 1)}} onChange={(e) => onChange('ch01_q12_a1', e.target.value)} value={userAnswers.ch01_q12_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「異同」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q12', 2)}} onChange={(e) => onChange('ch01_q12_a2', e.target.value)} value={userAnswers.ch01_q12_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「陟罰臧否」：升遷處罰、表揚批評（賞善罰惡）<br/>
+          「異同」：不同（這裏指標準不同）
+        </div>
+      )}
+    </div>
+
+    {/* Q13 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q13</h3>
+        <StarButton questionId="ch01_q13" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 若有「作姦」、「犯科」及為忠善者</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「作姦」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q13', 1)}} onChange={(e) => onChange('ch01_q13_a1', e.target.value)} value={userAnswers.ch01_q13_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「犯科」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q13', 2)}} onChange={(e) => onChange('ch01_q13_a2', e.target.value)} value={userAnswers.ch01_q13_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「作姦」：做壞事<br/>
+          「犯科」：觸犯法律
+        </div>
+      )}
+    </div>
+
+    {/* Q14 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q14</h3>
+        <StarButton questionId="ch01_q14" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 宜付「有司」，「論」其「刑賞」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「有司」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q14', 1)}} onChange={(e) => onChange('ch01_q14_a1', e.target.value)} value={userAnswers.ch01_q14_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「論」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q14', 2)}} onChange={(e) => onChange('ch01_q14_a2', e.target.value)} value={userAnswers.ch01_q14_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「刑賞」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q14', 3)}} onChange={(e) => onChange('ch01_q14_a3', e.target.value)} value={userAnswers.ch01_q14_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「有司」：主管的官吏<br/>
+          「論」：判定<br/>
+          「刑賞」：受罰或獲賞
+        </div>
+      )}
+    </div>
+
+    {/* Q15 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q15</h3>
+        <StarButton questionId="ch01_q15" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 以「昭」陛下「平明」之治</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「昭」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q15', 1)}} onChange={(e) => onChange('ch01_q15_a1', e.target.value)} value={userAnswers.ch01_q15_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「平明」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q15', 2)}} onChange={(e) => onChange('ch01_q15_a2', e.target.value)} value={userAnswers.ch01_q15_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「昭」：顯示／彰顯<br/>
+          「平明」：公正嚴明
+        </div>
+      )}
+    </div>
+
+    {/* Q16 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q16</h3>
+        <StarButton questionId="ch01_q16" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 不宜「偏私」，使內外「異法」也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「偏私」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q16', 1)}} onChange={(e) => onChange('ch01_q16_a1', e.target.value)} value={userAnswers.ch01_q16_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「異法」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q16', 2)}} onChange={(e) => onChange('ch01_q16_a2', e.target.value)} value={userAnswers.ch01_q16_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「偏私」：偏袒徇私<br/>
+          「異法」：法規不同
+        </div>
+      )}
+    </div>
+
+    {/* Q17 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q17</h3>
+        <StarButton questionId="ch01_q17" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 此皆「良實」，「志慮」「忠純」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「良實」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q17', 1)}} onChange={(e) => onChange('ch01_q17_a1', e.target.value)} value={userAnswers.ch01_q17_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「志慮」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q17', 2)}} onChange={(e) => onChange('ch01_q17_a2', e.target.value)} value={userAnswers.ch01_q17_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「忠純」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q17', 3)}} onChange={(e) => onChange('ch01_q17_a3', e.target.value)} value={userAnswers.ch01_q17_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「良實」：善良誠實的人<br/>
+          「志慮」：志向思慮<br/>
+          「忠純」：忠誠純正
+        </div>
+      )}
+    </div>
+
+    {/* Q18 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q18</h3>
+        <StarButton questionId="ch01_q18" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 是以先帝「簡拔」以「遺」陛下</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「簡拔」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q18', 1)}} onChange={(e) => onChange('ch01_q18_a1', e.target.value)} value={userAnswers.ch01_q18_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「遺」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q18', 2)}} onChange={(e) => onChange('ch01_q18_a2', e.target.value)} value={userAnswers.ch01_q18_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「簡拔」：選拔<br/>
+          「遺」：給予／留給
+        </div>
+      )}
+    </div>
+
+    {/* Q19 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q19</h3>
+        <StarButton questionId="ch01_q19" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「悉」以「諮」之</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「悉」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q19', 1)}} onChange={(e) => onChange('ch01_q19_a1', e.target.value)} value={userAnswers.ch01_q19_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「諮」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q19', 2)}} onChange={(e) => onChange('ch01_q19_a2', e.target.value)} value={userAnswers.ch01_q19_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「悉」：全部<br/>
+          「諮」：諮詢／商議
+        </div>
+      )}
+    </div>
+
+    {/* Q20 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q20</h3>
+        <StarButton questionId="ch01_q20" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 必能「裨補」「闕漏」，有所「廣益」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「裨補」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q20_a1', e.target.value)} value={userAnswers.ch01_q20_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「闕漏」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q20_a2', e.target.value)} value={userAnswers.ch01_q20_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「廣益」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q20_a3', e.target.value)} value={userAnswers.ch01_q20_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「裨補」：彌補<br/>
+          「闕漏」：缺失／遺漏<br/>
+          「廣益」：廣泛的益處
+        </div>
+      )}
+    </div>
+
+    {/* Q21 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q21</h3>
+        <StarButton questionId="ch01_q21" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 性行「淑均」，「曉暢」軍事</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「淑均」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q21_a1', e.target.value)} value={userAnswers.ch01_q21_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「曉暢」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q21_a2', e.target.value)} value={userAnswers.ch01_q21_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「淑均」：善良公正<br/>
+          「曉暢」：通曉熟練
+        </div>
+      )}
+    </div>
+
+    {/* Q22 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q22</h3>
+        <StarButton questionId="ch01_q22" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 是以「眾議」「舉」寵為「督」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「眾議」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q22', 1)}} onChange={(e) => onChange('ch01_q22_a1', e.target.value)} value={userAnswers.ch01_q22_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「舉」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q22', 2)}} onChange={(e) => onChange('ch01_q22_a2', e.target.value)} value={userAnswers.ch01_q22_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「督」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q22', 3)}} onChange={(e) => onChange('ch01_q22_a3', e.target.value)} value={userAnswers.ch01_q22_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「眾議」：大家商議<br/>
+          「舉」：推舉<br/>
+          「督」：都督（統帥）
+        </div>
+      )}
+    </div>
+
+    {/* Q23 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q23</h3>
+        <StarButton questionId="ch01_q23" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 必能使「行陣」和睦，「優劣得所」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「行陣」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q23', 1)}} onChange={(e) => onChange('ch01_q23_a1', e.target.value)} value={userAnswers.ch01_q23_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「優劣得所」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q23', 2)}} onChange={(e) => onChange('ch01_q23_a2', e.target.value)} value={userAnswers.ch01_q23_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「行陣」：軍隊／行列<br/>
+          「優劣得所」：才能高與低的人都得到適當安排
+        </div>
+      )}
+    </div>
+
+    {/* Q24 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q24</h3>
+        <StarButton questionId="ch01_q24" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 此先漢所以「興隆」也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「興隆」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q24', 1)}} onChange={(e) => onChange('ch01_q24_a1', e.target.value)} value={userAnswers.ch01_q24_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「興隆」：興盛
+        </div>
+      )}
+    </div>
+
+    {/* Q25 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q25</h3>
+        <StarButton questionId="ch01_q25" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 此後漢所以「傾頹」也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「傾頹」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q25', 1)}} onChange={(e) => onChange('ch01_q25_a1', e.target.value)} value={userAnswers.ch01_q25_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「傾頹」：傾覆衰敗
+        </div>
+      )}
+    </div>
+
+    {/* Q26 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q26</h3>
+        <StarButton questionId="ch01_q26" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 未嘗不「歎息」「痛恨」於桓、靈也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「歎息」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q26', 1)}} onChange={(e) => onChange('ch01_q26_a1', e.target.value)} value={userAnswers.ch01_q26_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「痛恨」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q26', 2)}} onChange={(e) => onChange('ch01_q26_a2', e.target.value)} value={userAnswers.ch01_q26_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「歎息」：感歎惋惜<br/>
+          「痛恨」：痛心遺憾
+        </div>
+      )}
+    </div>
+
+    {/* Q27 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q27</h3>
+        <StarButton questionId="ch01_q27" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 此「悉」「貞良」「死節」之臣</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「悉」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q27_a1', e.target.value)} value={userAnswers.ch01_q27_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「貞良」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q27_a2', e.target.value)} value={userAnswers.ch01_q27_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「死節」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q27_a3', e.target.value)} value={userAnswers.ch01_q27_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「悉」：全／都<br/>
+          「貞良」：堅貞賢良<br/>
+          「死節」：能夠為國盡節效死
+        </div>
+      )}
+    </div>
+
+    {/* Q28 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q28</h3>
+        <StarButton questionId="ch01_q28" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 則漢室之「隆」，可「計日」而待也</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「隆」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q28', 1)}} onChange={(e) => onChange('ch01_q28_a1', e.target.value)} value={userAnswers.ch01_q28_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「計日」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q28', 2)}} onChange={(e) => onChange('ch01_q28_a2', e.target.value)} value={userAnswers.ch01_q28_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「隆」：興盛<br/>
+          「計日」：數着日子（指日可待／時間不遠）
+        </div>
+      )}
+    </div>
+
+    {/* Q29 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q29</h3>
+        <StarButton questionId="ch01_q29" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 臣本「布衣」，「躬」耕於南陽</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「布衣」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q29_a1', e.target.value)} value={userAnswers.ch01_q29_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「躬」：</p>
+      <input style={styles.input} onChange={(e) => onChange('ch01_q29_a2', e.target.value)} value={userAnswers.ch01_q29_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「布衣」：平民（借代）<br/>
+          「躬」：親自
+        </div>
+      )}
+    </div>
+
+    {/* Q30 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q30</h3>
+        <StarButton questionId="ch01_q30" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「苟全」性命於亂世</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「苟全」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q30', 1)}} onChange={(e) => onChange('ch01_q30_a1', e.target.value)} value={userAnswers.ch01_q30_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「苟全」：苟且保全
+        </div>
+      )}
+    </div>
+
+    {/* Q31 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q31</h3>
+        <StarButton questionId="ch01_q31" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 不求「聞達」於諸侯</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「聞達」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q31', 1)}} onChange={(e) => onChange('ch01_q31_a1', e.target.value)} value={userAnswers.ch01_q31_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「聞達」：顯達揚名
+        </div>
+      )}
+    </div>
+
+    {/* Q32 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q32</h3>
+        <StarButton questionId="ch01_q32" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 先帝不以臣「卑鄙」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「卑鄙」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q32', 1)}} onChange={(e) => onChange('ch01_q32_a1', e.target.value)} value={userAnswers.ch01_q32_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「卑鄙」：身分低微，見識淺陋（古義）
+        </div>
+      )}
+    </div>
+
+    {/* Q33 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q33</h3>
+        <StarButton questionId="ch01_q33" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「猥」自「枉屈」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「猥」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q33', 1)}} onChange={(e) => onChange('ch01_q33_a1', e.target.value)} value={userAnswers.ch01_q33_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「枉屈」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q33', 2)}} onChange={(e) => onChange('ch01_q33_a2', e.target.value)} value={userAnswers.ch01_q33_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「猥」：辱（謙詞）<br/>
+          「枉屈」：委屈（降低身分）
+        </div>
+      )}
+    </div>
+
+    {/* Q34 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q34</h3>
+        <StarButton questionId="ch01_q34" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 遂「許」先帝以「驅馳」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「許」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q34', 1)}} onChange={(e) => onChange('ch01_q34_a1', e.target.value)} value={userAnswers.ch01_q34_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「驅馳」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q34', 2)}} onChange={(e) => onChange('ch01_q34_a2', e.target.value)} value={userAnswers.ch01_q34_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「許」：答應<br/>
+          「驅馳」：奔走效勞
+        </div>
+      )}
+    </div>
+
+    {/* Q35 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q35</h3>
+        <StarButton questionId="ch01_q35" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 後「值」「傾覆」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「值」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q35', 1)}} onChange={(e) => onChange('ch01_q35_a1', e.target.value)} value={userAnswers.ch01_q35_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「傾覆」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q35', 2)}} onChange={(e) => onChange('ch01_q35_a2', e.target.value)} value={userAnswers.ch01_q35_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「值」：遇上<br/>
+          「傾覆」：兵敗
+        </div>
+      )}
+    </div>
+
+    {/* Q36 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q36</h3>
+        <StarButton questionId="ch01_q36" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「爾來」二十有一年矣</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「爾來」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q36', 1)}} onChange={(e) => onChange('ch01_q36_a1', e.target.value)} value={userAnswers.ch01_q36_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「爾來」：從那時以來
+        </div>
+      )}
+    </div>
+
+    {/* Q37 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q37</h3>
+        <StarButton questionId="ch01_q37" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「夙夜」憂歎</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「夙夜」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q37', 1)}} onChange={(e) => onChange('ch01_q37_a1', e.target.value)} value={userAnswers.ch01_q37_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「夙夜」：早晚／日夜
+        </div>
+      )}
+    </div>
+
+    {/* Q38 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q38</h3>
+        <StarButton questionId="ch01_q38" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 恐託付不「效」，以「傷」先帝之明</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「效」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q38', 1)}} onChange={(e) => onChange('ch01_q38_a1', e.target.value)} value={userAnswers.ch01_q38_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「傷」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q38', 2)}} onChange={(e) => onChange('ch01_q38_a2', e.target.value)} value={userAnswers.ch01_q38_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「效」：奏效／成功<br/>
+          「傷」：損害
+        </div>
+      )}
+    </div>
+
+    {/* Q39 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q39</h3>
+        <StarButton questionId="ch01_q39" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 故五月渡瀘，深入「不毛」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「不毛」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q39', 1)}} onChange={(e) => onChange('ch01_q39_a1', e.target.value)} value={userAnswers.ch01_q39_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「不毛」：不長草木（荒涼）的地方
+        </div>
+      )}
+    </div>
+
+    {/* Q40 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q40</h3>
+        <StarButton questionId="ch01_q40" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「庶」「竭」「駑鈍」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「庶」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q40', 1)}} onChange={(e) => onChange('ch01_q40_a1', e.target.value)} value={userAnswers.ch01_q40_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「竭」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q40', 2)}} onChange={(e) => onChange('ch01_q40_a2', e.target.value)} value={userAnswers.ch01_q40_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「駑鈍」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q40', 3)}} onChange={(e) => onChange('ch01_q40_a3', e.target.value)} value={userAnswers.ch01_q40_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「庶」：希望<br/>
+          「竭」：用盡<br/>
+          「駑鈍」：低下的才能（謙詞）
+        </div>
+      )}
+    </div>
+
+    {/* Q41 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q41</h3>
+        <StarButton questionId="ch01_q41" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「攘除」姦凶</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「攘除」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q41', 1)}} onChange={(e) => onChange('ch01_q41_a1', e.target.value)} value={userAnswers.ch01_q41_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「攘除」：剷除／排除
+        </div>
+      )}
+    </div>
+
+    {/* Q42 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q42</h3>
+        <StarButton questionId="ch01_q42" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 至於「斟酌」「損益」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「斟酌」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q42', 1)}} onChange={(e) => onChange('ch01_q42_a1', e.target.value)} value={userAnswers.ch01_q42_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「損益」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q42', 2)}} onChange={(e) => onChange('ch01_q42_a2', e.target.value)} value={userAnswers.ch01_q42_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「斟酌」：反覆考慮<br/>
+          「損益」：減少與增加（這裏指興利除弊）
+        </div>
+      )}
+    </div>
+
+    {/* Q43 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q43</h3>
+        <StarButton questionId="ch01_q43" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 願陛下「託」臣以討賊興復之「效」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「託」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q43', 1)}} onChange={(e) => onChange('ch01_q43_a1', e.target.value)} value={userAnswers.ch01_q43_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「效」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q43', 2)}} onChange={(e) => onChange('ch01_q43_a2', e.target.value)} value={userAnswers.ch01_q43_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「託」：委託<br/>
+          「效」：任務／責任
+        </div>
+      )}
+    </div>
+
+    {/* Q44 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q44</h3>
+        <StarButton questionId="ch01_q44" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 若無「興德」之言</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「興德」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q44', 1)}} onChange={(e) => onChange('ch01_q44_a1', e.target.value)} value={userAnswers.ch01_q44_a1 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「興德」：發揚聖德
+        </div>
+      )}
+    </div>
+
+    {/* Q45 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q45</h3>
+        <StarButton questionId="ch01_q45" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 則責攸之......之「慢」，以「彰」其「咎」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「慢」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q45', 1)}} onChange={(e) => onChange('ch01_q45_a1', e.target.value)} value={userAnswers.ch01_q45_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「彰」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q45', 2)}} onChange={(e) => onChange('ch01_q45_a2', e.target.value)} value={userAnswers.ch01_q45_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「咎」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q45', 3)}} onChange={(e) => onChange('ch01_q45_a3', e.target.value)} value={userAnswers.ch01_q45_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「慢」：怠慢<br/>
+          「彰」：揭示<br/>
+          「咎」：過失
+        </div>
+      )}
+    </div>
+
+    {/* Q46 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q46</h3>
+        <StarButton questionId="ch01_q46" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 陛下亦宜「自謀」，以「諮諏」「善道」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「自謀」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q46', 1)}} onChange={(e) => onChange('ch01_q46_a1', e.target.value)} value={userAnswers.ch01_q46_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「諮諏」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q46', 2)}} onChange={(e) => onChange('ch01_q46_a2', e.target.value)} value={userAnswers.ch01_q46_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「善道」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q46', 3)}} onChange={(e) => onChange('ch01_q46_a3', e.target.value)} value={userAnswers.ch01_q46_a3 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「自謀」：自己打算<br/>
+          「諮諏」：詢問<br/>
+          「善道」：治國的好辦法
+        </div>
+      )}
+    </div>
+
+    {/* Q47 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q47</h3>
+        <StarButton questionId="ch01_q47" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 「察納」「雅言」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「察納」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q47', 1)}} onChange={(e) => onChange('ch01_q47_a1', e.target.value)} value={userAnswers.ch01_q47_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「雅言」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q47', 2)}} onChange={(e) => onChange('ch01_q47_a2', e.target.value)} value={userAnswers.ch01_q47_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「察納」：明察接納<br/>
+          「雅言」：正直合理的言論
+        </div>
+      )}
+    </div>
+
+    {/* Q48 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q48</h3>
+        <StarButton questionId="ch01_q48" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>原文：</b> 臨「表」「涕零」</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「表」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q48', 1)}} onChange={(e) => onChange('ch01_q48_a1', e.target.value)} value={userAnswers.ch01_q48_a1 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「涕零」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q48', 2)}} onChange={(e) => onChange('ch01_q48_a2', e.target.value)} value={userAnswers.ch01_q48_a2 || ''} placeholder="輸入翻譯..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          「表」：奏章<br/>
+          「涕零」：眼淚落下來
+        </div>
+      )}
+    </div>
+
+    <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
+      <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
+    </div>
     </div>
   );
 };
 
-// --- CRITICAL FIX: EXPORT THE APP COMPONENT ---
 export default App;
