@@ -4120,7 +4120,7 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q10', 2)}} onChange={(e) => onChange('ch01_q10_a2', e.target.value)} value={userAnswers.ch01_q10_a2 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「引喻失義」：引用譬喻不恰當（說話不合義理）<br/>
+          「引喻失義」：引用比喻不恰當（說話不合義理）<br/>
           「塞」：堵塞
         </div>
       )}
@@ -4554,8 +4554,8 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q33', 2)}} onChange={(e) => onChange('ch01_q33_a2', e.target.value)} value={userAnswers.ch01_q33_a2 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「猥」：辱（謙詞）<br/>
-          「枉屈」：委屈（降低身分）
+          「猥」：降低身分（謙詞）<br/>
+          「枉屈」：委屈
         </div>
       )}
     </div>
