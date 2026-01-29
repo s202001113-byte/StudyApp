@@ -4641,10 +4641,13 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q38', 1)}} onChange={(e) => onChange('ch01_q38_a1', e.target.value)} value={userAnswers.ch01_q38_a1 || ''} placeholder="輸入翻譯..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「傷」：</p>
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q38', 2)}} onChange={(e) => onChange('ch01_q38_a2', e.target.value)} value={userAnswers.ch01_q38_a2 || ''} placeholder="輸入翻譯..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>請翻譯「明」：</p>
+      <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q38', 3)}} onChange={(e) => onChange('ch01_q38_a3', e.target.value)} value={userAnswers.ch01_q38_a3 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
           「效」：奏效／成功<br/>
           「傷」：損害
+          「明」：明智
         </div>
       )}
     </div>
@@ -4984,15 +4987,16 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
           <b>「由是感激，遂許先帝以驅馳」</b><br/>
           含義：正是因為先帝的知遇，諸葛亮深感激動，因此答應為先帝效力和奮力工作<br/>
           <br/>
+          <b>「先帝知臣謹慎，故臨崩寄臣以大事也」</b><br/>
+          含義：先帝了解諸葛亮為人謹慎，所以在臨終時把治國和軍國大事託付給他，這是對諸葛亮最大的信任和重託<br/>
+          <br/>
           <b>「受命以來，夙夜憂歎，恐託付不效，以傷先帝之明」</b><br/>
           含義：自從接受先帝任命以來，諸葛亮日夜都在憂慮，擔心自己的工作做不好，會辜負先帝的期望和眼光<br/>
           <br/>
           <b>「故五月渡瀘，深入不毛」</b><br/>
           含義：因此諸葛亮毅然率軍南征，進入荒涼的南蠻之地，不怕艱苦，為了完成先帝的志業<br/>
           <br/>
-          <b>「先帝知臣謹慎，故臨崩寄臣以大事也」</b><br/>
-          含義：先帝了解諸葛亮為人謹慎，所以在臨終時把治國和軍國大事託付給他，這是對諸葛亮最大的信任和重託<br/>
-          <br/>
+
           <b>自述身世和志向的作用：</b>為使後主不質疑自己、信任自己的意見，將自己的心跡完全表露出來，以此打動後主的感情，使其願意接納自己的勸諫。同時也向後主強調自己對先帝的忠誠和責任，希望後主能傳承先帝的信任
         </div>
       )}
