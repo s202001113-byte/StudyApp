@@ -4839,6 +4839,221 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       )}
     </div>
 
+    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626', marginTop: '50px'}}>第二部分：問答</h3>
+
+    {/* Q&A Question 1: Analyzing the Situation */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q1：形勢分析</h3>
+        <StarButton questionId="ch01_qa1" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>諸葛亮在出師表開首如何分析蜀漢面臨的有利及不利形勢？試引述原文，各說明其含義，並且指出其分析形勢的三個目的。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>不利形勢（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa1_a1', e.target.value)} value={userAnswers.ch01_qa1_a1 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>不利形勢的含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa1_a2', e.target.value)} value={userAnswers.ch01_qa1_a2 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>有利形勢（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa1_a3', e.target.value)} value={userAnswers.ch01_qa1_a3 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>有利形勢的含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa1_a4', e.target.value)} value={userAnswers.ch01_qa1_a4 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>分析形勢的三個目的：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa1_a5', e.target.value)} value={userAnswers.ch01_qa1_a5 || ''} placeholder="說明三個目的..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>不利形勢：</b>「先帝創業未半而中道崩殂，今天下三分，益州疲弊，此誠危急存亡之秋也」<br/>
+          含義：先帝創業未成便去世，群龍無首；天下三分，蜀漢最弱小，受魏吳威脅；蜀漢長年征戰，國力困乏<br/>
+          <b>有利形勢：</b>「然侍衛之臣不懈於內，忠志之士忘身於外者」<br/>
+          含義：朝廷在內不懈怠，軍士奮勇作戰；朝廷和軍民都對先帝忠心，仍有希望<br/>
+          <b>三個目的：</b>（1）激勵後主，使其發奮圖強，繼承先業，復興漢室；（2）強調蜀漢形勢危急，使後主加以警惕；（3）表明軍民不忘先帝恩德，對後主忠心，因此仍有希望
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 2: Advice on Different Aspects */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q2：納諫內容</h3>
+        <StarButton questionId="ch01_qa2" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>諸葛亮對後主提出了哪些「宜」和「不宜」的建議？試就納諫、賞罰、用人方面，引述原文，各說明其含義。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>納諫方面「宜」（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a1', e.target.value)} value={userAnswers.ch01_qa2_a1 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a2', e.target.value)} value={userAnswers.ch01_qa2_a2 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>納諫方面「不宜」（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a3', e.target.value)} value={userAnswers.ch01_qa2_a3 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義及後果：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a4', e.target.value)} value={userAnswers.ch01_qa2_a4 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>賞罰方面「宜」（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a5', e.target.value)} value={userAnswers.ch01_qa2_a5 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a6', e.target.value)} value={userAnswers.ch01_qa2_a6 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>賞罰方面「不宜」（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a7', e.target.value)} value={userAnswers.ch01_qa2_a7 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義及後果：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a8', e.target.value)} value={userAnswers.ch01_qa2_a8 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」（引述原文及人名）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9', e.target.value)} value={userAnswers.ch01_qa2_a9 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10', e.target.value)} value={userAnswers.ch01_qa2_a10 || ''} placeholder="解釋含義..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>納諫方面「宜」：</b>「開張聖聽」、「諮諏善道，以光先帝遺德，恢弘志士之氣」<br/>
+          含義：廣開言路，諮詢並接納良策，以發揚先帝遺留的美德，激勵志士的精神<br/>
+          <b>納諫方面「不宜」：</b>「妄自菲薄」、「引喻失義」<br/>
+          含義及後果：過分看輕自己或說不恰當的話，以塞忠諫之路，阻礙忠良進言<br/>
+          <b>賞罰方面「宜」：</b>「宮中府中，俱為一體，陟罰臧否，不宜異同，若有作奸犯科及為忠善者，宜付有司論其刑賞，以昭陛下平明之治」<br/>
+          含義：宮中和府中要統一賞罰標準，對於為非作歹或盡忠行善的人，應交給負責官吏討論其刑賞，以彰顯後主公正嚴明的治理<br/>
+          <b>賞罰方面「不宜」：</b>「不宜偏私，使內外異法也」<br/>
+          含義及後果：不應偏袒徇私，否則會使宮內宮外有不同的賞罰制度<br/>
+          <b>用人方面「宜」：</b>如郭攸之、費依、董允等文臣，「此皆良實，志慮忠純」；向寵等武將，「性行淑均」<br/>
+          含義：這些人善良忠實，志向心思純正，應多加任用，諮詢他們，以補正缺漏
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 3: Learning from History */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q3：以古鑑今</h3>
+        <StarButton questionId="ch01_qa3" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>諸葛亮如何利用西漢與東漢的例子來勸說後主？試引述相關原文並解釋其作用。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>西漢的原文及含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa3_a1', e.target.value)} value={userAnswers.ch01_qa3_a1 || ''} placeholder="引述原文及含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>東漢的原文及含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa3_a2', e.target.value)} value={userAnswers.ch01_qa3_a2 || ''} placeholder="引述原文及含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>這個對比的作用：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa3_a3', e.target.value)} value={userAnswers.ch01_qa3_a3 || ''} placeholder="說明作用..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>西漢：</b>「親賢臣，遠小人，此先漢所以興隆也」<br/>
+          含義：西漢君主親近賢臣，遠離小人，因此國家興盛<br/>
+          <b>東漢：</b>「親小人，遠賢臣，此後漢所以傾頹也」<br/>
+          含義：東漢君主親信小人，遠離賢臣，因此國家衰敗<br/>
+          <b>作用：</b>通過正反對比，以西漢君主親賢臣遠小人致國家興隆，對比東漢君主親小人遠賢臣致國家傾頹，突出兩者的利弊損益的影響，強調要親賢臣遠小人，以免重蹈覆轍
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 4: Personal Commitment */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q4：真情述志</h3>
+        <StarButton questionId="ch01_qa4" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>諸葛亮如何表述先帝和他的感情？試引用原文解釋，並且指出他自述身世和志向的作用。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>先帝的知遇之恩（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa4_a1', e.target.value)} value={userAnswers.ch01_qa4_a1 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa4_a2', e.target.value)} value={userAnswers.ch01_qa4_a2 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>諸葛亮對先帝的感激與責任（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa4_a3', e.target.value)} value={userAnswers.ch01_qa4_a3 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>自述身世和志向的作用：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa4_a4', e.target.value)} value={userAnswers.ch01_qa4_a4 || ''} placeholder="說明作用..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>先帝知遇之恩：</b>「臣本布衣，躬耕於南陽，苟全性命於亂世，不求聞達於諸侯。先帝不以臣卑鄙，猥自枉屈，三顧臣於草廬之中，諮諏善道之事」<br/>
+          含義：諸葛亮原本身分低微，只想保全自己的生命，先帝卻不因他身分低下而看不起他，反而三次親自拜訪他，向他諮詢治國之策，顯示對他的重視和信任<br/>
+          <br/>
+          <b>諸葛亮對先帝的感激與責任（分句解釋）：</b><br/>
+          <b>「由是感激，遂許先帝以驅馳」</b><br/>
+          含義：正是因為先帝的知遇，諸葛亮深感激動，因此答應為先帝效力和奮力工作<br/>
+          <br/>
+          <b>「受命以來，夙夜憂歎，恐託付不效，以傷先帝之明」</b><br/>
+          含義：自從接受先帝任命以來，諸葛亮日夜都在憂慮，擔心自己的工作做不好，會辜負先帝的期望和眼光<br/>
+          <br/>
+          <b>「故五月渡瀘，深入不毛」</b><br/>
+          含義：因此諸葛亮毅然率軍南征，進入荒涼的南蠻之地，不怕艱苦，為了完成先帝的志業<br/>
+          <br/>
+          <b>「先帝知臣謹慎，故臨崩寄臣以大事也」</b><br/>
+          含義：先帝了解諸葛亮為人謹慎，所以在臨終時把治國和軍國大事託付給他，這是對諸葛亮最大的信任和重託<br/>
+          <br/>
+          <b>自述身世和志向的作用：</b>為使後主不質疑自己、信任自己的意見，將自己的心跡完全表露出來，以此打動後主的感情，使其願意接納自己的勸諫。同時也向後主強調自己對先帝的忠誠和責任，希望後主能傳承先帝的信任
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 5: Reaffirming Responsibilities */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q5：重申職責</h3>
+        <StarButton questionId="ch01_qa5" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>引用原文，指出並解釋諸葛亮自己、賢臣和後主各自的職責。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>諸葛亮自己的職責（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a1', e.target.value)} value={userAnswers.ch01_qa5_a1 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a2', e.target.value)} value={userAnswers.ch01_qa5_a2 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>賢臣的職責（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a3', e.target.value)} value={userAnswers.ch01_qa5_a3 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a4', e.target.value)} value={userAnswers.ch01_qa5_a4 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>後主的職責（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a5', e.target.value)} value={userAnswers.ch01_qa5_a5 || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa5_a6', e.target.value)} value={userAnswers.ch01_qa5_a6 || ''} placeholder="解釋含義..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>諸葛亮自己的職責：</b>「庶竭駑鈍，攘除奸凶，興復漢室，還於舊都」<br/>
+          含義：竭盡自己平庸的才能，剷除奸詐兇惡的敵人，復興漢朝，遷回原來的首都<br/>
+          <b>賢臣的職責：</b>「斟酌損益，進盡忠言」<br/>
+          含義：反覆考慮改革的方案，提出最好的建議<br/>
+          <b>後主的職責：</b>「諮諏善道，察納雅言，深追先帝遺詔」<br/>
+          含義：諮詢治國的好辦法，明察接納正直合理的言論，深深遵循先帝遺留的遺詔
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 6: Tears of Sorrow */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q6：臨表涕零</h3>
+        <StarButton questionId="ch01_qa6" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>指出作者臨表涕零的三個原因。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>原因一：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa6_a1', e.target.value)} value={userAnswers.ch01_qa6_a1 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>原因二：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa6_a2', e.target.value)} value={userAnswers.ch01_qa6_a2 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>原因三：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa6_a3', e.target.value)} value={userAnswers.ch01_qa6_a3 || ''} placeholder="說明..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>原因一：</b>蜀漢危急。蜀漢「益州疲弊」，面臨「危急存亡之秋」，國力衰弱，危在旦夕<br/>
+          <b>原因二：</b>後主年少，缺乏治國經驗，可能親信小人，不聽忠言，難以繼承先帝偉業，使諸葛亮對復興漢室的希望受到威脅<br/>
+          <b>原因三：</b>出師在即，擔心後主被小人蒙蔽，而自己在外難以控制局面，將無法得到後方的支持，直接影響北伐的成敗
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 7: Persuasion Techniques */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q7：游說技巧</h3>
+        <StarButton questionId="ch01_qa7" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>指出並說明作者的游說技巧。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>說理方面（引述例子並說明）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa7_a1', e.target.value)} value={userAnswers.ch01_qa7_a1 || ''} placeholder="說明技巧..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>動情方面（引述例子並說明）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa7_a2', e.target.value)} value={userAnswers.ch01_qa7_a2 || ''} placeholder="說明技巧..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>游說技巧：說之以理，動之以情</b><br/>
+          <b>說：</b>通過分析天下局勢，突出蜀國危難，以東漢西漢史實對比，希望後主以史為鑑，親賢臣遠小人，做出理性的決定<br/>
+          <b>動：</b>多次提及先帝，望以父子之情打動後主，使其甘於接納意見；又表明自己的心志和付出，以此打動後主，使其接受自己的勸諫。諸葛亮用「臨表涕零」這個細節，更是深刻表現了他內心的真摯情感
+        </div>
+      )}
+    </div>
+
     <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
       <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
