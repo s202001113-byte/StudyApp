@@ -4893,10 +4893,18 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a7', e.target.value)} value={userAnswers.ch01_qa2_a7 || ''} placeholder="引述原文..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義及後果：</p>
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a8', e.target.value)} value={userAnswers.ch01_qa2_a8 || ''} placeholder="解釋含義..."/>
-      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」（引述原文及人名）：</p>
-      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9', e.target.value)} value={userAnswers.ch01_qa2_a9 || ''} placeholder="引述原文..."/>
-      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義：</p>
-      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10', e.target.value)} value={userAnswers.ch01_qa2_a10 || ''} placeholder="解釋含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 文臣（人選、性格及原因）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9', e.target.value)} value={userAnswers.ch01_qa2_a9 || ''} placeholder="如：郭攸之、費禕、董允..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>文臣的性格特徵與選用原因（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9b', e.target.value)} value={userAnswers.ch01_qa2_a9b || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>文臣的效果與含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9c', e.target.value)} value={userAnswers.ch01_qa2_a9c || ''} placeholder="解釋效果與含義..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 武將（人選、性格及原因）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10', e.target.value)} value={userAnswers.ch01_qa2_a10 || ''} placeholder="如：向寵..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>武將的性格特徵與選用原因（引述原文）：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10b', e.target.value)} value={userAnswers.ch01_qa2_a10b || ''} placeholder="引述原文..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>武將的效果與含義：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10c', e.target.value)} value={userAnswers.ch01_qa2_a10c || ''} placeholder="解釋效果與含義..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
           <b>標準答案：</b><br/>
@@ -4908,8 +4916,20 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
           含義：宮中和府中要統一賞罰標準，對於為非作歹或盡忠行善的人，應交給負責官吏討論其刑賞，以彰顯後主公正嚴明的治理<br/>
           <b>賞罰方面「不宜」：</b>「不宜偏私，使內外異法也」<br/>
           含義及後果：不應偏袒徇私，否則會使宮內宮外有不同的賞罰制度<br/>
-          <b>用人方面「宜」：</b>如郭攸之、費依、董允等文臣，「此皆良實，志慮忠純」；向寵等武將，「性行淑均」<br/>
-          含義：這些人善良忠實，志向心思純正，應多加任用，諮詢他們，以補正缺漏，有所得益；軍中之事都咨詢他，能使軍中團結和睦，才能高與低的人都能得到合適的安排
+          <br/>
+          <b>用人方面「宜」 - 文臣：</b><br/>
+          <b>人選：</b>侍中、侍郎郭攸之、費禕、董允等<br/>
+          <b>性格特徵與選用原因：</b>「此皆良實，志慮忠純，是以先帝簡拔以遺陛下」<br/>
+          含義：他們都是善良誠實、志向心思純正的人，所以先帝就挑選了他們留給後主<br/>
+          <b>效果與含義：</b>「宮中之事，事無大小，悉以咨之，然後施行，必能裨補闕漏，有所廣益」<br/>
+          含義：宮廷內的所有事務，無論大小，都諮詢他們，然後再實施，這樣一定能夠彌補缺失，有所增益。說明了任用賢臣可以完善施政、增進國家利益<br/>
+          <br/>
+          <b>用人方面「宜」 - 武將：</b><br/>
+          <b>人選：</b>將軍向寵<br/>
+          <b>性格特徵與選用原因：</b>「向寵，性行淑均，曉暢軍事，試用於昔日，先帝稱之曰『能』，是以眾議舉寵為督」<br/>
+          含義：向寵為人善良公正，通曉軍事，之前試用過他，先帝評價他有能力，所以大家商議推舉他為軍隊統帥<br/>
+          <b>效果與含義：</b>「營中之事，悉以咨之，必能使行陣和睦，優劣得所」<br/>
+          含義：軍中的事務都諮詢他，一定能使軍隊團結和睦，才能高與低的人都能得到恰當的安排。說明了任用適當的軍事人才可以使軍隊有效運作、人盡其才
         </div>
       )}
     </div>
