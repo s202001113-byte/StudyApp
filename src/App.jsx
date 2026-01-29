@@ -4893,14 +4893,14 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a7', e.target.value)} value={userAnswers.ch01_qa2_a7 || ''} placeholder="引述原文..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>含義及後果：</p>
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a8', e.target.value)} value={userAnswers.ch01_qa2_a8 || ''} placeholder="解釋含義..."/>
-      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 文臣（人選、性格及原因）：</p>
-      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9', e.target.value)} value={userAnswers.ch01_qa2_a9 || ''} placeholder="如：郭攸之、費禕、董允..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 文臣：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9', e.target.value)} value={userAnswers.ch01_qa2_a9 || ''} placeholder="人選名稱..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>文臣的性格特徵與選用原因（引述原文）：</p>
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9b', e.target.value)} value={userAnswers.ch01_qa2_a9b || ''} placeholder="引述原文..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>文臣的效果與含義：</p>
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a9c', e.target.value)} value={userAnswers.ch01_qa2_a9c || ''} placeholder="解釋效果與含義..."/>
-      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 武將（人選、性格及原因）：</p>
-      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10', e.target.value)} value={userAnswers.ch01_qa2_a10 || ''} placeholder="如：向寵..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用人方面「宜」 - 武將：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10', e.target.value)} value={userAnswers.ch01_qa2_a10 || ''} placeholder="人選名稱..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>武將的性格特徵與選用原因（引述原文）：</p>
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa2_a10b', e.target.value)} value={userAnswers.ch01_qa2_a10b || ''} placeholder="引述原文..."/>
       <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>武將的效果與含義：</p>
