@@ -4900,7 +4900,7 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       {showAnswers && (
         <div style={styles.answerKey}>
           <b>標準答案：</b><br/>
-          <b>納諫方面「宜」：</b>「諮諏善道」、「開張聖聽，以光先帝遺德，恢弘志士之氣」<br/>
+          <b>納諫方面「宜」：</b>「諮諏善道」、「誠宜開張聖聽，以光先帝遺德，恢弘志士之氣」<br/>
           含義：諮詢並接納良策，廣開言路，以發揚先帝遺留的美德，激勵志士的精神<br/>
           <b>納諫方面「不宜」：</b>「妄自菲薄，引喻失義，以塞忠諫之路也」<br/>
           含義及後果：過分看輕自己或說不恰當的話，以塞忠諫之路，阻礙忠良進言<br/>
