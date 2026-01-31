@@ -15,6 +15,7 @@ const ICT_Comp_C_Ch2 = lazy(() => import('./components/ICT_Comp_C_Ch2'));
 const ICT_Comp_C_Ch3 = lazy(() => import('./components/ICT_Comp_C_Ch3'));
 const ICT_Comp_C_Ch4 = lazy(() => import('./components/ICT_Comp_C_Ch4'));
 const ICT_Comp_C_Ch5 = lazy(() => import('./components/ICT_Comp_C_Ch5'));
+const Phy_Comp_4_Ch1 = lazy(() => import('./components/Phy_Comp_4_Ch1'));
 const Phy_Comp_4_Ch2 = lazy(() => import('./components/Phy_Comp_4_Ch2'));
 const Phy_Comp_4_Ch3 = lazy(() => import('./components/Phy_Comp_4_Ch3'));
 const Phy_E_2_Ch1 = lazy(() => import('./components/Phy_E_2_Ch1'));
@@ -160,6 +161,7 @@ const App = () => {
     { id: 'ict_comp_c_ch5', title: 'Compulsory C Ch5: Network Security & Privacy', description: 'Malware, Attacks, Protection, & Privacy', icon: <ShieldAlert />, category: 'Compulsory C', color: '#dc2626' },
     
     // --- Physics Topics ---
+    { id: 'phy_comp_4_ch1', title: 'Compulsory 4 Ch1: Electrostatics', description: 'Electric Charges, Fields & Forces', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
     { id: 'phy_comp_4_ch2', title: 'Compulsory 4 Ch2: Electric Circuits', description: 'Electric Circuits, Current & Voltage', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
     { id: 'phy_comp_4_ch3', title: 'Compulsory 4 Ch3: Domestic Electricity', description: 'Domestic Electricity, Safety & Appliances', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
     { id: 'phy_e_2_ch1', title: 'E2 Ch1: Rutherford\'s atomic model', description: 'Rutherford\'s Model, Scattering & Limitations', icon: <Zap />, category: 'Elective 2', color: '#f97316' },
@@ -311,6 +313,7 @@ const App = () => {
               {selectedTopic === 'ict_comp_c_ch5' && <ICT_Comp_C_Ch5 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               
               {/* Physics Components */}
+              {selectedTopic === 'phy_comp_4_ch1' && <Phy_Comp_4_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_comp_4_ch2' && <Phy_Comp_4_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_comp_4_ch3' && <Phy_Comp_4_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_2_ch1' && <Phy_E_2_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
