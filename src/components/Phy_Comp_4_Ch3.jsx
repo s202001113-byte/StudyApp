@@ -28,7 +28,7 @@ const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton
   const getAnswerStyle = (qId, option) => {
     if (!showAnswers) return {};
     const userAnswer = userAnswers[`phy4ch3q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct;
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
     if (userAnswer === option) {
       return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
     }
@@ -36,6 +36,13 @@ const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton
       return { backgroundColor: '#d1fae5', borderColor: '#10b981' };
     }
     return {};
+  };
+
+  const getSolutionStyle = (qId) => {
+    if (!showAnswers) return styles.answerKey;
+    const userAnswer = userAnswers[`phy4ch3q${qId}`];
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
+    return isCorrect ? styles.answerKey : { ...styles.answerKey, backgroundColor: '#fee2e2', borderColor: '#ef4444', borderLeft: '4px solid #ef4444' };
   };
 
   return (
@@ -76,7 +83,7 @@ const Phy_Comp_4_Ch3 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           
           {/* Solution */}
           {showAnswers && (
-            <div style={styles.answerKey}>
+            <div style={getSolutionStyle(q.id)}>
               <p><b>Solution:</b></p>
               <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH3/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
             </div>

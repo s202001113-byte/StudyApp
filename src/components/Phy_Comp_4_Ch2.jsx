@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 
 const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
   const questions = [
@@ -19,13 +19,13 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
     { id: 15, correct: 'B', options: [{ text: '1Ω' }, { text: '2Ω' }, { text: '3Ω' }, { text: '4Ω' }] },
     { id: 16, correct: 'C', options: [{ text: 'Series' }, { text: 'Parallel' }, { text: 'Series and Parallel' }, { text: 'None' }] },
     { id: 17, correct: 'D', options: [{ text: 'Maximum' }, { text: 'Minimum' }, { text: 'Medium' }, { text: 'None' }] },
-    { id: 18, correct: 'A', options: [{ text: 'True' }, { text: 'False' }, { text: 'Partially' }, { text: 'Unknown' }] }
+    { id: 18,              correct: 'A', options: [{ text: 'True' }, { text: 'False' }, { text: 'Partially' }, { text: 'Unknown' }] }
   ];
 
   const getAnswerStyle = (qId, option) => {
     if (!showAnswers) return {};
     const userAnswer = userAnswers[`phy4ch2q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct;
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
     if (userAnswer === option) {
       return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
     }
@@ -35,12 +35,19 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
     return {};
   };
 
+  const getSolutionStyle = (qId) => {
+    if (!showAnswers) return styles.answerKey;
+    const userAnswer = userAnswers[`phy4ch2q${qId}`];
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
+    return isCorrect ? styles.answerKey : { ...styles.answerKey, backgroundColor: '#fee2e2', borderColor: '#ef4444', borderLeft: '4px solid #ef4444' };
+  };
+
   return (
     <div>
       {questions.map(q => (
         <div key={q.id} style={styles.qSection}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-            <h3 style={styles.qTitle}>Q{q.id}</h3>
+            <h3 style={styles.qTitle}>Q{q.id}{q.id === 18 && <Star size={20} fill="#f59e0b" color="#f59e0b" style={{marginLeft: '8px', display: 'inline'}} />}</h3>
             <StarButton questionId={`phy4ch2q${q.id}`} />
           </div>
           
@@ -73,7 +80,7 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           
           {/* Solution */}
           {showAnswers && (
-            <div style={styles.answerKey}>
+            <div style={getSolutionStyle(q.id)}>
               <p><b>Solution:</b></p>
               <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH2/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
             </div>

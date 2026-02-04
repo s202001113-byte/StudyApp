@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
 
 const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
   const questions = [
@@ -20,7 +20,7 @@ const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton
   const getAnswerStyle = (qId, option) => {
     if (!showAnswers) return {};
     const userAnswer = userAnswers[`phy4ch1q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct;
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
     if (userAnswer === option) {
       return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
     }
@@ -30,12 +30,19 @@ const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton
     return {};
   };
 
+  const getSolutionStyle = (qId) => {
+    if (!showAnswers) return styles.answerKey;
+    const userAnswer = userAnswers[`phy4ch1q${qId}`];
+    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
+    return isCorrect ? styles.answerKey : { ...styles.answerKey, backgroundColor: '#fee2e2', borderColor: '#ef4444', borderLeft: '4px solid #ef4444' };
+  };
+
   return (
     <div>
       {questions.map(q => (
         <div key={q.id} style={styles.qSection}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-            <h3 style={styles.qTitle}>Q{q.id}</h3>
+            <h3 style={styles.qTitle}>Q{q.id}{q.id === 13 && <Star size={20} fill="#f59e0b" color="#f59e0b" style={{marginLeft: '8px', display: 'inline'}} />}</h3>
             <StarButton questionId={`phy4ch1q${q.id}`} />
           </div>
           
@@ -54,10 +61,10 @@ const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton
                   onChange={(e) => onChange(`phy4ch1q${q.id}`, e.target.value)}
                   disabled={showAnswers}
                 />
-                <div style={{width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '8px'}}>
+                <div style={{width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '8px'}}>
                   <span style={{fontWeight: 'bold', minWidth: '20px'}}>{option}.</span>
                   {q.options[idx].text ? (
-                    <span style={{fontSize: '0.95rem', lineHeight: '1.4'}}>{q.options[idx].text}</span>
+                    <span>{q.options[idx].text}</span>
                   ) : (
                     <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH1/c/${q.id}${option.toLowerCase()}.png`} style={{maxWidth: '150px', width: '100%'}} alt={`Option ${option}`} />
                   )}
@@ -68,7 +75,7 @@ const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           
           {/* Solution */}
           {showAnswers && (
-            <div style={styles.answerKey}>
+            <div style={getSolutionStyle(q.id)}>
               <p><b>Solution:</b></p>
               <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH1/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
             </div>

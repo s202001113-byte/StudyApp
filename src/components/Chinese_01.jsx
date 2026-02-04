@@ -619,7 +619,7 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch01_q32', 1)}} onChange={(e) => onChange('ch01_q32_a1', e.target.value)} value={userAnswers.ch01_q32_a1 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「卑鄙」：身分低微，見識淺陋（古義）
+          「卑//鄙」：身分低微，見識淺陋
         </div>
       )}
     </div>
@@ -1158,6 +1158,69 @@ const Chinese_01 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
           <b>游說技巧：說之以理，動之以情</b><br/>
           <b>說：</b>通過分析天下局勢，突出蜀國危難，以東漢西漢史實對比，希望後主以史為鑑，親賢臣遠小人<br/>
           <b>動：</b>多次提及先帝，望以父子之情打動後主，使其甘於接納意見；又表明自己的心志，以此打動後主，使其接受自己的勸諫。
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 8: Thirteen References to the Former Emperor */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q8：先帝名號的用意</h3>
+        <StarButton questionId="ch01_qa8" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>文中先後十三次提及先帝之名，有甚麼用意？</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>用意一：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa8_a1', e.target.value)} value={userAnswers.ch01_qa8_a1 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用意二：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa8_a2', e.target.value)} value={userAnswers.ch01_qa8_a2 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用意三：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa8_a3', e.target.value)} value={userAnswers.ch01_qa8_a3 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>用意四：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa8_a4', e.target.value)} value={userAnswers.ch01_qa8_a4 || ''} placeholder="說明..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          <b>(1) 感激器重：</b>表明自己由於感激先帝的器重，是全心全意效忠蜀國的，這樣說法，用以激勵後主要效法先帝遺德，才有忠心為國的大臣。<br/>
+          <b>(2) 創業艱難：</b>警惕後主先帝創業的艱難，希望後主能圖強奮發，謹守先帝的遺業。<br/>
+          <b>(3) 父子之情：</b>對後主動之以父子之情，希望他能有所覺悟，痛改前非，得以繼承父志。<br/>
+          <b>(4) 加強力量：</b>諸葛亮想借助先帝的聲威，以加強自己的說話力量，又可避免別人誤解自己對後主施加壓力。
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 9: Form of Memorial (表) */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q9：表的作用和特色</h3>
+        <StarButton questionId="ch01_qa9" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>結合出師表一文的寫作對象和目的，分析表的作用和特色。（4 分）</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>寫作對象及表的特色：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa9_a1', e.target.value)} value={userAnswers.ch01_qa9_a1 || ''} placeholder="說明..."/>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginTop: '12px', marginBottom: '8px'}}>寫作目的及表的作用：</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch01_qa9_a2', e.target.value)} value={userAnswers.ch01_qa9_a2 || ''} placeholder="說明..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          出師表一文的寫作對象是劉後主，而表的特色是用詞恭敬有禮，不尚浮華。由於本文的寫作對象是君主，語氣須恭敬，故常以「陛下」稱呼君主，以「臣」自稱，以示尊卑之分，由此體現了表的特色。(2分)<br/>
+          而本文的寫作目的是勸勉後主：虛懷納諫，賞罰公平，親賢遠小，並在出師前為政事和軍事上作出安排，當中可見表的作用是臣子向君主進諫言及陳述己見。(2分)
+        </div>
+      )}
+    </div>
+
+    {/* Q&A Question 10: Appropriateness of Admonishment */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>問答 Q10：勸諫是否恰當</h3>
+        <StarButton questionId="ch01_qa10" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>題目：</b>諸葛亮是臣，後主是君，但在《出師表》中，諸葛亮卻常用告誡的口吻勸諫後主，你認為是否恰當？試加以說明。</p>
+      <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>你的看法及論據：</p>
+      <textarea style={{...styles.input, minHeight: '100px'}} onChange={(e) => onChange('ch01_qa10_a1', e.target.value)} value={userAnswers.ch01_qa10_a1 || ''} placeholder="說明你的看法..."/>
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>標準答案：</b><br/>
+          恰當。劉備臨終時，曾囑咐劉禪對諸葛亮「事之如父」，所以諸葛亮與後主名義上是君臣關係，實際上卻是世侄與世叔伯的關係，既然如此，諸葛亮用長輩的口吻告誡後主也是很自然的事了。加上諸葛亮告誡之語委曲婉轉，情真意切，並沒有逾越臣子應有的禮節，令人易於接受。
         </div>
       )}
     </div>
