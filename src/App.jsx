@@ -20,6 +20,7 @@ const Phy_Comp_4_Ch1 = lazy(() => import('./components/Phy_Comp_4_Ch1'));
 const Phy_Comp_4_Ch2 = lazy(() => import('./components/Phy_Comp_4_Ch2'));
 const Phy_Comp_4_Ch3 = lazy(() => import('./components/Phy_Comp_4_Ch3'));
 const Phy_E_2_Ch1 = lazy(() => import('./components/Phy_E_2_Ch1'));
+const Phy_E_2_Correction = lazy(() => import('./components/Phy_E_2_Correction'));
 const Phy_E_3_Ch1 = lazy(() => import('./components/Phy_E_3_Ch1'));
 const Phy_E_3_Ch2 = lazy(() => import('./components/Phy_E_3_Ch2'));
 const Phy_E_3_Ch3 = lazy(() => import('./components/Phy_E_3_Ch3'));
@@ -167,6 +168,7 @@ const App = () => {
     { id: 'phy_comp_4_ch2', title: 'Compulsory 4 Ch2: Electric Circuits', description: 'Electric Circuits, Current & Voltage', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
     { id: 'phy_comp_4_ch3', title: 'Compulsory 4 Ch3: Domestic Electricity', description: 'Domestic Electricity, Safety & Appliances', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
     { id: 'phy_e_2_ch1', title: 'E2 Ch1: Rutherford\'s atomic model', description: 'Rutherford\'s Model, Scattering & Limitations', icon: <Zap />, category: 'Elective 2', color: '#f97316' },
+    { id: 'phy_e_2_corr', title: 'E2 Correction Book: Structural Questions', description: 'Bohr\'s Model & Spectrum Analysis', icon: <Zap />, category: 'Elective 2', color: '#f97316' },
     { id: 'phy_e_3_ch1', title: 'E3 Ch1: Electricity at home', description: 'Efficiency, Lighting, Appliances & AC', icon: <Zap />, category: 'Elective 3', color: '#eab308' },
     { id: 'phy_e_3_ch2', title: 'E3 Ch2: Energy efficiency in buildings', description: 'Conduction, Radiation & Vehicles', icon: <Zap />, category: 'Elective 3', color: '#f59e0b' },
     { id: 'phy_e_3_ch3', title: 'E3 Ch3: Renewable energy', description: 'Nuclear, Wind, Hydro & Solar Energy', icon: <Zap />, category: 'Elective 3', color: '#84cc16' },
@@ -295,7 +297,7 @@ const App = () => {
         ) : (
           <div style={styles.quizBox}>
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
-            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic === 'phy_e_2_corr' ? 'Physics E2 Correction Book' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
             
             <Suspense fallback={<LoadingFallback />}>
               {/* Chinese Components */}
@@ -320,6 +322,7 @@ const App = () => {
               {selectedTopic === 'phy_comp_4_ch2' && <Phy_Comp_4_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_comp_4_ch3' && <Phy_Comp_4_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_2_ch1' && <Phy_E_2_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+              {selectedTopic === 'phy_e_2_corr' && <Phy_E_2_Correction userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_3_ch1' && <Phy_E_3_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_3_ch2' && <Phy_E_3_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_3_ch3' && <Phy_E_3_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
