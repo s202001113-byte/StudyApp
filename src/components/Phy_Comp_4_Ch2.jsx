@@ -1,31 +1,31 @@
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
   const questions = [
-    { id: 1, correct: 'A', options: [{ text: '100V' }, { text: '120V' }, { text: '240V' }, { text: '280V' }] },
-    { id: 2, correct: 'C', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
-    { id: 3, correct: 'B', options: [{ text: 'Parallel circuit' }, { text: 'Series circuit' }, { text: 'Series-parallel circuit' }, { text: 'None of above' }] },
-    { id: 4, correct: 'A', options: [{ text: '3A' }, { text: '4A' }, { text: '6A' }, { text: '12A' }] },
-    { id: 5, correct: 'C', options: [{ text: 'EMF' }, { text: 'Terminal voltage' }, { text: 'Internal resistance' }, { text: 'External resistance' }] },
-    { id: 6, correct: 'B', options: [{ text: '(1) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 7, correct: 'D', options: [{ text: 'Increases' }, { text: 'Decreases' }, { text: 'Remains constant' }, { text: 'Cannot determine' }] },
-    { id: 8, correct: 'A', options: [{ text: 'True' }, { text: 'False' }, { text: 'Partially true' }, { text: 'None of above' }] },
-    { id: 9, correct: 'C', options: [{ text: '(1), (2) only' }, { text: '(2), (3) only' }, { text: '(1), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 10, correct: 'B', options: [{ text: 'Higher' }, { text: 'Lower' }, { text: 'Same' }, { text: 'Cannot compare' }] },
-    { id: 11, correct: 'A', options: [{ text: 'Increase R' }, { text: 'Decrease R' }, { text: 'Short circuit' }, { text: 'Open circuit' }] },
-    { id: 12, correct: 'D', options: [{ text: '(1) only' }, { text: '(2) only' }, { text: '(1), (2) only' }, { text: '(2), (3) only' }] },
-    { id: 13, correct: 'C', options: [{ text: 'Light only' }, { text: 'Heat only' }, { text: 'Heat and Light' }, { text: 'Motion' }] },
-    { id: 14, correct: 'A', options: [{ text: 'Resistor' }, { text: 'Capacitor' }, { text: 'Inductor' }, { text: 'Diode' }] },
-    { id: 15, correct: 'B', options: [{ text: '1Ω' }, { text: '2Ω' }, { text: '3Ω' }, { text: '4Ω' }] },
-    { id: 16, correct: 'C', options: [{ text: 'Series' }, { text: 'Parallel' }, { text: 'Series and Parallel' }, { text: 'None' }] },
-    { id: 17, correct: 'D', options: [{ text: 'Maximum' }, { text: 'Minimum' }, { text: 'Medium' }, { text: 'None' }] },
-    { id: 18,              correct: 'A', options: [{ text: 'True' }, { text: 'False' }, { text: 'Partially' }, { text: 'Unknown' }] }
+    { id: 1, correct: 'B', options: [{ text: '(1) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 2, correct: 'A', options: [{ text: '0V' }, { text: '6V' }, { text: '12V' }, { text: '18V' }] },
+    { id: 3, correct: 'B', options: [{ text: 'r = 5Ω,  R = 20Ω' }, { text: 'r = 5Ω, R = 100Ω' }, { text: 'r = 20Ω, R = 5Ω' }, { text: 'r = 100Ω, R = 5Ω' }] },
+    { id: 4, correct: 'C', options: [{ text: '1V' }, { text: '2V' }, { text: '3V' }, { text: '4V' }] },
+    { id: 5, correct: 'A', options: [{ text: '-2V, 1V, 0V' }, { text: '-1V, 2V, 0V' }, { text: '0V, 3V, 1.5V' }, { text: '0V, 3V, 2V' }] },
+    { id: 6, correct: 'A', options: [{ text: 'unchanged, unchanged' }, { text: 'doubled, halved' }, { text: 'unchanged, doubled' }, { text: 'doubled, unchanged' }] },
+    { id: 7, correct: 'B', options: [{ text: 'The ammeter burns out.' }, { text: 'The reading of the ammeter becomes zero.' }, { text: 'The voltmeter burns out.' }, { text: 'The reading of the voltmeter becomes zero.' }] },
+    { id: 8, correct: 'B', options: [{ text: 'The voltmeter has finite resistance.' }, { text: 'The battery has internal resistance.' }, { text: 'The resistance of the bulb is very large.' }, { text: 'There is a voltage drop across the bulb.' }] },
+    { id: 9, correct: 'A', options: [{ text: '0V' }, { text: '1.8V' }, { text: '3V' }, { text: '4.5V' }] },
+    { id: 10, correct: 'A', options: [{ text: '0V' }, { text: '1V' }, { text: '3V' }, { text: '6V' }] },
+    { id: 11, correct: 'D', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 12, correct: 'B', options: [{ text: '4V' }, { text: '6V' }, { text: '8V' }, { text: '12V' }] },
+    { id: 13, correct: 'C', options: [{ text: 'R > R1 > R2' }, { text: 'R < R1 < R2' }, { text: 'R1 < R < R2' }, { text: 'R1 > R > R2' }] },
+    { id: 14, correct: 'B', options: [{ img: true }, { img: true }, { img: true }, { img: true }] },
+    { id: 15, correct: 'D', options: [{ text: '1:1' }, { text: '3:1' }, { text: '1:7' }, { text: '9:1' }] },
+    { id: 16, correct: 'C', options: [{ text: '0.67Ω' }, { text: '0.8Ω' }, { text: '1Ω' }, { text: '1.44Ω' }] },
+    { id: 17, correct: 'C', options: [{ text: '6V' }, { text: '2V' }, { text: '-2V' }, { text: '-6V' }] },
+    { id: 18, correct: 'A', options: [{ text: '0.12V' }, { text: '0.48V' }, { text: '0.96A' }, { text: '1.44A' }] }
   ];
 
   const getAnswerStyle = (qId, option) => {
     if (!showAnswers) return {};
     const userAnswer = userAnswers[`phy4ch2q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
+    const isCorrect = userAnswer === questions[qId - 1].correct;
     if (userAnswer === option) {
       return isCorrect ? { backgroundColor: '#d1fae5', borderColor: '#10b981' } : { backgroundColor: '#fee2e2', borderColor: '#ef4444' };
     }
@@ -35,19 +35,12 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
     return {};
   };
 
-  const getSolutionStyle = (qId) => {
-    if (!showAnswers) return styles.answerKey;
-    const userAnswer = userAnswers[`phy4ch2q${qId}`];
-    const isCorrect = userAnswer === questions[qId - 1].correct && userAnswer !== undefined;
-    return isCorrect ? styles.answerKey : { ...styles.answerKey, backgroundColor: '#fee2e2', borderColor: '#ef4444', borderLeft: '4px solid #ef4444' };
-  };
-
   return (
     <div>
       {questions.map(q => (
         <div key={q.id} style={styles.qSection}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
-            <h3 style={styles.qTitle}>Q{q.id}{q.id === 18 && <Star size={20} fill="#f59e0b" color="#f59e0b" style={{marginLeft: '8px', display: 'inline'}} />}</h3>
+            <h3 style={styles.qTitle}>Q{q.id}{q.id === 18 && <span style={{marginLeft: '8px', color: '#f97316'}}>&#9733;</span>}</h3>
             <StarButton questionId={`phy4ch2q${q.id}`} />
           </div>
           
@@ -80,7 +73,7 @@ const Phy_Comp_4_Ch2 = ({ userAnswers, onChange, showAnswers, styles, StarButton
           
           {/* Solution */}
           {showAnswers && (
-            <div style={getSolutionStyle(q.id)}>
+            <div style={styles.answerKey}>
               <p><b>Solution:</b></p>
               <img src={`${import.meta.env.BASE_URL}mcdata/PHY COMP 4 CH2/s/${q.id}.png`} style={{maxWidth: '100%'}} alt={`Solution ${q.id}`} />
             </div>
