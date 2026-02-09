@@ -1,10 +1,11 @@
-﻿import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Box, CheckCircle2, Database, Monitor, Cpu, Layers, Zap, Settings, Layout, Globe, ShieldAlert, ArrowLeft, Star } from 'lucide-react';
 import { LoadingFallback } from './components/LoadingFallback';
 
 // Lazy load all quiz components
 const Chinese_01 = lazy(() => import('./components/Chinese_01'));
 const Chinese_02 = lazy(() => import('./components/Chinese_02'));
+const Chinese_03 = lazy(() => import('./components/Chinese_03'));
 const ICT_Comp_A_Ch1 = lazy(() => import('./components/ICT_Comp_A_Ch1'));
 const ICT_Comp_A_Ch2 = lazy(() => import('./components/ICT_Comp_A_Ch2'));
 const ICT_Comp_A_Ch3 = lazy(() => import('./components/ICT_Comp_A_Ch3'));
@@ -149,6 +150,7 @@ const App = () => {
     // --- Chinese Topics ---
     { id: 'chinese_01', title: 'Ch1: 出師表', description: '語譯和問答 - Classical Chinese Translation & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
     { id: 'chinese_02', title: 'Ch2: 六國論', description: '語譯、寫作手法和問答 - Classical Chinese Translation, Techniques & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
+    { id: 'chinese_03', title: 'Ch3: 勸學', description: '語譯 - Classical Chinese Translation', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
 
     // --- ICT Topics ---
     { id: 'ict_comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
@@ -297,12 +299,13 @@ const App = () => {
         ) : (
           <div style={styles.quizBox}>
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
-            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic === 'phy_e_2_corr' ? 'Physics E2 Correction Book' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic === 'chinese_03' ? '勸學' : selectedTopic === 'phy_e_2_corr' ? 'Physics E2 Correction Book' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
             
             <Suspense fallback={<LoadingFallback />}>
               {/* Chinese Components */}
               {selectedTopic === 'chinese_01' && <Chinese_01 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'chinese_02' && <Chinese_02 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+              {selectedTopic === 'chinese_03' && <Chinese_03 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               
               {/* ICT Components */}
               {selectedTopic === 'ict_comp_a_ch1' && <ICT_Comp_A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}

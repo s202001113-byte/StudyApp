@@ -4,7 +4,7 @@ const Phy_Comp_4_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton
   const questions = [
     { id: 1, correct: 'B', options: [{ text: '4 cm' }, { text: '2 cm' }, { text: '0.5 cm' }, { text: '0 cm' }] },
     { id: 2, correct: 'D', options: [{ text: '(2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },
-    { id: 3, correct: 'C', options: [{ text: '(2) only' }, { text: '(3) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }] },
+    { id: 3, correct: 'C', options: [{ text: '(2) only' }, { text: '(3) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }] },
     { id: 4, correct: 'B', options: [{ text: '(2) only' }, { text: '(3) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }] },
     { id: 5, correct: 'A', options: [{ text: '(3) only' }, { text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(1), (2) and (3)' }] },
     { id: 6, correct: 'D', options: [{ text: '(1), (2) only' }, { text: '(1), (3) only' }, { text: '(2), (3) only' }, { text: '(1), (2) and (3)' }] },

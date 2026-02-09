@@ -4,66 +4,66 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
   const vocabularyItems = {
     // 第一段：提出論點
     seg1: [
-      { term: '六國破滅', ans: ['韓、趙、魏、楚、燕、齊六國被滅亡'] },
-      { term: '兵不利', ans: ['兵器不鋒利', '武器不鋒利'] },
-      { term: '戰不善', ans: ['作戰表現不優勝', '作戰不好', '戰術不優'] },
-      { term: '弊在賂秦', ans: ['弊病在於賄賂秦國', '弊病在於向秦國進獻土地'] },
-      { term: '力虧', ans: ['國力損耗、削弱', '實力受損', '力量削弱'] },
-      { term: '破滅之道', ans: ['道理、因由', '原因', '理由'] },
-      { term: '互喪', ans: ['相繼滅亡', '一個接一個地滅亡'] },
-      { term: '率', ans: ['都、全部', '通常、都是'] },
-      { term: '蓋', ans: ['因為', '原因是'] },
-      { term: '獨完', ans: ['獨自保全', '單獨保全', '自己保全'] }
+      { term: '六國破滅', sentence: '六國「破滅」，非兵不利，戰不善，弊在賂秦。', ans: ['滅亡', '消滅'] },
+      { term: '兵不利', sentence: '六國破滅，非「兵不利」，戰不善，弊在賂秦。', ans: ['武器/兵器不鋒利', '兵器性能差'] },
+      { term: '戰不善', sentence: '六國破滅，非兵不利，「戰不善」，弊在賂秦。', ans: ['作戰/打仗不好', '戰術不優', '作戰表現不優勝'] },
+      { term: '弊在賂秦', sentence: '六國破滅，非兵不利，戰不善，「弊在賂秦」。', ans: ['弊病在於賄賂秦國', '缺點/禍根在於向秦國進獻土地', '問題在於送禮物給秦國'] },
+      { term: '力虧', sentence: '賂秦而「力虧」，破滅之道也。', ans: ['國力損耗/削弱', '實力受損', '力量減少'] },
+      { term: '破滅之道', sentence: '賂秦而力虧，「破滅之道」也。', ans: ['滅亡的原因/理由', '亡國的道理', '導致滅亡的辦法'] },
+      { term: '互喪', sentence: '或曰：「六國「互喪」，率賂秦耶？」', ans: ['相繼滅亡', '相互滅亡', '一個接一個地滅亡'] },
+      { term: '率', sentence: '或曰：「六國互喪，「率」賂秦耶？」', ans: ['都、全部', '通常、都是', '是否都'] },
+      { term: '蓋', sentence: '「蓋」失強援，不能獨完，故曰「弊在賂秦」也。', ans: ['因為', '原因是', '大概'] },
+      { term: '獨完', sentence: '蓋失強援，不能「獨完」，故曰「弊在賂秦」也。', ans: ['獨自保全', '單獨保全', '自己維持完整'] }
     ],
     // 第二段：弊在賂秦
     seg2: [
-      { term: '攻取', ans: ['用戰爭侵佔', '戰爭侵佔'] },
-      { term: '邑', ans: ['小的城市', '城鎮'] },
-      { term: '所得', ans: ['因六國賄賂而得到之土地', '所獲得的土地'] },
-      { term: '所亡', ans: ['因賄賂秦國而失去之土地', '所喪失的土地'] },
-      { term: '思厥先祖父', ans: ['想起他們的祖輩父輩', '思念他們的先人'] },
-      { term: '暴霜露，斬荊棘', ans: ['暴露於霜露之下，斬除荊棘', '暴露於霜露，斬除荊棘（形容創業艱辛）'] },
-      { term: '以有尺寸之地', ans: ['才有尺寸之地', '才擁有一點點土地'] },
-      { term: '舉以予人', ans: ['全部拿來送給別人', '都拿去給別人'] },
-      { term: '草芥', ans: ['小草', '小草（形容輕賤之物）'] },
-      { term: '無厭', ans: ['不滿足', '貪得無厭', '滿足'] },
-      { term: '彌', ans: ['更加', '越', '更'] },
-      { term: '判', ans: ['分明、判斷', '決定', '判決'] },
-      { term: '顛覆', ans: ['滅亡', '跌倒翻轉', '倒塌'] },
-      { term: '古人', ans: ['戰國策士蘇代', '先賢', '前人'] },
-      { term: '以地事秦，猶抱薪救火', ans: ['用土地侍奉秦國，好像抱著木柴去救火', '拿土地去事奉秦國，如同抱柴救火'] },
-      { term: '得之', ans: ['得其道理', '說對了', '理解正確'] }
+      { term: '攻取', sentence: '秦以「攻取」之外，小則獲邑，大則得城。', ans: ['用戰爭侵佔', '用軍力攻擊掠奪'] },
+      { term: '邑', sentence: '秦以攻取之外，小則獲「邑」，大則得城。', ans: ['縣城', '小城鎮', '小城市'] },
+      { term: '所得', sentence: '較秦之「所得」與戰勝而得者，其實百倍。', ans: ['所獲得的土地', '得到的東西'] },
+      { term: '所亡', sentence: '諸侯之「所亡」與戰敗而亡者，其實亦百倍。', ans: ['所失去的土地', '喪失的東西'] },
+      { term: '思厥先祖父', sentence: '「思厥先祖父」，暴霜露，斬荊棘。', ans: ['思念/想起他們的祖輩父輩', '回想他們的先人'] },
+      { term: '暴霜露，斬荊棘', sentence: '思厥先祖父，「暴霜露，斬荊棘」，以有尺寸之地。', ans: ['暴露在霜露中，砍除荊棘', '遭受霜露，砍除荊棘（形容創業艱辛）'] },
+      { term: '以有尺寸之地', sentence: '暴霜露，斬荊棘，「以有尺寸之地」。', ans: ['才能擁有尺寸之地', '才有一點點土地'] },
+      { term: '舉以予人', sentence: '子孫視之不甚惜，「舉以予人」，如棄草芥。', ans: ['全部拿來送給別人', '都拿去給別人'] },
+      { term: '草芥', sentence: '舉以予人，如棄「草芥」。', ans: ['小草', '草（形容輕賤之物）'] },
+      { term: '無厭', sentence: '諸侯之地有限，暴秦之欲「無厭」。', ans: ['無止境/不滿足', '貪心不足', '沒有滿足'] },
+      { term: '彌', sentence: '奉之「彌」繁，侵之愈急。', ans: ['更加', '越', '更'] },
+      { term: '判', sentence: '故不戰而強弱勝負已「判」矣。', ans: ['決定/確定', '分明', '判出'] },
+      { term: '顛覆', sentence: '至於「顛覆」，理固宜然。', ans: ['滅亡', '推翻', '傾覆'] },
+      { term: '古人', sentence: '「古人」云：「以地事秦，猶抱薪救火。」', ans: ['前人', '古代的賢人（蘇代）', '先人'] },
+      { term: '以地事秦，猶抱薪救火', sentence: '古人云：「「以地事秦，猶抱薪救火」，薪不盡，火不滅。」', ans: ['用土地侍奉秦國，如同抱著木柴去救火', '拿土地去事奉秦國，好比抱柴救火'] },
+      { term: '得之', sentence: '此言「得之」。', ans: ['說對了', '說得對', '理解正確'] }
     ],
     // 第三段：不賂者以賂者喪
     seg3: [
-      { term: '遷滅', ans: ['亡國', '滅亡', '徙國叫遷（指滅亡）'] },
-      { term: '與贏', ans: ['親附秦國', '交好於秦國'] },
-      { term: '遠略', ans: ['長遠計策', '長遠的謀略'] },
-      { term: '義不賂秦', ans: ['堅持正義，不賄賂秦國', '以不去賄賂秦國為合宜'] },
-      { term: '斯用兵之效', ans: ['這就是用兵抗秦的功效', '這是用兵的成效'] },
-      { term: '丹以荊卿為計', ans: ['燕太子丹用荊軻刺秦王作為對策', '燕太子丹以荊軻刺秦王之計'] },
-      { term: '速禍', ans: ['招致禍患', '快速招來災禍'] },
-      { term: '趙嘗五戰於秦', ans: ['趙國曾經與秦國交戰五次', '趙國曾與秦國交戰五次'] },
-      { term: '二敗而三勝', ans: ['兩次敗仗，三次勝仗', '兩敗三勝'] },
-      { term: '李牧', ans: ['趙國名將', '趙國大將'] },
-      { term: '連卻', ans: ['接連擊退', '不斷擊退'] },
-      { term: '迨牧以讒誅', ans: ['等到李牧因讒言被殺', '及至李牧因讒言被誅'] },
-      { term: '邯鄲為郡', ans: ['趙國都城淪為秦國郡縣', '邯鄲成為秦國郡（指趙國滅亡）'] },
-      { term: '用武而不終', ans: ['使用武力抗秦卻沒能堅持到底', '用武力抗秦未能堅持到底'] },
-      { term: '革滅', ans: ['消滅', '改變而滅亡'] },
-      { term: '智力孤危', ans: ['智謀窮竭，國勢孤立危急', '智謀盡，力量孤立危險'] },
-      { term: '向使三國各愛其地', ans: ['假使韓、魏、楚三國各自愛惜他們的土地', '假如三國各自愛護其領土'] },
-      { term: '刺客不行', ans: ['荊軻不去行刺秦王', '刺殺秦王不進行'] },
-      { term: '良將', ans: ['指李牧', '優秀的將領'] },
-      { term: '數', ans: ['命運', '天數', '定數'] }
+      { term: '遷滅', sentence: '齊人未嘗賂秦，終繼五國「遷滅」。', ans: ['亡國', '滅亡', '亡國徙遷'] },
+      { term: '與贏', sentence: '與秦而不助五國也。', note: '與贏即親附秦國', ans: ['親附秦國', '交好於秦國', '依附秦國'] },
+      { term: '遠略', sentence: '燕趙之君，始有「遠略」，能守其土。', ans: ['長遠計策', '長遠的謀略', '遠大的計劃'] },
+      { term: '義不賂秦', sentence: '義「不賂秦」。', ans: ['堅持正義，不賄賂秦國', '以不賄賂秦國為正義所在'] },
+      { term: '斯用兵之效', sentence: '燕雖小國而後亡，「斯用兵之效」也。', ans: ['這就是用兵抗秦的功效', '這是用兵的成果'] },
+      { term: '丹以荊卿為計', sentence: '至「丹以荊卿為計」，始速禍焉。', ans: ['燕太子丹用荊軻刺秦王作為對策', '太子丹採用荊軻刺秦王之計'] },
+      { term: '速禍', sentence: '至丹以荊卿為計，始「速禍」焉。', ans: ['招致禍患', '快速招來災禍', '加速引來災難'] },
+      { term: '趙嘗五戰於秦', sentence: '「趙嘗五戰於秦」，二敗而三勝。', ans: ['趙國曾經與秦國交戰五次', '趙國曾與秦國交戰五次'] },
+      { term: '二敗而三勝', sentence: '趙嘗五戰於秦，「二敗而三勝」。', ans: ['兩次敗仗，三次勝仗', '戰績為兩敗三勝'] },
+      { term: '李牧', sentence: '後秦擊趙者再，「李牧」連卻之。', ans: ['趙國名將', '趙國大將'], note: '名將' },
+      { term: '連卻', sentence: '後秦擊趙者再，李牧「連卻」之。', ans: ['接連擊退', '不斷擊退'] },
+      { term: '迨牧以讒誅', sentence: '「迨牧以讒誅」，邯鄲為郡。', ans: ['等到李牧因讒言被殺', '直到李牧因讒言被處死'] },
+      { term: '邯鄲為郡', sentence: '迨牧以讒誅，「邯鄲為郡」，惜其用武而不終也。', ans: ['趙國都城成為秦國郡縣', '邯鄲成為秦國的郡（象徵趙國滅亡）'] },
+      { term: '用武而不終', sentence: '惜其「用武而不終」也。', ans: ['用武力抗秦卻沒能堅持到底', '用兵力抗秦未能貫徹始終'] },
+      { term: '革滅', sentence: '且燕趙處秦「革滅」殆盡之際。', ans: ['消滅', '銷滅', '淪滅'] },
+      { term: '智力孤危', sentence: '可謂「智力孤危」，戰敗而亡。', ans: ['智謀窮竭，國勢孤立危急', '謀略盡力單勢危險'] },
+      { term: '向使三國', sentence: '「向使」三國各愛其地，齊人勿附於秦。', ans: ['假如', '假使', '若是'] },
+      { term: '刺客不行', sentence: '刺客「不行」，良將猶在。', ans: ['刺殺秦王之舉不進行', '刺殺不去進行'] },
+      { term: '良將', sentence: '刺客不行，「良將」猶在。', ans: ['才能優秀的將領（指李牧）', '優秀的將領'] },
+      { term: '數', sentence: '則勝負之「數」，存亡之理，當與秦相較。', ans: ['命運', '天數', '定數'] }
     ],
     // 第四段至第五段
     seg4: [
-      { term: '禮天下之奇才', ans: ['禮遇天下的奇才', '用禮來對待'] },
-      { term: '西嚮', ans: ['向西', '對付秦國'] },
-      { term: '下嚥', ans: ['吞下', '咽喉', '吞咽'] },
-      { term: '積威所劫', ans: ['長久累積的威勢所脅迫', '積累的威勢所懾服'] },
-      { term: '故事', ans: ['舊事、前例', '歷史事跡'] }
+      { term: '以地事秦之地', sentence: '以賂秦之地，「封天下之謀臣」；以事秦之心，「禮天下之奇才」。', ans: ['禮遇/尊敬天下的奇才', '用禮來對待天下奇才'] },
+      { term: '並力西嚮', sentence: '「並力西嚮」，則吾恐秦人食之不得下嚥也。', ans: ['合力向西（對付秦國）', '聯合力量向西進攻'] },
+      { term: '食之不得下嚥', sentence: '並力西嚮，則吾恐秦人「食之不得下嚥」也。', ans: ['食物（指六國之力）無法吞嚥', '無法吞下去', '消化不了'] },
+      { term: '積威之所劫', sentence: '為秦人「積威之所劫」，日削月割。', ans: ['被長久累積的威勢所脅迫/威脅', '被累積的威勢所嚇唬'] },
+      { term: '故事', sentence: '苟以天下之大，而從「六國破亡之故事」。', ans: ['舊事、前例', '歷史事跡'] }
     ]
   };
 
@@ -94,7 +94,7 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
 
   return (
     <div>
-      <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第二部分：註釋及翻譯</h3>
+      <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第一部分：註釋及翻譯</h3>
 
       {/* 第一段：提出論點 */}
       <div style={{marginBottom: '30px'}}>
@@ -105,8 +105,8 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
               <h3 style={styles.qTitle}>Q{idx + 1}</h3>
               <StarButton questionId={`seg1_${idx}`} />
             </div>
-            <p style={{marginBottom: '12px'}}><b>原文：</b>「{item.term}」</p>
-            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯：</p>
+            <p style={{marginBottom: '12px'}}><b>原文：</b> {item.sentence}</p>
+            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「{item.term}」：</p>
             <input 
               style={{...styles.input, backgroundColor: getInputBgColor(`seg1_${idx}`, 1, userAnswers[`seg1_${idx}_a1`], showAnswers)}} 
               onChange={(e) => onChange(`seg1_${idx}_a1`, e.target.value)} 
@@ -131,8 +131,8 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
               <h3 style={styles.qTitle}>Q{idx + 1}</h3>
               <StarButton questionId={`seg2_${idx}`} />
             </div>
-            <p style={{marginBottom: '12px'}}><b>原文：</b>「{item.term}」</p>
-            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯：</p>
+            <p style={{marginBottom: '12px'}}><b>原文：</b> {item.sentence}</p>
+            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「{item.term}」：</p>
             <input 
               style={{...styles.input, backgroundColor: getInputBgColor(`seg2_${idx}`, 1, userAnswers[`seg2_${idx}_a1`], showAnswers)}} 
               onChange={(e) => onChange(`seg2_${idx}_a1`, e.target.value)} 
@@ -157,8 +157,8 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
               <h3 style={styles.qTitle}>Q{idx + 1}</h3>
               <StarButton questionId={`seg3_${idx}`} />
             </div>
-            <p style={{marginBottom: '12px'}}><b>原文：</b>「{item.term}」</p>
-            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯：</p>
+            <p style={{marginBottom: '12px'}}><b>原文：</b> {item.sentence}</p>
+            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「{item.term}」：</p>
             <input 
               style={{...styles.input, backgroundColor: getInputBgColor(`seg3_${idx}`, 1, userAnswers[`seg3_${idx}_a1`], showAnswers)}} 
               onChange={(e) => onChange(`seg3_${idx}_a1`, e.target.value)} 
@@ -183,8 +183,8 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
               <h3 style={styles.qTitle}>Q{idx + 1}</h3>
               <StarButton questionId={`seg4_${idx}`} />
             </div>
-            <p style={{marginBottom: '12px'}}><b>原文：</b>「{item.term}」</p>
-            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯：</p>
+            <p style={{marginBottom: '12px'}}><b>原文：</b> {item.sentence}</p>
+            <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「{item.term}」：</p>
             <input 
               style={{...styles.input, backgroundColor: getInputBgColor(`seg4_${idx}`, 1, userAnswers[`seg4_${idx}_a1`], showAnswers)}} 
               onChange={(e) => onChange(`seg4_${idx}_a1`, e.target.value)} 
@@ -200,7 +200,7 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         ))}
       </div>
 
-    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第三部分：寫作手法</h3>
+    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第二部分：寫作手法</h3>
 
     {/* Writing Techniques Q1: 下筆立論 */}
     <div style={styles.qSection}>
@@ -356,7 +356,7 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       )}
     </div>
 
-    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第四部分：主旨</h3>
+    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第三部分：主旨</h3>
 
     {/* Main Theme Question */}
     <div style={styles.qSection}>
@@ -374,7 +374,7 @@ const Chinese_02 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       )}
     </div>
 
-    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第五部分：問答</h3>
+    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第四部分：問答</h3>
 
     {/* Q&A Question 1 */}
     <div style={styles.qSection}>
