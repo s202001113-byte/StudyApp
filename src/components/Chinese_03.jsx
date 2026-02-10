@@ -40,7 +40,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch03_q2', 1)}} onChange={(e) => onChange('ch03_q2_a1', e.target.value)} value={userAnswers.ch03_q2_a1 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「青，取之於藍」：靛青（顏料）是從藍草取得的
+          「青，取之於藍」：靛青（顏料）是從藍草中提取而來的
         </div>
       )}
     </div>
@@ -264,7 +264,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <input style={{...styles.input, backgroundColor: getInputBgColor('ch03_q16', 1)}} onChange={(e) => onChange('ch03_q16_a1', e.target.value)} value={userAnswers.ch03_q16_a1 || ''} placeholder="輸入翻譯..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「疾」：快速、急促
+          「疾」：響亮
         </div>
       )}
     </div>
@@ -681,7 +681,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch03_qa1_a1', e.target.value)} value={userAnswers.ch03_qa1_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          「學無止境」或「學習無止境」的中心論點，緊扣文章題目「勸學」之旨。
+          「學習不可以停止」的中心論點，緊扣文章題目「勸學」之旨。
         </div>
       )}
     </div>
@@ -696,7 +696,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch03_qa2_a1', e.target.value)} value={userAnswers.ch03_qa2_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          說明後天學習可以使人不斷進步；任何人通過發憤學習，都能進步；今日之我可以勝過昨日之我，學生也可以超過老師。
+          以靛青從藍草中提取而來，但是比藍草更青，類比冰從水凝結而成，但是比水更寒冷，說明後天學習可以使人不斷進步，任何人通過發憤學習，都能進步。
         </div>
       )}
     </div>
@@ -707,7 +707,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         <h3 style={styles.qTitle}>問答 Q3</h3>
         <StarButton questionId="ch03_qa3" />
       </div>
-      <p style={{marginBottom: '12px'}}><b>題目：</b> 「木直中繩，輮以為輪」這個類比中，「木」和「輮」分別比喻什麽？藉此說明什麽？</p>
+      <p style={{marginBottom: '12px'}}><b>題目：</b> 「木直中繩，輮以為輪」這個比喻中，「木」和「輮」分別比喻什麽？藉此說明什麽？</p>
       <textarea style={{...styles.input, minHeight: '100px'}} onChange={(e) => onChange('ch03_qa3_a1', e.target.value)} value={userAnswers.ch03_qa3_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
@@ -726,7 +726,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '100px'}} onChange={(e) => onChange('ch03_qa4_a1', e.target.value)} value={userAnswers.ch03_qa4_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          兩句都說明人通過學習可以進步；物質經由或利用一些工具來改變自身（木經過墨繩的校正變直，刀劍經過磨刀石變鋒利），人亦可通過學習而進步改變。
+          以木經過墨繩的校正變直類比刀劍經過磨刀石變鋒利，説明物質經由或利用一些工具來改變自身，人亦可通過學習而去惡從善，改變本性。
         </div>
       )}
     </div>
