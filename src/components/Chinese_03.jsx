@@ -741,7 +741,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '100px'}} onChange={(e) => onChange('ch03_qa5_a1', e.target.value)} value={userAnswers.ch03_qa5_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          君子廣泛學習，並且每天反省檢查自己，這樣智慧自可通達，行為亦無過失。即學習能使人獲得智慧並改正過失。
+          君子廣泛學習，並且每天反省檢查自己，這樣智慧明達，行為亦無過失。即學習能使人獲得智慧並改正過失。
         </div>
       )}
     </div>
@@ -771,7 +771,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('ch03_qa7_a1', e.target.value)} value={userAnswers.ch03_qa7_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          說明踮起腳尖去看不如登上高處看得廣闊；比喻個人的思考不如通過學習（借助他人知識、經驗等）能更豐富地學得知識。
+          說明踮起腳尖去看不如登上高處看得廣闊；比喻個人的思考通過借助外物學習能更豐富地學得知識。
         </div>
       )}
     </div>
@@ -831,7 +831,7 @@ const Chinese_03 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       <textarea style={{...styles.input, minHeight: '100px'}} onChange={(e) => onChange('ch03_qa11_a1', e.target.value)} value={userAnswers.ch03_qa11_a1 || ''} placeholder="請回答..."/>
       {showAnswers && (
         <div style={styles.answerKey}>
-          前兩句是自然現象的類比，說明積累能夠產生某種自然結果；第三句推論到人的修養，說明累積善言善行也能自然而然地產生美德，體現學習要腳踏實地、循序漸進、持守善言善行的必要性。
+          前兩句是自然現象的類比，說明積累能夠產生某種自然結果；第三句推論到人的修養，說明累積善言善行也能自然而然地產生美德，體現學習必須纍積。
         </div>
       )}
     </div>
