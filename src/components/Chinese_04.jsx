@@ -9,6 +9,13 @@ const Chinese_04 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
     return '#dcfce7';
   };
 
+  const getTableInputBgColor = (fieldId) => {
+    const userAnswer = userAnswers[fieldId];
+    if (!showAnswers) return '#ffffff';
+    if (!userAnswer || userAnswer.trim() === '') return '#fee2e2';
+    return '#dcfce7';
+  };
+
   return (
     <div>
       <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第一部分：語譯</h3>
@@ -560,63 +567,129 @@ const Chinese_04 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         <StarButton questionId="ch04_table1" />
       </div>
       <div style={{overflowX: 'auto', marginBottom: '20px'}}>
-        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155', tableLayout: 'fixed'}}>
           <thead>
             <tr style={{backgroundColor: '#f1f5f9'}}>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>聖人</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>令人</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700', width: '25%'}}>對象(對比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 1</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 2</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比對象</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col1', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_object_col1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table1_object_col1 || ''} 
+                  onChange={(e) => onChange('ch04_table1_object_col1', e.target.value)} 
+                  placeholder="輸入對象 1..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    聖人
+                  </div>
+                )}
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_object_col2'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table1_object_col2 || ''} 
+                  onChange={(e) => onChange('ch04_table1_object_col2', e.target.value)} 
+                  placeholder="輸入對象 2..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    今人
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(對比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_col1_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table1_col1_row1 || ''} 
                   onChange={(e) => onChange('ch04_table1_col1_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    願意從師學習
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col1', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_col1_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table1_col1_row2 || ''} 
                   onChange={(e) => onChange('ch04_table1_col1_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    學問才能(智慧)高於一般人
+                  </div>
+                )}
               </td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col2', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_col2_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table1_col2_row1 || ''} 
                   onChange={(e) => onChange('ch04_table1_col2_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    不願意從師學習
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col2', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_col2_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table1_col2_row2 || ''} 
                   onChange={(e) => onChange('ch04_table1_col2_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    學問才能(智慧)不及聖人
+                  </div>
+                )}
               </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
-              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>的對比</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table1_comparison_point'), boxSizing: 'border-box', fontSize: '0.9rem'}}
+                  value={userAnswers.ch04_table1_comparison_point || ''} 
+                  onChange={(e) => onChange('ch04_table1_comparison_point', e.target.value)} 
+                  placeholder="輸入對比點..." 
+                />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 聖人與今人智慧高低的對比
+                  </div>
+                )}
+              </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
               <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
                 <textarea 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px', backgroundColor: getTableInputBgColor('ch04_table1_viewpoint'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table1_viewpoint || ''} 
                   onChange={(e) => onChange('ch04_table1_viewpoint', e.target.value)} 
                   placeholder="輸入觀點..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 從師學習的必要，聖人從師而更加聖明，今人不從師而更為愚昧
+                  </div>
+                )}
               </td>
             </tr>
           </tbody>
@@ -631,63 +704,129 @@ const Chinese_04 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         <StarButton questionId="ch04_table2" />
       </div>
       <div style={{overflowX: 'auto', marginBottom: '20px'}}>
-        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155', tableLayout: 'fixed'}}>
           <thead>
             <tr style={{backgroundColor: '#f1f5f9'}}>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫之子</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700', width: '25%'}}>對象(對比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 1</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 2</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比對象</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col1', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_object_col1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table2_object_col1 || ''} 
+                  onChange={(e) => onChange('ch04_table2_object_col1', e.target.value)} 
+                  placeholder="輸入對象 1..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    士大夫之子
+                  </div>
+                )}
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_object_col2'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table2_object_col2 || ''} 
+                  onChange={(e) => onChange('ch04_table2_object_col2', e.target.value)} 
+                  placeholder="輸入對象 2..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    士大夫
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(對比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_col1_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table2_col1_row1 || ''} 
                   onChange={(e) => onChange('ch04_table2_col1_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    願意從師學習學習句讀
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col1', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_col1_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table2_col1_row2 || ''} 
                   onChange={(e) => onChange('ch04_table2_col1_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    只學習到小學問(句讀的知識)
+                  </div>
+                )}
               </td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col2', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_col2_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table2_col2_row1 || ''} 
                   onChange={(e) => onChange('ch04_table2_col2_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    不願意從師學習學習道理
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col2', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_col2_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table2_col2_row2 || ''} 
                   onChange={(e) => onChange('ch04_table2_col2_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    未能學習道理，未能解惑
+                  </div>
+                )}
               </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
-              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>的對比</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table2_comparison_point'), boxSizing: 'border-box', fontSize: '0.9rem'}}
+                  value={userAnswers.ch04_table2_comparison_point || ''} 
+                  onChange={(e) => onChange('ch04_table2_comparison_point', e.target.value)} 
+                  placeholder="輸入對比點..." 
+                />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 學問大小的對比
+                  </div>
+                )}
+              </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
               <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
                 <textarea 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px', backgroundColor: getTableInputBgColor('ch04_table2_viewpoint'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table2_viewpoint || ''} 
                   onChange={(e) => onChange('ch04_table2_viewpoint', e.target.value)} 
                   placeholder="輸入觀點..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 從師學習的重要，能明白道理及解惑，突出士大夫不從師求教的荒謬
+                  </div>
+                )}
               </td>
             </tr>
           </tbody>
@@ -702,63 +841,129 @@ const Chinese_04 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         <StarButton questionId="ch04_table3" />
       </div>
       <div style={{overflowX: 'auto', marginBottom: '20px'}}>
-        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155', tableLayout: 'fixed'}}>
           <thead>
             <tr style={{backgroundColor: '#f1f5f9'}}>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>巫、醫、樂師、百工之人</th>
-              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700', width: '25%'}}>對象(對比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 1</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center', fontWeight: '700', width: '37.5%'}}>欄位 2</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比對象</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col1', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_object_col1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table3_object_col1 || ''} 
+                  onChange={(e) => onChange('ch04_table3_object_col1', e.target.value)} 
+                  placeholder="輸入對象 1..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    巫、醫、樂師、百工之人
+                  </div>
+                )}
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_object_col2'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
+                  value={userAnswers.ch04_table3_object_col2 || ''} 
+                  onChange={(e) => onChange('ch04_table3_object_col2', e.target.value)} 
+                  placeholder="輸入對象 2..." 
+                />
+                {showAnswers && (
+                  <div style={{padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    士大夫
+                  </div>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(對比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_col1_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table3_col1_row1 || ''} 
                   onChange={(e) => onChange('ch04_table3_col1_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    願意從師學習
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col1', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_col1_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table3_col1_row2 || ''} 
                   onChange={(e) => onChange('ch04_table3_col1_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac'}}>
+                    只要對方有道便不恥從師
+                  </div>
+                )}
               </td>
-              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
-                <div style={{marginBottom: '8px'}}>1.</div>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', verticalAlign: 'top'}}>
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>1.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col2', 1)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_col2_row1'), boxSizing: 'border-box', fontSize: '0.9rem', marginBottom: '6px'}}
                   value={userAnswers.ch04_table3_col2_row1 || ''} 
                   onChange={(e) => onChange('ch04_table3_col2_row1', e.target.value)} 
                   placeholder="輸入..." 
                 />
-                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                {showAnswers && (
+                  <div style={{marginBottom: '6px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac', whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+                    不願意從師學習
+                  </div>
+                )}
+                <div style={{marginBottom: '6px', fontSize: '0.9rem'}}>2.</div>
                 <input 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col2', 2)}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_col2_row2'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table3_col2_row2 || ''} 
                   onChange={(e) => onChange('ch04_table3_col2_row2', e.target.value)} 
                   placeholder="輸入..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '4px', padding: '4px', backgroundColor: '#f0fdf4', borderRadius: '3px', fontSize: '0.85rem', color: '#22c55e', border: '1px solid #86efac', whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+                    計較老師的年齡長幼及地位高低，因而恥於向年紀相若、學問差不多的人學習
+                  </div>
+                )}
               </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
-              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>地位高低的對比</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <input 
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getTableInputBgColor('ch04_table3_comparison_point'), boxSizing: 'border-box', fontSize: '0.9rem'}}
+                  value={userAnswers.ch04_table3_comparison_point || ''} 
+                  onChange={(e) => onChange('ch04_table3_comparison_point', e.target.value)} 
+                  placeholder="輸入對比點..." 
+                />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 地位高低的對比
+                  </div>
+                )}
+              </td>
             </tr>
             <tr>
               <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
               <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
                 <textarea 
-                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  style={{width: '100%', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px', backgroundColor: getTableInputBgColor('ch04_table3_viewpoint'), boxSizing: 'border-box', fontSize: '0.9rem'}}
                   value={userAnswers.ch04_table3_viewpoint || ''} 
                   onChange={(e) => onChange('ch04_table3_viewpoint', e.target.value)} 
                   placeholder="輸入觀點..." 
                 />
+                {showAnswers && (
+                  <div style={{marginTop: '8px', padding: '8px', backgroundColor: '#f0fdf4', borderRadius: '4px', fontSize: '0.85rem', color: '#22c55e'}}>
+                    <strong>✓ 參考答案：</strong> 從師學習的重要，只要對方有道便不恥從師，而且不應計較老師的年紀及地位
+                  </div>
+                )}
               </td>
             </tr>
           </tbody>
