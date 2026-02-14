@@ -551,6 +551,221 @@ const Chinese_04 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
       )}
     </div>
 
+    <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第三部分：對比表格</h3>
+
+    {/* Table 1 - 第二段 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>表格 1：第二段</h3>
+        <StarButton questionId="ch04_table1" />
+      </div>
+      <div style={{overflowX: 'auto', marginBottom: '20px'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+          <thead>
+            <tr style={{backgroundColor: '#f1f5f9'}}>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>聖人</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>令人</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col1', 1)}}
+                  value={userAnswers.ch04_table1_col1_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table1_col1_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col1', 2)}}
+                  value={userAnswers.ch04_table1_col1_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table1_col1_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col2', 1)}}
+                  value={userAnswers.ch04_table1_col2_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table1_col2_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table1_col2', 2)}}
+                  value={userAnswers.ch04_table1_col2_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table1_col2_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>的對比</td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <textarea 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  value={userAnswers.ch04_table1_viewpoint || ''} 
+                  onChange={(e) => onChange('ch04_table1_viewpoint', e.target.value)} 
+                  placeholder="輸入觀點..." 
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Table 2 - 第四段 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>表格 2：第四段</h3>
+        <StarButton questionId="ch04_table2" />
+      </div>
+      <div style={{overflowX: 'auto', marginBottom: '20px'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+          <thead>
+            <tr style={{backgroundColor: '#f1f5f9'}}>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫之子</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col1', 1)}}
+                  value={userAnswers.ch04_table2_col1_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table2_col1_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col1', 2)}}
+                  value={userAnswers.ch04_table2_col1_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table2_col1_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col2', 1)}}
+                  value={userAnswers.ch04_table2_col2_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table2_col2_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table2_col2', 2)}}
+                  value={userAnswers.ch04_table2_col2_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table2_col2_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>的對比</td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <textarea 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  value={userAnswers.ch04_table2_viewpoint || ''} 
+                  onChange={(e) => onChange('ch04_table2_viewpoint', e.target.value)} 
+                  placeholder="輸入觀點..." 
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Table 3 - 第五段 */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>表格 3：第五段</h3>
+        <StarButton questionId="ch04_table3" />
+      </div>
+      <div style={{overflowX: 'auto', marginBottom: '20px'}}>
+        <table style={{width: '100%', borderCollapse: 'collapse', border: '2px solid #334155'}}>
+          <thead>
+            <tr style={{backgroundColor: '#f1f5f9'}}>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>對象(與比內容)</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>巫、醫、樂師、百工之人</th>
+              <th style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'left', fontWeight: '700'}}>士大夫</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>特點(與比內容)</td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col1', 1)}}
+                  value={userAnswers.ch04_table3_col1_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table3_col1_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col1', 2)}}
+                  value={userAnswers.ch04_table3_col1_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table3_col1_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <div style={{marginBottom: '8px'}}>1.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col2', 1)}}
+                  value={userAnswers.ch04_table3_col2_row1 || ''} 
+                  onChange={(e) => onChange('ch04_table3_col2_row1', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+                <div style={{marginTop: '12px', marginBottom: '8px'}}>2.</div>
+                <input 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', backgroundColor: getInputBgColor('ch04_table3_col2', 2)}}
+                  value={userAnswers.ch04_table3_col2_row2 || ''} 
+                  onChange={(e) => onChange('ch04_table3_col2_row2', e.target.value)} 
+                  placeholder="輸入..." 
+                />
+              </td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>對比點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1', textAlign: 'center'}}>地位高低的對比</td>
+            </tr>
+            <tr>
+              <td style={{padding: '12px', border: '1px solid #cbd5e1', backgroundColor: '#fef3c7', fontWeight: '700'}}>論證觀點</td>
+              <td colSpan="2" style={{padding: '12px', border: '1px solid #cbd5e1'}}>
+                <textarea 
+                  style={{width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px', minHeight: '60px'}}
+                  value={userAnswers.ch04_table3_viewpoint || ''} 
+                  onChange={(e) => onChange('ch04_table3_viewpoint', e.target.value)} 
+                  placeholder="輸入觀點..." 
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
       <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
