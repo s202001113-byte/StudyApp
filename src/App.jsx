@@ -7,6 +7,7 @@ const Chinese_01 = lazy(() => import('./components/Chinese_01'));
 const Chinese_02 = lazy(() => import('./components/Chinese_02'));
 const Chinese_03 = lazy(() => import('./components/Chinese_03'));
 const Chinese_04 = lazy(() => import('./components/Chinese_04'));
+const Chinese_05 = lazy(() => import('./components/Chinese_05'));
 const ICT_Comp_A_Ch1 = lazy(() => import('./components/ICT_Comp_A_Ch1'));
 const ICT_Comp_A_Ch2 = lazy(() => import('./components/ICT_Comp_A_Ch2'));
 const ICT_Comp_A_Ch3 = lazy(() => import('./components/ICT_Comp_A_Ch3'));
@@ -153,6 +154,7 @@ const App = () => {
     { id: 'chinese_02', title: 'Ch2: 六國論', description: '語譯、寫作手法和問答 - Classical Chinese Translation, Techniques & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
     { id: 'chinese_03', title: 'Ch3: 勸學', description: '語譯 - Classical Chinese Translation', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
     { id: 'chinese_04', title: 'Ch4: 師說', description: '語譯和問答 - Classical Chinese Translation & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
+    { id: 'chinese_05', title: 'Ch5: 逍遙遊', description: '語譯和問答 - Classical Chinese Translation & Q&A', icon: <Globe />, category: 'Classical Chinese', color: '#dc2626' },
     // --- ICT Topics ---
     { id: 'ict_comp_a_ch1', title: 'Compulsory A Ch1: Data and Information', description: 'Data Types, Images, & Information Age', icon: <Box />, category: 'Compulsory A', color: '#2563eb' },
     { id: 'ict_comp_a_ch2', title: 'Compulsory A Ch2: Data Control', description: 'GIGO, Data Validation & Verification', icon: <CheckCircle2 />, category: 'Compulsory A', color: '#3b82f6' },
@@ -300,7 +302,7 @@ const App = () => {
         ) : (
           <div style={styles.quizBox}>
             <button style={styles.backBtn} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
-            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic === 'chinese_03' ? '勸學' : selectedTopic === 'chinese_04' ? '師說' : selectedTopic === 'phy_e_2_corr' ? 'Physics E2 Correction Book' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
+            <h2 style={{fontSize: '1.75rem', fontWeight: '800', marginBottom: '30px', color: '#1e1b4b'}}>{selectedTopic === 'chinese_01' ? '出師表' : selectedTopic === 'chinese_02' ? '六國論' : selectedTopic === 'chinese_03' ? '勸學' : selectedTopic === 'chinese_04' ? '師說' : selectedTopic === 'chinese_05' ? '逍遙遊' : selectedTopic === 'phy_e_2_corr' ? 'Physics E2 Correction Book' : selectedTopic.replace(/_/g, ' ').toUpperCase()}</h2>
             
             <Suspense fallback={<LoadingFallback />}>
               {/* Chinese Components */}
@@ -308,6 +310,7 @@ const App = () => {
               {selectedTopic === 'chinese_02' && <Chinese_02 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'chinese_03' && <Chinese_03 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'chinese_04' && <Chinese_04 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+              {selectedTopic === 'chinese_05' && <Chinese_05 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               
               {/* ICT Components */}
               {selectedTopic === 'ict_comp_a_ch1' && <ICT_Comp_A_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
