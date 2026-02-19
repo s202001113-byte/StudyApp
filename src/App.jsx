@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Box, CheckCircle2, Database, Monitor, Cpu, Layers, Zap, Settings, Layout, Globe, ShieldAlert, ArrowLeft, Star } from 'lucide-react';
+import { Box, CheckCircle2, Database, Monitor, Cpu, Layers, Zap, Settings, Layout, Globe, ShieldAlert, ArrowLeft, Star, BookOpen } from 'lucide-react';
 import { LoadingFallback } from './components/LoadingFallback';
 
 // Lazy load all quiz components
@@ -27,6 +27,7 @@ const Phy_E_2_Correction = lazy(() => import('./components/Phy_E_2_Correction'))
 const Phy_E_3_Ch1 = lazy(() => import('./components/Phy_E_3_Ch1'));
 const Phy_E_3_Ch2 = lazy(() => import('./components/Phy_E_3_Ch2'));
 const Phy_E_3_Ch3 = lazy(() => import('./components/Phy_E_3_Ch3'));
+const Phy_LQ_Guide = lazy(() => import('./components/Phy_LQ_Guide'));
 
 // ======================================================
 // MAIN APP COMPONENT
@@ -177,6 +178,7 @@ const App = () => {
     { id: 'phy_e_3_ch1', title: 'E3 Ch1: Electricity at home', description: 'Efficiency, Lighting, Appliances & AC', icon: <Zap />, category: 'Elective 3', color: '#eab308' },
     { id: 'phy_e_3_ch2', title: 'E3 Ch2: Energy efficiency in buildings', description: 'Conduction, Radiation & Vehicles', icon: <Zap />, category: 'Elective 3', color: '#f59e0b' },
     { id: 'phy_e_3_ch3', title: 'E3 Ch3: Renewable energy', description: 'Nuclear, Wind, Hydro & Solar Energy', icon: <Zap />, category: 'Elective 3', color: '#84cc16' },
+    { id: 'phy_lq_guide', title: 'Physics LQ Guide', description: 'Long Question Study Guide - All Chapters', icon: <BookOpen />, category: 'LQ Guide', color: '#dc2626' },
   ];
 
   const handleInputChange = (id, val) => {
@@ -192,7 +194,7 @@ const App = () => {
   const categories = {
     Chinese: ['Classical Chinese'],
     ICT: ['Compulsory A', 'Compulsory B', 'Compulsory C'],
-    Physics: ['Compulsory 4', 'Elective 2', 'Elective 3']
+    Physics: ['Compulsory 4', 'Elective 2', 'Elective 3', 'LQ Guide']
   };
 
   const styles = {
@@ -334,6 +336,7 @@ const App = () => {
               {selectedTopic === 'phy_e_3_ch1' && <Phy_E_3_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_3_ch2' && <Phy_E_3_Ch2 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'phy_e_3_ch3' && <Phy_E_3_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+              {selectedTopic === 'phy_lq_guide' && <Phy_LQ_Guide styles={styles} setCurrentView={setCurrentView} />}
             </Suspense>
 
             <div style={{textAlign: 'center', marginTop: '40px'}}>

@@ -1,0 +1,906 @@
+import { ArrowLeft, BookOpen } from 'lucide-react';
+import { useState } from 'react';
+
+const Phy_LQ_Guide = ({ styles, setCurrentView }) => {
+  const [showAllAnswers, setShowAllAnswers] = useState(false);
+  const [expandedQuestions, setExpandedQuestions] = useState({});
+
+  // Helper function to parse and bold keywords (enclosed in *)
+  const parseAnswer = (text) => {
+    const parts = [];
+    let lastIndex = 0;
+    const regex = /\*([^*]+)\*/g;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push({
+          type: 'text',
+          content: text.substring(lastIndex, match.index)
+        });
+      }
+      parts.push({
+        type: 'bold',
+        content: match[1]
+      });
+      lastIndex = match.index + match[0].length;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push({
+        type: 'text',
+        content: text.substring(lastIndex)
+      });
+    }
+
+    return parts.map((part, idx) =>
+      part.type === 'bold' ? <b key={idx}>{part.content}</b> : <span key={idx}>{part.content}</span>
+    );
+  };
+
+  const toggleQuestionAnswer = (questionId) => {
+    setExpandedQuestions(prev => ({
+      ...prev,
+      [questionId]: !prev[questionId]
+    }));
+  };
+
+  const chapters = [
+    {
+      title: 'Ch1.1 Thermometer',
+      questions: [
+        {
+          id: 'ch1_1_q1',
+          question: 'The bulb of a soil thermometer is very large compared to those of common thermometers. Suggest a reason for this design. (1 mark)',
+          answer: 'It improves the *sensitivity* of the thermometer.',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch1.2 Heat and Internal Energy',
+      questions: [
+        {
+          id: 'ch1_2_q1',
+          question: 'After the heater is switched off, the temperature of the metal block continues to rise for a while and then falls again. Explain why. (3 marks)',
+          answer: 'When the heater is switched off, its *temperature is still higher* than the metal. (1)\n*Energy continues to transfer* to the liquid. (1)\nAfter a while, *heat is lost to the surrounding* Thus the temperature drops. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_2_q2',
+          question: 'Describe briefly an experiment to measure the specific heat capacity of water. (4 marks)',
+          answer: 'Put *known mass of water m* into a polystyrene cup. Then put the *heater* and *thermometer* into the water.(1)\nConnect the heater to the *power supply* through a *joulemeter*. Record the *energy supplied Q* by the heater. (1)\nRecord the *increase in temperature T* by the *thermometer*. (1)\nThe specific heat capacity *c* is given by *c = Q/mT*. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch1.3 Change of state',
+      questions: [
+        {
+          id: 'ch1_3_q1',
+          question: 'Refer to the diagram, what is the purpose of a control set up? (2 marks)',
+          answer: 'To find the *mass of ice melted due to heat gained from surroundings*. (1)\nTo find the *ice actually melted by the heater*. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch1_3_q2',
+          question: 'Hence, explain how the control set up is built and explain its function. (2 marks)',
+          answer: 'It is *identical* to the original setup except the *heater* is *not connected to power supply*. (1)\nThe control set up can measure the amount of ice melted due to energy gain from the surroundings only. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_3_q3',
+          question: 'Explain why should the ice used in the experiments be crushed and melting. (2 marks)',
+          answer: 'The ice should be crushed to *increase the surface area* and *ensure good contact* of the ice with the heater. (1)\nTo ensure that the temperature of the ice is *0°C*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_3_q4',
+          question: 'Explain why steam at 100°C cause more severe burns to human skin than boiling water. (1 mark)',
+          answer: 'Steam releases *a larger amount of latent heat of vaporization* when it *condense*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_3_q5',
+          question: 'Explain why we feel cold when we get out of the swimming pool without drying our body. (1 mark)',
+          answer: 'Evaporation occurs and *latent heat of vaporization is absorbed* from the body. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch1.4 Heat transfer process',
+      questions: [
+        {
+          id: 'ch1_4_q1',
+          question: 'Explain the use of the cover of a cup. (1 mark)',
+          answer: 'It *reduces heat loss due to convection of air*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_4_q2',
+          question: 'Explain why the heater should be placed near the bottom in the tank. (1 mark)',
+          answer: 'The temperature of the water in the tank *becomes uniform faster*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_4_q3',
+          question: 'Explain how foam reduces heat transfer by conduction and convection. (2 marks)',
+          answer: 'It is a *poor conductor of heat*. (1)\nThe *small air bubbles* inside the foam *reduces the air convection*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_4_q4',
+          question: 'Hence explain why heat insulation of vacuum is better than foam. (2 marks)',
+          answer: 'Vacuum *does not have air* thus *no conduction and convection of heat* occurs. (1+1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch1.5 Gases',
+      questions: [
+        {
+          id: 'ch1_5_q1',
+          question: 'Boyle\'s law (P-V graph) shows the relationship between pressure and volume. State TWO precautions that should be taken in this experiment. (2 marks)',
+          answer: '(Any 2 each 1)\n- *Rubber tubing* should be as *short* as possible.\n- Compress and release the syringe *slowly to keep temperature constant*.\n- *Do not take readings immediately* after the syringe is pressed.\n- After pressing the pump, wait for a while to *ensure that the temperature becomes steady*.',
+          hasImage: true
+        },
+        {
+          id: 'ch1_5_q2',
+          question: 'Explain why the rubber tubing should be short (1 mark)',
+          answer: 'To *reduce the volume of gas inside* the tubing.',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q3',
+          question: 'Describe the procedure of the experiment to prove this P-V relationship. (3 marks)',
+          answer: '*Connect a syringe to* a *Bourdon gauge*. (1)\n*Slowly push the piston*. *Record several sets of pressure p and volume V* in the syringe.(1)\n*Plot a graph of P against 1/V*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q4',
+          question: 'Charlie\'s law (V-T graph) shows the relationship between volume and temperature. State TWO precautions that should be taken in this experiment. (2 marks)',
+          answer: '(ANY 2, each 1)\n- The water must be *well stirred* to *ensure uniform temperature*.\n- The air column should be *completely immersed* into the water.\n- The *thermometer* and the *tube* should *not touch the bottom of the water*.',
+          hasImage: true
+        },
+        {
+          id: 'ch1_5_q5',
+          question: 'Describe the procedure of the experiment to prove this relationship. (3 marks)',
+          answer: '*Tie the capillary tube* against a ruler and put them into a beaker of water. (1)\n*Heat* the water gently. (1)\nRecord the *temperature T* and the *length L* at certain temperature intervals. *Plot a graph of T against L*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q6',
+          question: 'Pressure law (P-T graph) shows the relationship between pressure and temperature. State TWO precaution that should be taken in this experiment. (2 marks)',
+          answer: '(ANY 2, each 1)\n- *Rubber tubing* should be as *short* as possible.\n- The flask must be *fully immersed* in water.\n- Water must be *well stirred* before taking the reading of temperature.\n- *Air* in the flask must be *dry*.',
+          hasImage: true
+        },
+        {
+          id: 'ch1_5_q7',
+          question: 'Explain change in gas pressure of a container as its volume increases using kinetic theory. (2 marks)',
+          answer: '*Volume increases* with the *same speed of gas molecules* (1)\ntherefore *frequency* of collision of molecules on *inner surface of container* decreases. *Gas pressure decreases.* (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q8',
+          question: 'Explain the increase of pressure inside a basketball when air is pumped into it by using kinetic theory. (2 marks)',
+          answer: 'Since the *volume* and the *temperature* *remain unchanged*, (1)\n*number of air molecules* hitting the wall of the basketball *per unit time* *increases*. *Gas pressure inside increases.* (1)\nOR: *Frequency of collision* with the wall of the basketball *increases*, *gas pressure inside increases.* (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q9',
+          question: 'Explain why increase in temperature increases the gas pressure by using kinetic theory. (2 marks)',
+          answer: 'The *speed* of the gas molecule *increases*. (1)\nThey *collide more frequently and violently* with the wall of the container. (1)\nThus, *the pressure increases*.',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q10',
+          question: 'Explain why increase in temperature increases the volume of a balloon by using kinetic theory. (3 marks)',
+          answer: 'The *speed of the gas molecule increases*. (1)\nThey collide *more frequently and violently* with the wall of the container. (1)\nSince the balloon is *flexible*, it expands until the *internal pressure* *balances the atmospheric pressure* again. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch1_5_q11',
+          question: 'Explain in terms of molecular motion, how the gas inside the balloon exerts pressure on the inner surface. (2 marks)',
+          answer: 'The gas molecules are in *random motion* and *collide* with the *surface of the balloon* (1) resulting in *momentum change* and *creating pressure* on the surface. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch2.2 Motion',
+      questions: [
+        {
+          id: 'ch2_2_q1',
+          question: 'Describe the motion of the boat from t= 0 to 300 s. (4 marks)',
+          answer: 'From t = 0 to 50 s, the boat *accelerates uniformly*. (1)\nFrom t = 50 to 150s, the boat travels with a *uniform velocity*. (1)\nFrom t= 150 to 250 s, the boat *decelerates uniformly*. (1)\nFrom t = 250 to 300 s, the boat *travels backwards* with *uniform acceleration*. (1)',
+          hasImage: true
+        }
+      ]
+    },
+    {
+      title: 'Ch2.3 Newton\'s law of motion',
+      questions: [
+        {
+          id: 'ch2_3_q1',
+          question: 'A person wears a water jetpack which enables him to stay afloat in equilibrium in the air as shown. A pump on the sea surface continuously pumps water to the jetpack via a hose and the water is then ejected downwards. Water enters the U-shape hose inside the jetpack with a certain speed and is then ejected out vertically downwards. Use Newton\'s law(s) of motion to explain why a lifting force acting on the person is produced. (3 marks)',
+          answer: 'According to *Newton\'s 2nd law of motion*, *a net force* acts on the water so as to *change its momentum*. (1)\nAccording to *Newton\'s 3rd law of motion*, a force acting *downwards* on the ejecting water, (1)\nand the water exerts a *reaction force* on the jetpack. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch2_3_q2',
+          question: 'When the four propellers are operating to propel airs streams vertically downwards, the quadcopter can hover in the air in a fixed position. By Newton\'s law of motion, explain why the quadcopter can hover in the air. (2 marks)',
+          answer: 'According to *Newton\'s 3rd law of motion*, a force acting *downwards* on the air, and the air exerts a *force* with *same magnitude but opposite direction* on the quadcopter. (1)\nAccording to *Newton\'s 1st law of motion*, Upwards thrust on the quadcopter balances its weight for a certain speed of air streams. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch2_3_q3',
+          question: 'By using Newton\'s laws of motion, explain why it is dangerous for John to carry an excessive amount of goods on the bicycle when riding on the street. (3 marks)',
+          answer: 'When the *mass of the bicycle increases*, (1)\nby Newton\'s 2nd law, the *deceleration* of the bicycle would become smaller. (1)\nAs a result, the *stopping distance* would *increase*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch2_3_q4',
+          question: 'Explain why a skydiver accelerates downwards at first and then falls with a uniform velocity. (3 marks)',
+          answer: 'The *air resistance* is smaller than his weight. By Newton\'s 2nd law, he *accelerates downwards* due to *downward net force*. (1)\nWhen *speed increases*, *air resistance increases*. (1)\nFinally, when the *air resistance* just *equals his weight*, By Newton\'s 1st law, the *resultant force is zero* and he *fall with uniform velocity*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch2_3_q5',
+          question: 'Consider the period from the moment the skydiver just opens the parachute to the moment when the skydiver just reaches the terminal velocity. Describe and explain the change in net force on the skydiver. (3 marks)',
+          answer: 'At the moment the skydiver just open the parachute, net force is *upward* since *air resistance* exceeds weight. (1)\nThen, net force *decreases* since air resistance decreases with speed. (1)\nFinally, when the air resistance *equals his weight*, by *Newton\'s 1st law*, the *resultant force become zero* and he falls with uniform velocity. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch2.6 Work, energy and power',
+      questions: [
+        {
+          id: 'ch2_6_q1',
+          question: 'Explain why the speed of the moon remains unchanged although it is acted upon by gravitational force. (2 marks)',
+          answer: 'The gravitational force is *always perpendicular* to the *velocity of the moon* (1)\nthus *no work is done* on the moon by this force (KE unchanged). (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch2_6_q2',
+          question: 'It is known that the brake pads would fail to work at high temperatures. Explain why it is not recommended for a vehicle driver to apply the brakes continuously during a long downhill trip. (1 mark)',
+          answer: 'If the brakes are applied continuously, *thermal energy* generated will heat up the brake pads (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch2.7 momentum',
+      questions: [
+        {
+          id: 'ch2_7_q1',
+          question: 'Explain the working principle of a knee pad with a padded cushion on the front to protect the cyclist when his knee hits the ground. (2 marks)',
+          answer: 'The padded cushion can *increase the contact time* of the knee (1)\nand the ground such that a *smaller force* acts on the knee. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch2_7_q2',
+          question: 'Figure below shows the cross-section of a fixed spring gun fitted with a small cannon ball. Explain whether the total momentum of the spring gun and the cannon ball is conserved. (2 marks)',
+          answer: 'As the spring gun is *fixed*, there is *external force* acting on the gun, (1)\ntotal momentum (of the spring gun and cannon ball) is *not conserved*. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch2_7_q3',
+          question: 'The following experimental items are provided to set up an experiment to estimate the speed of a bullet fired from an air gun: smooth track, a trolley, a motion sensor used to measure the speed of the trolley some plasticine, an air gun and bullets, an electronic balance. Describe the procedure of the experiment. State the physical quantities to be measured and an equation for an equation for finding the speed of the bullet. Write one precaution or getting a more accurate result. (5 marks)',
+          answer: 'Measure the *mass of a bullet m* and the *mass of the trolley with plasticine M* (1)\n*Fire the bullet* towards the plasticine. (1)\nRead the *speed of the trolley v* immediately after the bullet hit the plasticine. (1)\nThe *speed of the bullet u* is given by *u = (M+m)/mv*. (1)\n\nPrecaution: (ANY ONE)\n- The bullet should be fired along the direction of travel of the trolley.\n- The bullet should be fired close to the plasticine\n- The track must be horizontal/ friction compensated.',
+          hasImage: true
+        }
+      ]
+    },
+    {
+      title: 'Ch2.9 Circular motion',
+      questions: [
+        {
+          id: 'ch2_9_q1',
+          question: 'Explain why the chance of skidding would increase if there are oil patches on the road surface. (2 marks)',
+          answer: '*Maximum friction* is reduced (1)\nso *not enough to provide centripetal force* required for circular motion. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch2.10 Gravitation',
+      questions: [
+        {
+          id: 'ch2_10_q1',
+          question: 'Explain why astronauts experience weightlessness inside a space station. (1 mark)',
+          answer: 'Astronauts feel weightless because they have *same acceleration due to gravity* with the space station, so *no normal reaction force* acts on them (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch3.1 Reflection of light',
+      questions: [
+        {
+          id: 'ch3_1_q1',
+          question: 'Explain why a clear image can be seen on the calm water surface. (2 marks)',
+          answer: 'The calm water surface gives a *smooth* reflecting surface (1)\nand *Regular reflection* occurs at the water surface. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_1_q2',
+          question: 'state three properties of the boy\'s image as formed by the mirror. (3 marks)',
+          answer: 'Any THREE of the following, each 1:\n- Virtual\n- Erect\n- Same size as the object\n- Laterally inverted\n- Image distance is equal to the object distance',
+          hasImage: false
+        },
+        {
+          id: 'ch3_1_q3',
+          question: 'If the incident ray is a ray of white light, what can be observed when it passes a prism? (1 mark)',
+          answer: 'A *spectrum* (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_1_q4',
+          question: 'State one advantage of using right-angled prisms over plane mirrors. (1 mark)',
+          answer: 'Prism *does not produce multiple images* (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_1_q5',
+          question: 'Describe how to use the above apparatus to measure the critical angle of the semi-circular glass block. A low voltage power supply, a ray box with a single slit, a full circle protractor and a semi-circular glass block. (5 marks)',
+          answer: 'Connect the *ray box to the power supply* and *switch it on*. (1)\nPut the semi-circular glass block *onto the protractor*. (1)\n*Direct a light ray* into the glass block through the curved side towards its centre. (1)\n*Vary the incident angle* in the glass block until the *refracted ray* is *parallel to the straight edge* of the glass block. (1)\nThe *critical angle* can be obtained by reading the protractor. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch3.3 lens',
+      questions: [
+        {
+          id: 'ch3_3_q1',
+          question: 'How does the focal length of a convex lens change when blue light is used instead of red light? (1 mark)',
+          answer: 'The *focal length* becomes shorter since *blue light bends more in glass*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_3_q2',
+          question: 'Explain why an object emitting white light passes through convex lens would have colour edges. (3 marks)',
+          answer: '*White light* consist of *different colours* (1)\nsince *refractive index* of glass is different *for different colour of light*, (1)\nsize of colour images are slightly different. Colour edges are seen when these images overlap on the screens. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_3_q3',
+          question: 'Describe briefly a simple laboratory method that can be used to determine the focal length of a convex lens. (3 marks)',
+          answer: 'The convex lens is used to face a *distant object* (1)\nand the image is *captured by a screen*. (1)\nThe distance between the lens and the screen is equal to the focal length of the lens. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_3_q4',
+          question: 'You are given a ray box with a single slit (producing a fine beam), a cylindrical concave lens, a plastic ruler, a pencil and a piece of paper. Describe how you would use the above apparatus to find the focal length of the lens and state ONE possible source of error in the experiment. (5 marks)',
+          answer: 'Direct a light ray towards the lens (1)\nExtend the emerging ray backward and locate the point of intersection with the principal axis (1)\nMeasure the corresponding *object distance u* and *image distance v* (1)\nUse *lens formula* to find the *focal length f*. (1)\nSource of error: Scale uncertainty of the plastic ruler (read to nearest mm) (1)',
+          hasImage: true
+        }
+      ]
+    },
+    {
+      title: 'Ch3.5 Wave phenomenon',
+      questions: [
+        {
+          id: 'ch3_5_q1',
+          question: 'Figure 6.1. shows two identical loudspeakers P and Q are connected to a signal generator. Position A is the mid-point of PQ. A microphone connected to a CRO is moved along BC Explain why the loudness of the sound varies along BC. (2 marks)',
+          answer: 'There is *interference* (1)\nwhere alternative *constructive and destructive interference* occurs across BC. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch3_5_q2',
+          question: 'Explain what is meant by coherent sound waves. (1 mark)',
+          answer: 'Sound waves having *same frequency* and a *constant phase difference*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_5_q3',
+          question: 'Explain how a stationary wave is formed. (2 marks)',
+          answer: 'stationary wave is formed when two waves of the *same frequency, wavelength and amplitude* travel in *opposite directions and superpose*. (1)\nFixed *nodes and antinodes* are produced due to *destructive and constructive interference* respectively. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch3.6 light waves',
+      questions: [
+        {
+          id: 'ch3_6_q1',
+          question: 'Explain why the slit width has to be very narrow in order for the above pattern to be observed. (1 marks)',
+          answer: 'To ensure that the light through the 2 slits *diffracts enough to interfere*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_6_q2',
+          question: 'With reference to the above settings, use the young\'s double slit fringe separation equation in double slit interference to find the wavelength λ of sound is not accurate. Explain briefly. (1 mark)',
+          answer: 'The equation can only be applied for λ << a / D >> a. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch3_6_q3',
+          question: 'The double slit is now replaced by a diffraction grating with 400 lines per mm. Briefly explain why the accuracy of the experiment can be improved. (1 mark)',
+          answer: 'The separation of the bright dots on the screen becomes larger thus the *percentage error* in its measurement is *smaller*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_6_q4',
+          question: 'Give ONE advantage of measuring the position of the second-order image instead of the first-order one. (1 mark)',
+          answer: 'Smaller percentage error. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_6_q5',
+          question: 'State one safety precaution in diffraction grating experiment. (1 mark)',
+          answer: 'ANY ONE of the following:\n- Do not view the laser light directly with the eye.\n- Grating should be perpendicular to the incident light.\n- The screen should be parallel to the grating.',
+          hasImage: false
+        },
+        {
+          id: 'ch3_6_q6',
+          question: 'microwaves can be used in radar and satellite communication. Why are radio waves of lower frequencies not suitable for use in radar and satellite communication? (2 marks)',
+          answer: 'Radio waves with longer wavelengths have greater *diffraction effects*. (1)\nRadio waves *cannot be reflected back* to the receiver. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_6_q7',
+          question: 'Peter is watching TV in his house. He finds that the reception is affected when an aeroplane flies overhead. Explain this phenomenon. (2 marks)',
+          answer: 'The aeroplane *reflects the TV waves*. (1)\nThe reflected wave *interferes with the original TV wave*. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch3.7 Sound wave',
+      questions: [
+        {
+          id: 'ch3_7_q1',
+          question: 'Explain why sound waves can bend round a corner but light cannot. (1 mark)',
+          answer: 'The *wavelength of light* is *much smaller than that of sound* Thus the *degree of diffraction of light* is *much smaller*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_7_q2',
+          question: 'State three differences between microwave and ultrasound. (3)',
+          answer: 'Microwave is a *transverse wave* while ultrasound is a *longitudinal wave* (1)\nMicrowaves travels at a *much higher speed* than ultrasound.(1)\nMicrowaves can *travel through vacuum* but ultrasound *cannot*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_7_q3',
+          question: 'The set-up in Figure 6.1 is to find the speed of sound in air. Two identical microphones A and B are connected to a timer and placed on a beach top as shown. The timer can be triggered to start and stop timing using the respective microphones to feed signals to the START and STOP terminals of the timer. You are given a hammer and a metal plate. State an additional piece of apparatus needed and the measurements to be made in this experiment. (4 marks)',
+          answer: 'Use a *meter ruler to measure the separation D between the two microphones*(1)\nHit the metal plate on the left of A. (1)\nRecord the *timer reading* t from microphone A to B. (1)\n*Speed of sound = D/t*. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch3_7_q4',
+          question: 'Is it possible for ultrasonic waves, at certain angles of incidence, to undergo total internal reflection when they go from sea water to the air? Explain. (2 marks)',
+          answer: 'No. Ultrasonic waves *propagate faster in sea water than in air* (1)\nso they bend *towards the normal* and *no total infernal reflection is possible* when they go from sea water to air. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch3_7_q5',
+          question: 'The Figure shows a loudspeaker unit with two speaker cones, a big one and a small one. Which one is more suitable for emitting high-frequency sounds? Explain. (2 marks)',
+          answer: 'The *smaller speaker cone* is more suitable(1)\nSince the wavelength of high-frequency sounds is shorter, diffraction is less significant. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch3_7_q6',
+          question: 'Describe how you should use the apparatus to conduct an experiment to demonstrate the interference of sound waves. You may use additional apparatus if necessary. (4 marks)',
+          answer: '*Connect the two loudspeakers* to the *signal generator*. (1)\n*Adjust the frequency* of the signal generator to give a sound note that *can be heard*. (1)\n*Walking* in front of the two loudspeakers (1)\n*Alternate loud and soft sounds* can be heard. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch4.1 Electrostatics',
+      questions: [
+        {
+          id: 'ch4_1_q1',
+          question: 'suggest a simple method to test whether the electric field is uniform. (3 marks)',
+          answer: '*Fix the plates separation* and the *output voltage* of the EHT supply. (1)\n*Move the polystyrene tile* so that *the ball* is placed in *different positions*. (1)\n*Angle θ should remain the same* if the electric field between the plates is uniform. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch4_1_q2',
+          question: 'A small conducting ball is placed midway between two parallel metal plates connected to an E.H.T. via an ammeter as shown in the Figure. After the ball acquires positive charges, explain why it can shuttle continuously between the two plates. (2 marks)',
+          answer: '*The ball is repelled by the left plate* and *attracted to the right plate*. (1)\nThe ball then *acquires negative charges* when touching the right plate and the *process repeats*. (1)',
+          hasImage: true
+        }
+      ]
+    },
+    {
+      title: 'Ch4.2 Electric circuit',
+      questions: [
+        {
+          id: 'ch4_2_q1',
+          question: 'You are given a battery, crocodile clips, ammeter, thin nichrome wire, thick nichrome wire. Describe the procedures of an experiment to study how the resistance of a nichrome wire depends on its thickness. (4 marks)',
+          answer: 'connect the two crocodile clips across *a certain length* of the *thin nichrome wire*.(1)\nRecord the ammeter reading. (1)\nRepeated the experiment using *the thicker nichrome wire of the same length*. (1)\nAmmeter reading is larger, which means that the *resistance of the thicker wire is smaller*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_2_q2',
+          question: 'Explain what is ohm\'s law. (2 marks)',
+          answer: 'The current through a conductor is *directly proportional* to the *potential difference* across it (1)\nprovided that the *temperature remain constant*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_2_q3',
+          question: 'The student claims that equation R = V/I cannot be used to calculate the resistance of the non-ohmic resistor. Briefly explain why his claim is wrong. (1 mark)',
+          answer: 'It is the *definition of resistance and applicable to all conductors*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_2_q4',
+          question: 'Explain why this voltmeter gives a relatively inaccurate value for the circuit. Hence state the general principle of selecting a suitable voltmeter for such measurement. (3 marks)',
+          answer: '[Question requires diagram - please add answer based on your specific diagram]',
+          hasImage: true
+        },
+        {
+          id: 'ch4_2_q5',
+          question: 'You are provided with a battery (of fixed e.m.f. & and internal resistance r), a switch, a voltmeter (assumed ideal) and a few connecting wires. describe the procedure of an experiment to study how the terminal voltage V delivered by the battery depends on the resistance R connected to it. State ONE precaution of the experiment. (3 marks)',
+          answer: '*Close the switch* and *record corresponding V and R readings*. (1)\n*Adjust the resistance R to lower value* and *repeat the experiment*. (1)\nPrecaution (ANY one, 1 mark):\n- first set the variable resistor to its maximum value\n- Open the switch after each measurement',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch4.3 Domestic electricity',
+      questions: [
+        {
+          id: 'ch4_3_q1',
+          question: 'If a fault resulted in the live wire having contact with the metal case of the heater, which wire could prevent an electric shock of a person touched the case of the heater? Explain. (2 marks)',
+          answer: '*Earth wire* (1)\nCurrent would be conducted from the case through this wire to the Earth. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_3_q2',
+          question: 'Explain why Earth pin of the plug is longer than the other two pins (Live and neutral). (2 marks)',
+          answer: 'To ensure the metal case is earthed before the connecting to the live wire. (1)\nThe long earth pin opens the shutter that blocks the live and neutral wire. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_3_q3',
+          question: 'Give a reason why domestic circuits are all connected in parallel instead of in series. (1 mark)',
+          answer: 'any ONE of the following:\n- Each electrical appliance can be *switched on and off independently*\n- Even if one appliance is *burnt*, *the other appliances can still operate properly*\n- All appliances can work at the *rated power*',
+          hasImage: false
+        },
+        {
+          id: 'ch4_3_q4',
+          question: 'Explain the use of the fuse in the circuit. (1 mark)',
+          answer: 'To *prevent the overloading of the wire*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_3_q5',
+          question: 'A student claims that since a.c. is used for the heater, the switch S can be installed in either live or neutral. Comment on this claim. (2 marks)',
+          answer: 'Although the heater still works in both connection, it is *dangerous* for switch S in neutral (1)\nas the cable would still be *live* (high voltage) even when the switch was turned off. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_3_q6',
+          question: 'State one advantage of the ring circuit. (1 mark)',
+          answer: 'any ONE of the following:\n- If the ring circuit is *broken* at one point, the ring circuit can *still function*.\n- Current is divided into two halves via two paths, thus *thinner cables* can be used.\n- Since current is divided into two halves, the *chance of overloading is reduced*',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch4.4 Electromagnetism',
+      questions: [
+        {
+          id: 'ch4_4_q1',
+          question: 'describe a method to find the magnetic field pattern on the cardboard using iron fillings. (2 marks)',
+          answer: 'Sprinkle some *iron filings* on the board.(1)\nTap the board gently (1)\nThe magnetic field pattern is shown by the pattern of the iron filings',
+          hasImage: false
+        },
+        {
+          id: 'ch4_4_q2',
+          question: 'You are given a bar magnet, 8 small plotting compases, a pencil and a piece of white paper. Describe how to use the apparatus given to trace several field lines around the bar magnet. Neglect earth\'s magnetic field. (4 marks)',
+          answer: '*Successively place the compasses* on the paper *near one pole* of the magnet such that the *tip of each compass needle* follows lines up with the *tail of the compass ahead*. (1)\n*Draw the tip and tail of each compass* with *dots* on the paper using the pencil and *remove the compasses* one by one and trace the direction of field line, (1)\n*Sketch a smooth curve* representing a field line by *joining up the series of dots* from one pole to the other. (1)\n*Repeat the above process* by starting from *different points* around the magnet to get another field line. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_4_q3',
+          question: 'Suggest ONE advantage of using a plotting-compass method and ONE advantage of an ironfiling method in studying magnetic fields. (2 marks)',
+          answer: 'The plotting-compass method shows the *direction of the magnetic field at a point* (1)\nThe iron-filing method shows the *overall pattern and relative strength fast* (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_4_q4',
+          question: 'To investigate the relationship between the strength of an electromagnet and the number of turns of its coil by using the apparatus shown in the below. Describe the procedure for the experiment you should conduct. State clearly how you can measure the strength of the electromagnet. (5 marks)',
+          answer: 'Use the *electromagnet* to *attract the iron clips* (1)\n*Record the number of iron clips* when the chain just *falls down*. (1)\n*Vary the number of turns of the coil* and *repeat* the above procedure. (1)\n*Record the change of the number of iron clips* when the chain just falls down. (1)\nIn each trial, the *current* should be *kept constant* (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch4_4_q5',
+          question: 'Describe the motion of the coil if the two ends of the coil are connected directly to a cell without using the commutator and the brush. (4 marks)',
+          answer: 'When the switch is closed, current flows through the coil inside a magnetic field, *there are magnetic forces* acting on *wires* to *rotate the coil* and the coil and the coil turns *clockwise*. (1)\nWhen the coil turns to the *vertical position*, the *turning effect becomes zero*. Due to inertia, the coil shoots through the vertical position to the other side. (1)\nThe direction of the *turning effect* acting on the coil *reverses* and the coil rotates back in the anticlockwise direction. This process repeats. (1)\nAs *energy is lost against friction* during the motion, the coil will finally stop in the vertical position. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch4_4_q6',
+          question: 'Explain the use of soft iron core in an electric motor. (2 marks)',
+          answer: 'Soft iron is a *magnetic material* (1)\nIt can *increase the strength of the magnetic field*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch4_4_q7',
+          question: 'Explain the use of commutators in electric motors. (2 marks)',
+          answer: 'Commutator can *reverse the direction of the current through the coil* (1)\nwhenever the coil has rotated *half cycle*.(1)\nHence the coil will continue to *rotate in the same direction*.',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch4.5 electromagnetic induction',
+      questions: [
+        {
+          id: 'ch4_5_q1',
+          question: 'The strength of the magnetic field decreases uniformly to zero within 0.5 s. Explain why a current would be induced in the coil. (2 marks)',
+          answer: 'By *Lenz\'s law*, an *e.m.f.* would be *induced to opposes the decrease of magnetic flux* (1)\nby *driving an induced current* (clockwise) in the coil. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch4_5_q2',
+          question: 'A coil and a retort stand are arranged as shown in figure below. The coil is connected to a d.c. supply by a switch S. When the switch is closed, the aluminium ring placed on the top of the coil jumps up momentarily and falls back. Explain this phenomenon. (3 marks)',
+          answer: 'When S is closed, the current flows in the coil and *produce increasing magnetic flux*. (1)\nBy *Lenz\'s law*, an *induced emf* is created in the ring to *oppose the change* (1)\nthus it jumps up momentarily. When the *current reaches steady value*, no change in magnetic flux results in fall back of the ring. (1)',
+          hasImage: true
+        }
+      ]
+    },
+    {
+      title: 'Ch4.6 Transmission of electricity',
+      questions: [
+        {
+          id: 'ch4_6_q1',
+          question: 'Suggest TWO changes in the transformer which improve its efficiency. (2 marks)',
+          answer: 'Any TWO of the following, each 1:\n- Use *laminated core* to reduce the eddy current\n- Use *thicker copper coils* to reduce heating loss in the wires\n- Use *soft iron* to reduce energy required to magnetize and demagnetize the core',
+          hasImage: false
+        },
+        {
+          id: 'ch4_6_q2',
+          question: 'Explain why high voltage a.c. is preferred for electric power transmission. (2 marks)',
+          answer: 'only a.c. voltage can be *easily stepped up and down by transformer*. (1)\nHigh voltage transmission *has low transmission current so as to reduces power loss*. (1)',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch5.1 Radiation',
+      questions: [
+        {
+          id: 'ch5_1_q1',
+          question: 'State ONE source of background radiation. (1 mark)',
+          answer: 'Any ONE of the following:\n- *Cosmic rays* from outer space\n- *Radioactive substances* in rocks and soils (e.g. radon)\n- *Medical diagnostic equipment* (e.g. X-rays)',
+          hasImage: false
+        },
+        {
+          id: 'ch5_1_q2',
+          question: 'Describe the procedures of the experiment to find the range of alpha particles in the air. (4 marks)',
+          answer: 'Place the *alpha source close* to and *facing the GM tube*. (1)\n*Increase their separation gradually* and observe the count rate reading. (1)\n*Mark the point* for the *rapid drop* in count rate. (1)\n*Measure the distance between the alpha source and the GM tube* with *metre rule* to give the range. (1)',
+          hasImage: true
+        },
+        {
+          id: 'ch5_1_q3',
+          question: 'Spark counters can show the ionizing power of radiation. Explain why the sparks occur at irregular intervals. (1 mark)',
+          answer: 'Due to the *random nature of radiation*.',
+          hasImage: false
+        }
+      ]
+    },
+    {
+      title: 'Ch5.3 nuclear reaction',
+      questions: [
+        {
+          id: 'ch5_3_q1',
+          question: 'Describe the process of nuclear fission of Uranium-235. (3 marks)',
+          answer: 'When *a neutron* is captured by a *Uranium-235 nucleus*, the nucleus *undergoes fission*. (1)\nIt then *splits into two smaller nuclei* and together with *some fission neutrons*. (1)\nDuring the fission, *large amount of energy* is released. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch5_3_q2',
+          question: 'State a necessary condition for chain reaction of fission to occur. (1 marks)',
+          answer: '*More neutrons are produced in each fission* for triggering further fissions. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch5_3_q3',
+          question: 'Explain why a large amount of work is done for nuclear fusion to occur, and state the kind of energy this work is done has become. (2 marks)',
+          answer: 'To *overcome the electrostatic repulsion* between the two positive nuclei (1)\nand becomes *electrical potential energy*. (1)',
+          hasImage: false
+        },
+        {
+          id: 'ch5_3_q4',
+          question: 'Explain why a high temperature is needed for nuclear fusion to occur. (1 mark)',
+          answer: '*High temperature* enables them to have *sufficient kinetic energy* (to overcome electrical repulsion between the nuclei). (1)',
+          hasImage: false
+        }
+      ]
+    }
+  ];
+
+  const containerStyle = {
+    maxWidth: '900px',
+    margin: '0 auto',
+    padding: '20px',
+    fontFamily: 'Arial, sans-serif'
+  };
+
+  const headerStyle = {
+    textAlign: 'center',
+    marginBottom: '30px',
+    paddingBottom: '20px',
+    borderBottom: '3px solid #2563eb'
+  };
+
+  const titleStyle = {
+    fontSize: '32px',
+    fontWeight: 'bold',
+    color: '#1e40af',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    marginBottom: '10px'
+  };
+
+  const chapterHeaderStyle = {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color: '#1e40af',
+    marginTop: '40px',
+    marginBottom: '15px',
+    paddingTop: '20px',
+    borderTop: '2px solid #e5e7eb',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px'
+  };
+
+  const questionBlockStyle = {
+    marginBottom: '25px',
+    padding: '15px',
+    backgroundColor: '#f9fafb',
+    borderLeft: '4px solid #3b82f6',
+    borderRadius: '4px'
+  };
+
+  const questionNumberStyle = {
+    fontWeight: 'bold',
+    fontSize: '16px',
+    marginBottom: '8px',
+    color: '#1f2937'
+  };
+
+  const questionTextStyle = {
+    fontSize: '15px',
+    marginBottom: '12px',
+    color: '#374151',
+    fontStyle: 'italic'
+  };
+
+  const buttonContainerStyle = {
+    display: 'flex',
+    gap: '10px',
+    marginBottom: '12px',
+    flexWrap: 'wrap'
+  };
+
+  const buttonStyle = {
+    padding: '8px 14px',
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: 'bold',
+    transition: 'background-color 0.2s'
+  };
+
+  const answerStyle = {
+    padding: '12px',
+    backgroundColor: '#dcfce7',
+    borderLeft: '4px solid #16a34a',
+    borderRadius: '4px',
+    fontSize: '14px',
+    lineHeight: '1.6',
+    color: '#15803d'
+  };
+
+  const imageStyle = {
+    maxWidth: '100%',
+    height: 'auto',
+    marginTop: '10px',
+    borderRadius: '4px',
+    border: '1px solid #ddd'
+  };
+
+  return (
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <div style={titleStyle}>
+          <BookOpen size={36} color="#1e40af" />
+          Physics LQ Guide
+        </div>
+        <p style={{ color: '#6b7280', marginBottom: '15px' }}>Long Question Study Guide</p>
+        <button
+          style={{
+            ...buttonStyle,
+            backgroundColor: showAllAnswers ? '#dc2626' : '#16a34a'
+          }}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = showAllAnswers ? '#b91c1c' : '#15803d')}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = showAllAnswers ? '#dc2626' : '#16a34a')}
+          onClick={() => setShowAllAnswers(!showAllAnswers)}
+        >
+          {showAllAnswers ? 'Hide All Answers' : 'Show All Answers'}
+        </button>
+      </div>
+
+      {chapters.map((chapter, chapterIdx) => (
+        <div key={chapterIdx}>
+          <div style={chapterHeaderStyle}>
+            <BookOpen size={24} />
+            {chapter.title}
+          </div>
+
+          {chapter.questions.map((q, qIdx) => (
+            <div key={q.id} style={questionBlockStyle}>
+              <div style={questionNumberStyle}>
+                Q{qIdx + 1}: {q.question}
+              </div>
+
+              {q.hasImage && (
+                <img
+                  src={`${import.meta.env.BASE_URL}lqdata/PHY/${chapter.title.replace('Ch', 'CH').split(' ')[0]}/${qIdx + 1}.png`}
+                  style={imageStyle}
+                  alt={`Question diagram`}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              )}
+
+              <div style={buttonContainerStyle}>
+                <button
+                  style={buttonStyle}
+                  onMouseEnter={(e) => (e.target.style.backgroundColor = '#2563eb')}
+                  onMouseLeave={(e) => (e.target.style.backgroundColor = '#3b82f6')}
+                  onClick={() => toggleQuestionAnswer(q.id)}
+                >
+                  {expandedQuestions[q.id] ? 'Hide Answer' : 'Show Answer'}
+                </button>
+              </div>
+
+              {(showAllAnswers || expandedQuestions[q.id]) && (
+                <div style={answerStyle}>
+                  <strong>Answer:</strong><br />
+                  {q.answer.split('\n').map((line, idx) =>
+                    line.trim() ? (
+                      <div key={idx} style={{ marginBottom: '8px' }}>
+                        {parseAnswer(line)}
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #e5e7eb', textAlign: 'center' }}>
+        <button
+          style={{ ...styles.backBtn, display: 'inline-block', marginBottom: '20px' }}
+          onClick={() => setCurrentView('home')}
+        >
+          <ArrowLeft size={18} style={{ marginRight: '8px', display: 'inline' }} />
+          Back to Home
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Phy_LQ_Guide;
