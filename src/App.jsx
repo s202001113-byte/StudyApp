@@ -19,6 +19,7 @@ const ICT_Comp_C_Ch2 = lazy(() => import('./components/ICT_Comp_C_Ch2'));
 const ICT_Comp_C_Ch3 = lazy(() => import('./components/ICT_Comp_C_Ch3'));
 const ICT_Comp_C_Ch4 = lazy(() => import('./components/ICT_Comp_C_Ch4'));
 const ICT_Comp_C_Ch5 = lazy(() => import('./components/ICT_Comp_C_Ch5'));
+const ICT_E_1_Ch1 = lazy(() => import('./components/ICT_E_1_Ch1'));
 const Phy_Comp_4_Ch1 = lazy(() => import('./components/Phy_Comp_4_Ch1'));
 const Phy_Comp_4_Ch2 = lazy(() => import('./components/Phy_Comp_4_Ch2'));
 const Phy_Comp_4_Ch3 = lazy(() => import('./components/Phy_Comp_4_Ch3'));
@@ -168,6 +169,7 @@ const App = () => {
     { id: 'ict_comp_c_ch3', title: 'Compulsory C Ch3: Internet Services & Applications', description: 'IoT, Cloud, Smart City, & Online Services', icon: <Layout />, category: 'Compulsory C', color: '#db2777' },
     { id: 'ict_comp_c_ch4', title: 'Compulsory C Ch4: Web Authoring Basics', description: 'HTML, Editors, Tags, & UI/UX Design', icon: <Globe />, category: 'Compulsory C', color: '#ec4899' },
     { id: 'ict_comp_c_ch5', title: 'Compulsory C Ch5: Network Security & Privacy', description: 'Malware, Attacks, Protection, & Privacy', icon: <ShieldAlert />, category: 'Compulsory C', color: '#dc2626' },
+    { id: 'ict_e_1_ch1', title: 'Elective 1 Ch1: SQL Fundamentals', description: 'SQL Commands, Constraints, Conditions & Functions', icon: <Database />, category: 'Elective 1', color: '#e91e63' },
     
     // --- Physics Topics ---
     { id: 'phy_comp_4_ch1', title: 'Compulsory 4 Ch1: Electrostatics', description: 'Electric Charges, Fields & Forces', icon: <Zap />, category: 'Compulsory 4', color: '#f97316' },
@@ -193,7 +195,7 @@ const App = () => {
   // Define categories per subject
   const categories = {
     Chinese: ['Classical Chinese'],
-    ICT: ['Compulsory A', 'Compulsory B', 'Compulsory C'],
+    ICT: ['Compulsory A', 'Compulsory B', 'Compulsory C', 'Elective 1'],
     Physics: ['Compulsory 4', 'Elective 2', 'Elective 3', 'LQ Guide']
   };
 
@@ -326,6 +328,7 @@ const App = () => {
               {selectedTopic === 'ict_comp_c_ch3' && <ICT_Comp_C_Ch3 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'ict_comp_c_ch4' && <ICT_Comp_C_Ch4 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               {selectedTopic === 'ict_comp_c_ch5' && <ICT_Comp_C_Ch5 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
+              {selectedTopic === 'ict_e_1_ch1' && <ICT_E_1_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
               
               {/* Physics Components */}
               {selectedTopic === 'phy_comp_4_ch1' && <Phy_Comp_4_Ch1 userAnswers={userAnswers} onChange={handleInputChange} showAnswers={showAnswers} styles={styles} StarButton={StarButton} setCurrentView={setCurrentView} />}
