@@ -219,6 +219,7 @@ const App = () => {
     iconBox: { padding: '12px', borderRadius: '12px', marginRight: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
     quizBox: { backgroundColor: '#fff', borderRadius: '24px', padding: '30px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' },
     backBtn: { display: 'flex', alignItems: 'center', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', marginBottom: '24px', fontWeight: '600' },
+    hintBtn: { padding: '8px 16px', borderRadius: '8px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', color: '#4b5563', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: '6px' },
     qSection: { marginBottom: '40px', padding: '20px', borderRadius: '12px', border: '1px solid #f1f5f9', backgroundColor: '#fdfdff' },
     qTitle: { fontSize: '1.2rem', fontWeight: '700', color: '#4338ca', marginBottom: '15px' },
     table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px' },

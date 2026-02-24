@@ -1,6 +1,14 @@
+import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => (
+const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, setCurrentView }) => {
+  const [showHints, setShowHints] = useState({});
+
+  const toggleHint = (questionId) => {
+    setShowHints(prev => ({...prev, [questionId]: !prev[questionId]}));
+  };
+
+  return (
   <div>
     {/* Q1: CREATE TABLE */}
     <div style={styles.qSection}>
@@ -8,28 +16,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q1: CREATE TABLE Statement</h3>
         <StarButton questionId="e1q1" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the CREATE TABLE command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q1_b1', e.target.value)} value={userAnswers.e1q1_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b2', e.target.value)} value={userAnswers.e1q1_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the CREATE TABLE command:</p>
+      
+      {!showHints.e1q1 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q1_b1', parts[0] || '');
+              onChange('e1q1_b2', parts[1] || '');
+              onChange('e1q1_b3', parts[2] || '');
+              onChange('e1q1_b4', parts[3] || '');
+              onChange('e1q1_b5', parts[4] || '');
+            }} value={[userAnswers.e1q1_b1, userAnswers.e1q1_b2, userAnswers.e1q1_b3, userAnswers.e1q1_b4, userAnswers.e1q1_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q1')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b3', e.target.value)} value={userAnswers.e1q1_b3 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q1_b1', e.target.value)} value={userAnswers.e1q1_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b2', e.target.value)} value={userAnswers.e1q1_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b3', e.target.value)} value={userAnswers.e1q1_b3 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 4 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b4', e.target.value)} value={userAnswers.e1q1_b4 || ''}/>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q1_b5', e.target.value)} value={userAnswers.e1q1_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ (_____ _____, ...);</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q1')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 4 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q1_b4', e.target.value)} value={userAnswers.e1q1_b4 || ''}/>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q1_b5', e.target.value)} value={userAnswers.e1q1_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ (_____ _____, ...);</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>CREATE TABLE table (field datatype [constraints], ...)</div>}
     </div>
 
@@ -39,22 +67,40 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q2: DROP TABLE Statement</h3>
         <StarButton questionId="e1q2" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the DROP TABLE command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q2_b1', e.target.value)} value={userAnswers.e1q2_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q2_b2', e.target.value)} value={userAnswers.e1q2_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the DROP TABLE command:</p>
+      
+      {!showHints.e1q2 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q2_b1', parts[0] || '');
+              onChange('e1q2_b2', parts[1] || '');
+              onChange('e1q2_b3', parts[2] || '');
+            }} value={[userAnswers.e1q2_b1, userAnswers.e1q2_b2, userAnswers.e1q2_b3].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q2')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q2_b3', e.target.value)} value={userAnswers.e1q2_b3 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q2_b1', e.target.value)} value={userAnswers.e1q2_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q2_b2', e.target.value)} value={userAnswers.e1q2_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q2_b3', e.target.value)} value={userAnswers.e1q2_b3 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q2')}>💡 Hide Hint</button>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>DROP TABLE table;</div>}
     </div>
 
@@ -64,28 +110,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q3: INSERT DATA Statement</h3>
         <StarButton questionId="e1q3" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the INSERT INTO command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q3_b1', e.target.value)} value={userAnswers.e1q3_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b2', e.target.value)} value={userAnswers.e1q3_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the INSERT INTO command:</p>
+      
+      {!showHints.e1q3 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q3_b1', parts[0] || '');
+              onChange('e1q3_b2', parts[1] || '');
+              onChange('e1q3_b3', parts[2] || '');
+              onChange('e1q3_b4', parts[3] || '');
+              onChange('e1q3_b5', parts[4] || '');
+            }} value={[userAnswers.e1q3_b1, userAnswers.e1q3_b2, userAnswers.e1q3_b3, userAnswers.e1q3_b4, userAnswers.e1q3_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q3')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b3', e.target.value)} value={userAnswers.e1q3_b3 || ''}/>
-          <span><b>Blank 4 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b4', e.target.value)} value={userAnswers.e1q3_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q3_b1', e.target.value)} value={userAnswers.e1q3_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b2', e.target.value)} value={userAnswers.e1q3_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b3', e.target.value)} value={userAnswers.e1q3_b3 || ''}/>
+            <span><b>Blank 4 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q3_b4', e.target.value)} value={userAnswers.e1q3_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q3_b5', e.target.value)} value={userAnswers.e1q3_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ (_____, _____) _____ (record1field1, record1field2);</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q3')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q3_b5', e.target.value)} value={userAnswers.e1q3_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ (_____, _____) _____ (record1field1, record1field2);</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>INSERT INTO table (field1, field2) VALUES (record1field1, record1field2);</div>}
     </div>
 
@@ -95,34 +161,56 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q4: UPDATE DATA Statement</h3>
         <StarButton questionId="e1q4" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the UPDATE command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q4_b1', e.target.value)} value={userAnswers.e1q4_b1 || ''}/>
-          <span><b>Blank 2 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b2', e.target.value)} value={userAnswers.e1q4_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the UPDATE command:</p>
+      
+      {!showHints.e1q4 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q4_b1', parts[0] || '');
+              onChange('e1q4_b2', parts[1] || '');
+              onChange('e1q4_b3', parts[2] || '');
+              onChange('e1q4_b4', parts[3] || '');
+              onChange('e1q4_b5', parts[4] || '');
+              onChange('e1q4_b6', parts[5] || '');
+              onChange('e1q4_b7', parts[6] || '');
+            }} value={[userAnswers.e1q4_b1, userAnswers.e1q4_b2, userAnswers.e1q4_b3, userAnswers.e1q4_b4, userAnswers.e1q4_b5, userAnswers.e1q4_b6, userAnswers.e1q4_b7].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q4')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b3', e.target.value)} value={userAnswers.e1q4_b3 || ''}/>
-          <span><b>Blank 4 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b4', e.target.value)} value={userAnswers.e1q4_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q4_b1', e.target.value)} value={userAnswers.e1q4_b1 || ''}/>
+            <span><b>Blank 2 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b2', e.target.value)} value={userAnswers.e1q4_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b3', e.target.value)} value={userAnswers.e1q4_b3 || ''}/>
+            <span><b>Blank 4 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b4', e.target.value)} value={userAnswers.e1q4_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b5', e.target.value)} value={userAnswers.e1q4_b5 || ''}/>
+            <span><b>Blank 6 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b6', e.target.value)} value={userAnswers.e1q4_b6 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 7 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q4_b7', e.target.value)} value={userAnswers.e1q4_b7 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ = _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q4')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b5', e.target.value)} value={userAnswers.e1q4_b5 || ''}/>
-          <span><b>Blank 6 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q4_b6', e.target.value)} value={userAnswers.e1q4_b6 || ''}/>
-        </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 7 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q4_b7', e.target.value)} value={userAnswers.e1q4_b7 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ = _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>UPDATE table SET field = value1 WHERE condition;</div>}
     </div>
 
@@ -132,28 +220,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q5: DELETE DATA Statement</h3>
         <StarButton questionId="e1q5" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the DELETE command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q5_b1', e.target.value)} value={userAnswers.e1q5_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b2', e.target.value)} value={userAnswers.e1q5_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the DELETE command:</p>
+      
+      {!showHints.e1q5 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q5_b1', parts[0] || '');
+              onChange('e1q5_b2', parts[1] || '');
+              onChange('e1q5_b3', parts[2] || '');
+              onChange('e1q5_b4', parts[3] || '');
+              onChange('e1q5_b5', parts[4] || '');
+            }} value={[userAnswers.e1q5_b1, userAnswers.e1q5_b2, userAnswers.e1q5_b3, userAnswers.e1q5_b4, userAnswers.e1q5_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q5')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b3', e.target.value)} value={userAnswers.e1q5_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b4', e.target.value)} value={userAnswers.e1q5_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q5_b1', e.target.value)} value={userAnswers.e1q5_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b2', e.target.value)} value={userAnswers.e1q5_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b3', e.target.value)} value={userAnswers.e1q5_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q5_b4', e.target.value)} value={userAnswers.e1q5_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q5_b5', e.target.value)} value={userAnswers.e1q5_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q5')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q5_b5', e.target.value)} value={userAnswers.e1q5_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>DELETE FROM table WHERE condition;</div>}
     </div>
 
@@ -163,30 +271,51 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q6: ALTER TABLE - ADD Field</h3>
         <StarButton questionId="e1q6" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the ALTER TABLE ADD command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q6_b1', e.target.value)} value={userAnswers.e1q6_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b2', e.target.value)} value={userAnswers.e1q6_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the ALTER TABLE ADD command:</p>
+      
+      {!showHints.e1q6 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q6_b1', parts[0] || '');
+              onChange('e1q6_b2', parts[1] || '');
+              onChange('e1q6_b3', parts[2] || '');
+              onChange('e1q6_b4', parts[3] || '');
+              onChange('e1q6_b5', parts[4] || '');
+              onChange('e1q6_b6', parts[5] || '');
+            }} value={[userAnswers.e1q6_b1, userAnswers.e1q6_b2, userAnswers.e1q6_b3, userAnswers.e1q6_b4, userAnswers.e1q6_b5, userAnswers.e1q6_b6].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q6')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b3', e.target.value)} value={userAnswers.e1q6_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b4', e.target.value)} value={userAnswers.e1q6_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q6_b1', e.target.value)} value={userAnswers.e1q6_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b2', e.target.value)} value={userAnswers.e1q6_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b3', e.target.value)} value={userAnswers.e1q6_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b4', e.target.value)} value={userAnswers.e1q6_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b5', e.target.value)} value={userAnswers.e1q6_b5 || ''}/>
+            <span><b>Blank 6 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q6_b6', e.target.value)} value={userAnswers.e1q6_b6 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q6')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q6_b5', e.target.value)} value={userAnswers.e1q6_b5 || ''}/>
-          <span><b>Blank 6 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q6_b6', e.target.value)} value={userAnswers.e1q6_b6 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table ADD field datatype;</div>}
     </div>
 
@@ -196,28 +325,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q7: ALTER TABLE - MODIFY Field</h3>
         <StarButton questionId="e1q7" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the ALTER TABLE MODIFY command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1-2 (Keywords):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b1', e.target.value)} value={userAnswers.e1q7_b1 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the ALTER TABLE MODIFY command:</p>
+      
+      {!showHints.e1q7 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q7_b1', parts[0] || '');
+              onChange('e1q7_b3', parts[1] || '');
+              onChange('e1q7_b4', parts[2] || '');
+              onChange('e1q7_b5', parts[3] || '');
+              onChange('e1q7_b6', parts[4] || '');
+            }} value={[userAnswers.e1q7_b1, userAnswers.e1q7_b3, userAnswers.e1q7_b4, userAnswers.e1q7_b5, userAnswers.e1q7_b6].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q7')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q7_b3', e.target.value)} value={userAnswers.e1q7_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b4', e.target.value)} value={userAnswers.e1q7_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1-2 (Keywords):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b1', e.target.value)} value={userAnswers.e1q7_b1 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q7_b3', e.target.value)} value={userAnswers.e1q7_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b4', e.target.value)} value={userAnswers.e1q7_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q7_b5', e.target.value)} value={userAnswers.e1q7_b5 || ''}/>
+            <span><b>Blank 6 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b6', e.target.value)} value={userAnswers.e1q7_b6 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q7')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q7_b5', e.target.value)} value={userAnswers.e1q7_b5 || ''}/>
-          <span><b>Blank 6 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q7_b6', e.target.value)} value={userAnswers.e1q7_b6 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table MODIFY field datatype;</div>}
     </div>
 
@@ -227,28 +376,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q8: ALTER TABLE - DROP Field</h3>
         <StarButton questionId="e1q8" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the ALTER TABLE DROP COLUMN command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q8_b1', e.target.value)} value={userAnswers.e1q8_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b2', e.target.value)} value={userAnswers.e1q8_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the ALTER TABLE DROP COLUMN command:</p>
+      
+      {!showHints.e1q8 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q8_b1', parts[0] || '');
+              onChange('e1q8_b2', parts[1] || '');
+              onChange('e1q8_b3', parts[2] || '');
+              onChange('e1q8_b4', parts[3] || '');
+              onChange('e1q8_b5', parts[4] || '');
+            }} value={[userAnswers.e1q8_b1, userAnswers.e1q8_b2, userAnswers.e1q8_b3, userAnswers.e1q8_b4, userAnswers.e1q8_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q8')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b3', e.target.value)} value={userAnswers.e1q8_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b4', e.target.value)} value={userAnswers.e1q8_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q8_b1', e.target.value)} value={userAnswers.e1q8_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b2', e.target.value)} value={userAnswers.e1q8_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b3', e.target.value)} value={userAnswers.e1q8_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q8_b4', e.target.value)} value={userAnswers.e1q8_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q8_b5', e.target.value)} value={userAnswers.e1q8_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q8')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q8_b5', e.target.value)} value={userAnswers.e1q8_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table DROP field;</div>}
     </div>
 
@@ -258,26 +427,45 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q9: ALTER TABLE - RENAME Table</h3>
         <StarButton questionId="e1q9" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the ALTER TABLE RENAME command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1-2 (Keywords):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b1', e.target.value)} value={userAnswers.e1q9_b1 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the ALTER TABLE RENAME command:</p>
+      
+      {!showHints.e1q9 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q9_b1', parts[0] || '');
+              onChange('e1q9_b3', parts[1] || '');
+              onChange('e1q9_b4', parts[2] || '');
+              onChange('e1q9_b5', parts[3] || '');
+            }} value={[userAnswers.e1q9_b1, userAnswers.e1q9_b3, userAnswers.e1q9_b4, userAnswers.e1q9_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q9')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q9_b3', e.target.value)} value={userAnswers.e1q9_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b4', e.target.value)} value={userAnswers.e1q9_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1-2 (Keywords):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b1', e.target.value)} value={userAnswers.e1q9_b1 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q9_b3', e.target.value)} value={userAnswers.e1q9_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b4', e.target.value)} value={userAnswers.e1q9_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b5', e.target.value)} value={userAnswers.e1q9_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q9')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q9_b5', e.target.value)} value={userAnswers.e1q9_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table RENAME new-table;</div>}
     </div>
 
@@ -287,32 +475,53 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q10: ALTER TABLE - RENAME Column</h3>
         <StarButton questionId="e1q10" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the ALTER TABLE RENAME COLUMN command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1-2 (Keywords):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b1', e.target.value)} value={userAnswers.e1q10_b1 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the ALTER TABLE RENAME COLUMN command:</p>
+      
+      {!showHints.e1q10 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q10_b1', parts[0] || '');
+              onChange('e1q10_b3', parts[1] || '');
+              onChange('e1q10_b4', parts[2] || '');
+              onChange('e1q10_b5', parts[3] || '');
+              onChange('e1q10_b6', parts[4] || '');
+              onChange('e1q10_b7', parts[5] || '');
+            }} value={[userAnswers.e1q10_b1, userAnswers.e1q10_b3, userAnswers.e1q10_b4, userAnswers.e1q10_b5, userAnswers.e1q10_b6, userAnswers.e1q10_b7].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q10')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q10_b3', e.target.value)} value={userAnswers.e1q10_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b4', e.target.value)} value={userAnswers.e1q10_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1-2 (Keywords):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b1', e.target.value)} value={userAnswers.e1q10_b1 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q10_b3', e.target.value)} value={userAnswers.e1q10_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b4', e.target.value)} value={userAnswers.e1q10_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b5', e.target.value)} value={userAnswers.e1q10_b5 || ''}/>
+            <span><b>Blank 6 (Keyword):</b></span>
+            <input style={{...styles.input, width: '100px'}} onChange={(e) => onChange('e1q10_b6', e.target.value)} value={userAnswers.e1q10_b6 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 7 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b7', e.target.value)} value={userAnswers.e1q10_b7 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q10')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b5', e.target.value)} value={userAnswers.e1q10_b5 || ''}/>
-          <span><b>Blank 6 (Keyword):</b></span>
-          <input style={{...styles.input, width: '100px'}} onChange={(e) => onChange('e1q10_b6', e.target.value)} value={userAnswers.e1q10_b6 || ''}/>
-        </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 7 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q10_b7', e.target.value)} value={userAnswers.e1q10_b7 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table RENAME old-field TO new-field;</div>}
     </div>
 
@@ -322,28 +531,48 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q11: SELECT DISTINCT Statement</h3>
         <StarButton questionId="e1q11" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the SELECT DISTINCT command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b1', e.target.value)} value={userAnswers.e1q11_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b2', e.target.value)} value={userAnswers.e1q11_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the SELECT DISTINCT command:</p>
+      
+      {!showHints.e1q11 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q11_b1', parts[0] || '');
+              onChange('e1q11_b2', parts[1] || '');
+              onChange('e1q11_b3', parts[2] || '');
+              onChange('e1q11_b4', parts[3] || '');
+              onChange('e1q11_b5', parts[4] || '');
+            }} value={[userAnswers.e1q11_b1, userAnswers.e1q11_b2, userAnswers.e1q11_b3, userAnswers.e1q11_b4, userAnswers.e1q11_b5].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q11')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q11_b3', e.target.value)} value={userAnswers.e1q11_b3 || ''}/>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q11_b4', e.target.value)} value={userAnswers.e1q11_b4 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b1', e.target.value)} value={userAnswers.e1q11_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b2', e.target.value)} value={userAnswers.e1q11_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q11_b3', e.target.value)} value={userAnswers.e1q11_b3 || ''}/>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q11_b4', e.target.value)} value={userAnswers.e1q11_b4 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 5 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b5', e.target.value)} value={userAnswers.e1q11_b5 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ _____;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q11')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 5 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q11_b5', e.target.value)} value={userAnswers.e1q11_b5 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>SELECT DISTINCT field FROM table;</div>}
     </div>
 
@@ -354,7 +583,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q12" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for adding PRIMARY KEY constraint:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q12 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q12_answer', e.target.value)} value={userAnswers.e1q12_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q12')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1-2 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q12_b1', e.target.value)} value={userAnswers.e1q12_b1 || ''}/>
@@ -375,10 +613,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 7-8 (Keywords):</b></span>
           <input style={{...styles.input, width: '200px'}} onChange={(e) => onChange('e1q12_b7', e.target.value)} value={userAnswers.e1q12_b7 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q12')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table MODIFY field datatype PRIMARY KEY;</div>}
     </div>
 
@@ -389,7 +629,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q13" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for adding FOREIGN KEY constraint:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q13 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q13_answer', e.target.value)} value={userAnswers.e1q13_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q13')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1-2 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q13_b1', e.target.value)} value={userAnswers.e1q13_b1 || ''}/>
@@ -414,10 +663,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 9 (Parameter):</b></span>
           <input style={{...styles.input, width: '180px'}} onChange={(e) => onChange('e1q13_b9', e.target.value)} value={userAnswers.e1q13_b9 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ _____ (_____)_____  _____ (____);</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Command: <b>_____ _____ _____ _____ _____ _____ (_____)_____  _____ (____);</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q13')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table ADD FOREIGN KEY (foreign_key_field) REFERENCES parent_table_name (primary_key_field);</div>}
     </div>
 
@@ -428,7 +679,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q14" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for adding NOT NULL constraint:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q14 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q14_answer', e.target.value)} value={userAnswers.e1q14_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q14')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1-2 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q14_b1', e.target.value)} value={userAnswers.e1q14_b1 || ''}/>
@@ -449,10 +709,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 7-8 (Keywords):</b></span>
           <input style={{...styles.input, width: '200px'}} onChange={(e) => onChange('e1q14_b7', e.target.value)} value={userAnswers.e1q14_b7 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Command: <b>_____ _____ _____ _____ _____ _____ _____;</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q14')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table MODIFY field datatype NOT NULL;</div>}
     </div>
 
@@ -463,7 +725,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q15" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for adding UNIQUE constraint:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q15 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q15_answer', e.target.value)} value={userAnswers.e1q15_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q15')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1-2 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q15_b1', e.target.value)} value={userAnswers.e1q15_b1 || ''}/>
@@ -480,10 +751,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 6 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q15_b6', e.target.value)} value={userAnswers.e1q15_b6 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ (_____)</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Command: <b>_____ _____ _____ _____ _____ (_____)</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q15')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table ADD UNIQUE (field);</div>}
     </div>
 
@@ -494,7 +767,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q16" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for adding CHECK constraint:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q16 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q16_answer', e.target.value)} value={userAnswers.e1q16_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q16')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1-2 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q16_b1', e.target.value)} value={userAnswers.e1q16_b1 || ''}/>
@@ -511,10 +793,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 6 (Parameter):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q16_b6', e.target.value)} value={userAnswers.e1q16_b6 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ _____ (_____)</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Command: <b>_____ _____ _____ _____ _____ (_____)</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q16')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>ALTER TABLE table ADD CHECK (condition);</div>}
     </div>
 
@@ -525,7 +809,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q17" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for WHERE IN condition:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q17 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Condition:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q17_answer', e.target.value)} value={userAnswers.e1q17_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q17')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q17_b1', e.target.value)} value={userAnswers.e1q17_b1 || ''}/>
@@ -536,10 +829,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 3-5 (Parameters):</b></span>
           <input style={{...styles.input, width: '350px'}} onChange={(e) => onChange('e1q17_b3', e.target.value)} value={userAnswers.e1q17_b3 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Condition: <b>_____ _____ (_____, _____)</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Condition: <b>_____ _____ (_____, _____)</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q17')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>field IN (value1, value2)</div>}
     </div>
 
@@ -550,7 +845,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q18" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for WHERE BETWEEN AND condition:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q18 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Condition:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q18_answer', e.target.value)} value={userAnswers.e1q18_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q18')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q18_b1', e.target.value)} value={userAnswers.e1q18_b1 || ''}/>
@@ -565,10 +869,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 5 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q18_b5', e.target.value)} value={userAnswers.e1q18_b5 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Condition: <b>_____ _____ _____ _____ _____</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Condition: <b>_____ _____ _____ _____ _____</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q18')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>field BETWEEN value1 AND value2</div>}
     </div>
 
@@ -579,7 +885,16 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q19" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for WHERE LIKE condition :</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q19 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Condition:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q19_answer', e.target.value)} value={userAnswers.e1q19_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q19')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q19_b1', e.target.value)} value={userAnswers.e1q19_b1 || ''}/>
@@ -594,10 +909,12 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
           <span><b>Blank 4 (Parameter - with percent):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q19_b4', e.target.value)} value={userAnswers.e1q19_b4 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Condition examples: <b>_____ _____ _____ or _____ _____ _____</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Condition examples: <b>_____ _____ _____ or _____ _____ _____</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q19')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>field LIKE '_xxxx' or field LIKE '%xxxx'</div>}
     </div>
 
@@ -608,17 +925,28 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q20" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for WHERE IS NULL condition:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q20 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Condition:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q20_answer', e.target.value)} value={userAnswers.e1q20_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q20')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q20_b1', e.target.value)} value={userAnswers.e1q20_b1 || ''}/>
           <span><b>Blank 2-3 (Keywords):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q20_b2', e.target.value)} value={userAnswers.e1q20_b2 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Condition: <b>_____ _____</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Condition: <b>_____ _____</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q20')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>field IS NULL</div>}
     </div>
 
@@ -629,17 +957,28 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <StarButton questionId="e1q21" />
       </div>
       <p style={{marginBottom: '10px'}}>Fill in the blanks for WHERE IS NOT NULL condition:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+      {!showHints.e1q21 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Condition:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => onChange('e1q21_answer', e.target.value)} value={userAnswers.e1q21_answer || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q21')}>💡 Show Hint</button>
+        </div>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
         <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
           <span><b>Blank 1 (Parameter):</b></span>
           <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q21_b1', e.target.value)} value={userAnswers.e1q21_b1 || ''}/>
           <span><b>Blank 2-4 (Keywords):</b></span>
           <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q21_b2', e.target.value)} value={userAnswers.e1q21_b2 || ''}/>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Condition: <b>_____ _____</b>
-      </p>
+        <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+          Condition: <b>_____ _____</b>
+        </p>
+        <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q21')}>💡 Hide Hint</button>
+        </div>
+      )}
       {showAnswers && <div style={styles.answerKey}>field IS NOT NULL</div>}
     </div>
 
@@ -753,26 +1092,45 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q26: CREATE VIEW Statement</h3>
         <StarButton questionId="e1q26" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the CREATE VIEW command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b1', e.target.value)} value={userAnswers.e1q26_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b2', e.target.value)} value={userAnswers.e1q26_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the CREATE VIEW command:</p>
+      
+      {!showHints.e1q26 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q26_b1', parts[0] || '');
+              onChange('e1q26_b2', parts[1] || '');
+              onChange('e1q26_b3', parts[2] || '');
+              onChange('e1q26_b4', parts[3] || '');
+            }} value={[userAnswers.e1q26_b1, userAnswers.e1q26_b2, userAnswers.e1q26_b3, userAnswers.e1q26_b4].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q26')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q26_b3', e.target.value)} value={userAnswers.e1q26_b3 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b1', e.target.value)} value={userAnswers.e1q26_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b2', e.target.value)} value={userAnswers.e1q26_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q26_b3', e.target.value)} value={userAnswers.e1q26_b3 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 4 (Keyword):</b></span>
+            <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b4', e.target.value)} value={userAnswers.e1q26_b4 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ field1, field2, field3 FROM table;</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q26')}>💡 Hide Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 4 (Keyword):</b></span>
-          <input style={{...styles.input, width: '120px'}} onChange={(e) => onChange('e1q26_b4', e.target.value)} value={userAnswers.e1q26_b4 || ''}/>
-        </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ field1, field2, field3 FROM table;</b>
-      </p>
+      )}
+      
       {showAnswers && <div style={styles.answerKey}>CREATE VIEW viewname AS SELECT</div>}
       
       <p style={{marginTop: '15px', marginBottom: '10px', fontWeight: 'bold'}}>List all advantages of using views:</p>
@@ -990,22 +1348,39 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
         <h3 style={styles.qTitle}>Q33: Indexing</h3>
         <StarButton questionId="e1q33" />
       </div>
-      <p style={{marginBottom: '10px'}}>Fill in the blanks for the CREATE INDEX command:</p>
-      <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 1 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b1', e.target.value)} value={userAnswers.e1q33_b1 || ''}/>
-          <span><b>Blank 2 (Keyword):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b2', e.target.value)} value={userAnswers.e1q33_b2 || ''}/>
+      <p style={{marginBottom: '10px'}}>Fill in the CREATE INDEX command:</p>
+      
+      {!showHints.e1q33 ? (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span>Command:</span>
+            <input style={{...styles.input, flex: 1, minWidth: '400px'}} onChange={(e) => {
+              const parts = e.target.value.split(/\s+/);
+              onChange('e1q33_b1', parts[0] || '');
+              onChange('e1q33_b2', parts[1] || '');
+              onChange('e1q33_b3', parts[2] || '');
+            }} value={[userAnswers.e1q33_b1, userAnswers.e1q33_b2, userAnswers.e1q33_b3].filter(v => v).join(' ') || ''}/>
+          </div>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q33')}>💡 Show Hint</button>
         </div>
-        <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
-          <span><b>Blank 3 (Parameter):</b></span>
-          <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b3', e.target.value)} value={userAnswers.e1q33_b3 || ''}/>
+      ) : (
+        <div style={{display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px'}}>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 1 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b1', e.target.value)} value={userAnswers.e1q33_b1 || ''}/>
+            <span><b>Blank 2 (Keyword):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b2', e.target.value)} value={userAnswers.e1q33_b2 || ''}/>
+          </div>
+          <div style={{display: 'flex', gap: '5px', alignItems: 'center', flexWrap: 'wrap'}}>
+            <span><b>Blank 3 (Parameter):</b></span>
+            <input style={{...styles.input, width: '150px'}} onChange={(e) => onChange('e1q33_b3', e.target.value)} value={userAnswers.e1q33_b3 || ''}/>
+          </div>
+          <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
+            Command: <b>_____ _____ _____ _____ table (field1, field2)</b>
+          </p>
+          <button style={{...styles.hintBtn, alignSelf: 'flex-start'}} onClick={() => toggleHint('e1q33')}>💡 Hide Hint</button>
         </div>
-      </div>
-      <p style={{backgroundColor: '#f0f9ff', padding: '10px', borderRadius: '6px', fontSize: '0.9rem'}}>
-        Command: <b>_____ _____ _____ _____ table (field1, field2)</b>
-      </p>
+      )}
       
       <p style={{marginTop: '15px', marginBottom: '10px', fontWeight: 'bold'}}>Advantages of Indexing (list 1):</p>
       <div style={{display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '15px'}}>
@@ -1037,5 +1412,6 @@ const ICT_E_1_Ch1 = ({ userAnswers, onChange, showAnswers, styles, StarButton, s
     </div>
   </div>
 );
+};
 
 export default ICT_E_1_Ch1;

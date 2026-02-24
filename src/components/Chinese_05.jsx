@@ -571,7 +571,7 @@ const Chinese_05 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
             「安所」：怎、難道（反問句，意為「有什麼艱難窮苦呢」）
           </div>
         )}
-      </div>
+      </div>z
 
       <h3 style={{fontSize: '1.5rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '25px', paddingTop: '30px', marginTop: '30px', paddingBottom: '15px', borderBottom: '3px solid #dc2626'}}>第二部分：問答</h3>
 
