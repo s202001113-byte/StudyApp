@@ -109,6 +109,23 @@ const Phy_E_2_Correction = ({ userAnswers, onChange, showAnswers, styles, StarBu
       )}
     </div>
 
+    {/* Q2: Photoelectric Effect - Time Delay */}
+    <div style={styles.qSection}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+        <h3 style={styles.qTitle}>Q2: Photoelectric Effect - Why No Time Delay for Electron Ejection</h3>
+        <StarButton questionId="phy_e2_corr_q2" />
+      </div>
+      <p style={{marginBottom: '12px'}}><b>Question:</b> Explain why in photoelectric experiments almost no time delay is observed for electrons to be ejected from the metal surface even though the intensity of light is very weak. (1 mark)</p>
+      <textarea style={{...styles.input, minHeight: '80px'}} onChange={(e) => onChange('phy_e2_corr_q2_ans', e.target.value)} value={userAnswers.phy_e2_corr_q2_ans || ''} placeholder="Explain why there is no time delay despite weak light intensity..."/>
+
+      {showAnswers && (
+        <div style={styles.answerKey}>
+          <b>Model Answer (1 mark):</b><br/>
+          If a single photon has sufficient energy to knock out an electron, the electron gains enough energy in just one collision. (1 mark)
+        </div>
+      )}
+    </div>
+
     <div style={{marginTop: '30px', paddingTop: '20px', borderTop: '2px solid #e2e8f0', textAlign: 'center'}}>
       <button style={{...styles.backBtn, display: 'inline-block'}} onClick={() => setCurrentView('home')}><ArrowLeft size={18} style={{marginRight: '8px'}}/> Back to Home</button>
     </div>
