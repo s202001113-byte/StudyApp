@@ -264,7 +264,7 @@ const Chinese_05 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
         <input style={{...styles.input, backgroundColor: getInputBgColor('ch05_q16', 1)}} onChange={(e) => onChange('ch05_q16_a1', e.target.value)} value={userAnswers.ch05_q16_a1 || ''} placeholder="輸入翻譯..."/>
         {showAnswers && (
           <div style={styles.answerKey}>
-            「一也」：同樣一條
+            「一也」：（用法）同樣
           </div>
         )}
       </div>
