@@ -83,12 +83,12 @@ const Chinese_05 = ({ userAnswers, onChange, showAnswers, styles, StarButton, se
           <h3 style={styles.qTitle}>Q5</h3>
           <StarButton questionId="ch05_q5" />
         </div>
-        <p style={{marginBottom: '12px'}}><b>原文：</b> 則瓠「落無所容」</p>
-        <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「落」：</p>
+        <p style={{marginBottom: '12px'}}><b>原文：</b> 則「瓠落」無所容</p>
+        <p style={{color: '#64748b', fontSize: '0.9rem', marginBottom: '12px'}}>請翻譯「瓠落」：</p>
         <input style={{...styles.input, backgroundColor: getInputBgColor('ch05_q5', 1)}} onChange={(e) => onChange('ch05_q5_a1', e.target.value)} value={userAnswers.ch05_q5_a1 || ''} placeholder="輸入翻譯..."/>
         {showAnswers && (
           <div style={styles.answerKey}>
-            「落」：廓落、大貌、空廓貌
+            「瓠落」：大而平淺
           </div>
         )}
       </div>
